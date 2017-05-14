@@ -1,0 +1,36 @@
+{
+  "name": "@eq8/store",
+  "version": "0.0.0",
+  "description": "A predictable state container for the backend",
+  "main": "index.js",
+  "bin": {
+    "eq8store": "./cli/eq8store"
+  },
+  "scripts": {
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "tape test/test.unit.js | faucet",
+    "test:integration": "tape test/test.integration.js | faucet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eq8/eq8js.git"
+  },
+  "keywords": [
+    "eq8"
+  ],
+  "author": "bbartolome",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/eq8/eq8js/issues"
+  },
+  "homepage": "https://github.com/eq8/eq8js#readme",
+  "dependencies": {
+    "commander": "2.9.0"
+  },
+  "devDependencies": {
+    "eslint": "3.19.0",
+    "eslint-config-eslint": "4.0.0",
+    "faucet": "0.0.1",
+    "tape": "4.6.3"
+  }
+}

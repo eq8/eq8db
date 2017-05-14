@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const program = require('commander');
+
+const pkg = require('../package.json');
+
+/**
+ * Program Options
+ */
+program
+  .version(pkg.version)
+	.option('--stack-name', 'The eq8store stack name to deploy in Docker')
+	.option('--http-port <num>', 'HTTP service port')
+	.option('--amqp-port <num>', 'AMQP service port')
+	.option('--disable-amqp', 'Disable and use an external AMQP service')
+	.option('--amqp-dsn <uri>', 'Required if `--disable-amqp` is on')
+	.option('--dockerd <uri>', 'Docker daemon socket to connect to')
+	.option('--tls', 'Use TLS')
+	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8store/cert.pem')
+	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8store/key.pem')
+	.option('--manager-replicas <num>', 'Number of worker replicas to create')
+	.option('--worker-replicas <num>', 'Number of worker replicas to create')
+  .parse(process.argv);
