@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const program = require('commander');
+
+const pkg = require('../package.json');
+
+/**
+ * Program Options
+ */
+program
+	.description('Runs an instance of the eq8store manager')
+  .version(pkg.version)
+	.option('--join <uri>', 'Join an existing eq8store stack')
+	.option('--log-level <uri>', 'Join an existing eq8store stack', /^(info|debug|trace)$/i, 'info')
+	.option('--http-port <num>', 'HTTP service port', parseInt)
+	.option('--amqp-dsn <uri>', 'The Data Source Notation (DSN) providing the AMQP service')
+	.option('--amqp-queue <string>', 'The queue to subscribe RPC messages on')
+	.option('--trx-dsn <uri>', 'The DSN for the service providing transactions')
+	.option('--cache-dsn <uri>', 'The DSN for the cache service provider')
+	.option('--search-dsn <uri>', 'The DSN for the search/index service provider')
+	.option('--log-dsn <uri>', 'The DSN for the log service provider')
+	.option('--tls', 'Use TLS')
+	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8store/cert.pem')
+	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8store/key.pem')
+	.option('--replicas <num>', 'Number of worker replicas to create', parseInt)
+  .parse(process.argv);
+
+var eq8store = require('..')({
+	cmd: 'run',
+	args: program
+});
