@@ -1,0 +1,25 @@
+version: '2'
+services:
+  elasticsearch:
+    image: elasticsearch:5.3.2-alpine
+    restart: always
+  mysql:
+    image: mysql:5.7.18
+    restart: always
+    environment:
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+      - "MYSQL_DATABASE=eq8"
+  rabbitmq:
+    image: rabbitmq:3.6.9-alpine
+    restart: always
+  redis:
+    image: redis:3.2.8-alpine
+    restart: always
+  worker:
+    image: equate/store:latest
+    restart: always
+    links:
+     - elasticsearch
+     - mysql
+     - rabbitmq
+     - redis

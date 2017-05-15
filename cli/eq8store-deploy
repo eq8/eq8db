@@ -24,3 +24,19 @@ program
 	.option('--manager-replicas <num>', 'Number of worker replicas to create', parseInt)
 	.option('--worker-replicas <num>', 'Number of worker replicas to create', parseInt)
   .parse(process.argv);
+
+const spawn = require('child_process').spawn;
+
+const deploy = spawn('docker-compose', ['up', '-d']);
+
+deploy.stdout.on('data', (data) => {
+  console.log(`stdout: ${data}`);
+});
+
+deploy.stderr.on('data', (data) => {
+  console.log(`stderr: ${data}`);
+});
+
+deploy.on('close', (code) => {
+	process.exit(code);
+});
