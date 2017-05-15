@@ -2,6 +2,7 @@
 
 'use strict';
 
+const _ = require('lodash');
 const program = require('commander');
 
 const pkg = require('../package.json');
@@ -12,7 +13,7 @@ const pkg = require('../package.json');
 program
 	.description('Runs an instance of the eq8store manager')
   .version(pkg.version)
-	.option('--log-level <uri>', 'Join an existing eq8store stack', /^(info|debug|trace)$/i, 'info')
+	.option('--log-level <uri>', 'Join an existing eq8store stack', /^(info|debug|trace)$/i)
 	.option('--http-port <num>', 'HTTP service port', parseInt)
 	.option('--amqp-dsn <uri>', 'The Data Source Notation (DSN) providing the AMQP service')
 	.option('--amqp-queue <string>', 'The queue to subscribe RPC messages on')
@@ -29,5 +30,7 @@ program
 
 var eq8store = require('..')({
 	cmd: 'run',
-	args: program
+	args: _.pick(program, [
+		'logLevel'
+	])
 });
