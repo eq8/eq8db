@@ -1,4 +1,4 @@
-#eq8store
+# EQuate Store (eq8store)
 
 A predictable state container for the backend.
 
