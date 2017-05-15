@@ -12,7 +12,6 @@ const pkg = require('../package.json');
 program
 	.description('Runs an instance of the eq8store manager')
   .version(pkg.version)
-	.option('--join <uri>', 'Join an existing eq8store stack')
 	.option('--log-level <uri>', 'Join an existing eq8store stack', /^(info|debug|trace)$/i, 'info')
 	.option('--http-port <num>', 'HTTP service port', parseInt)
 	.option('--amqp-dsn <uri>', 'The Data Source Notation (DSN) providing the AMQP service')
@@ -21,6 +20,7 @@ program
 	.option('--cache-dsn <uri>', 'The DSN for the cache service provider')
 	.option('--search-dsn <uri>', 'The DSN for the search/index service provider')
 	.option('--log-dsn <uri>', 'The DSN for the log service provider')
+	.option('--join <uri>', 'Join an existing eq8store stack')
 	.option('--tls', 'Use TLS')
 	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8store/cert.pem')
 	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8store/key.pem')
