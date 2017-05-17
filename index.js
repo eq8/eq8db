@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const map = require('immutable').Map;
 
 const pkg = require('./package.json');
 const NAME = _.get(pkg, 'name');
@@ -19,5 +20,5 @@ module.exports = function bootstrap(options) {
 		logger.error(`Command ${options.cmd} not found!`);
 	});
 
-	proc(options);
+	proc(map(options.args));
 };
