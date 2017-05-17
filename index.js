@@ -14,8 +14,7 @@ module.exports = function bootstrap(options) {
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
-	const kernel = require('./lib/kernel.js')(logger);
-
+	const kernel = lib.getKernel(logger);
 	const proc = _.get(kernel, options.cmd) || (() => {
 		logger.error(`Command ${options.cmd} not found!`);
 	});
