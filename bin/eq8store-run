@@ -25,7 +25,6 @@ program
 	.option('--tls', 'Use TLS')
 	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8store/cert.pem')
 	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8store/key.pem')
-	.option('--replicas <num>', 'Number of worker replicas to create', parseInt)
   .parse(process.argv);
 
 var eq8store = require('..')({
