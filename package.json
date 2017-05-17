@@ -4,7 +4,7 @@
   "description": "A predictable state container for the backend",
   "main": "index.js",
   "bin": {
-    "eq8store": "./cli/eq8store"
+    "eq8store": "./bin/eq8store"
   },
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",
