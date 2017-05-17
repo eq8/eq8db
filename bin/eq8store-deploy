@@ -30,11 +30,11 @@ const spawn = require('child_process').spawn;
 const deploy = spawn('docker-compose', ['up', '-d']);
 
 deploy.stdout.on('data', (data) => {
-  console.log(`stdout: ${data}`);
+		process.stdout.write(data);
 });
 
 deploy.stderr.on('data', (data) => {
-  console.log(`stderr: ${data}`);
+		process.stderr.write(data);
 });
 
 deploy.on('close', (code) => {
