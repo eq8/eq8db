@@ -15,6 +15,15 @@ services:
   redis:
     image: redis:3.2.8-alpine
     restart: always
+  manager:
+    image: equate/store:latest
+    restart: always
+    command: eq8store manage
+    links:
+     - elasticsearch
+     - mysql
+     - rabbitmq
+     - redis
   worker:
     image: equate/store:latest
     restart: always
