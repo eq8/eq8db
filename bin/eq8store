@@ -12,6 +12,7 @@ program
   .description(pkg.description)
   .version(pkg.version)
   .command('deploy', 'Deploy an eq8store stack in Docker')
+  .command('teardown', 'Tear down an eq8store stack in Docker')
   .command('manage', 'Run an instance of the eq8store manager') // e.g. `--scale`, `--interactive`
   .command('run', 'Run an instance of the eq8store worker')
   .parse(process.argv);
