@@ -9,6 +9,11 @@ const VERSION = _.get(pkg, 'version');
 
 const lib = require('./lib/index.js');
 
+/**
+ * Bootstrap the process provided in `options`
+ * @param {Object} options Provides the information needed to load the correct process
+ * @returns {void}
+ */
 module.exports = function bootstrap(options) {
 	const logger = lib.getLogger(_.get(options, 'args.logLevel'));
 
