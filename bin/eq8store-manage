@@ -17,9 +17,8 @@ program
 	.option('--join <uri>', 'Join an existing eq8store stack')
   .parse(process.argv);
 
-var eq8store = require('..')({
-	cmd: 'manage',
-	args: _.pick(program, [
-		'logLevel'
-	])
-});
+const logLevel = _.pick(program, ['logLevel']);
+const options = _.pick(program, ['join']);
+const eq8store = require('..')(logLevel);
+
+eq8store.run(options);

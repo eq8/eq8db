@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const map = require('immutable').Map;
+const immutable = require('immutable');
 
 const pkg = require('./package.json');
 const NAME = _.get(pkg, 'name');
@@ -19,10 +19,7 @@ module.exports = function bootstrap(options) {
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
-	const kernel = lib.getKernel(logger);
-	const proc = _.get(kernel, options.cmd) || (() => {
-		logger.error(`Command ${options.cmd} not found!`);
-	});
+	const sharedLibs = { _, immutable, logger };
 
-	proc(map(options.args));
+	return lib.getKernel(sharedLibs);
 };

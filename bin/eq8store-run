@@ -27,9 +27,8 @@ program
 	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8store/key.pem')
   .parse(process.argv);
 
-var eq8store = require('..')({
-	cmd: 'run',
-	args: _.pick(program, [
-		'logLevel'
-	])
-});
+const logLevel = _.pick(program, ['logLevel']);
+const options = _.pick(program, ['httpPort']);
+const eq8store = require('..')(logLevel);
+
+eq8store.run(options);
