@@ -19,7 +19,7 @@ module.exports = function bootstrap(options) {
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
-	const sharedLibs = { _, immutable, logger };
+	const commons = { _, immutable, logger };
 
-	return api(sharedLibs);
+	return api(commons);
 };
