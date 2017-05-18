@@ -7,7 +7,7 @@ const pkg = require('./package.json');
 const NAME = _.get(pkg, 'name');
 const VERSION = _.get(pkg, 'version');
 
-const lib = require('./lib/index.js');
+const { getLogger, api } = require('./lib');
 
 /**
  * Bootstrap the process provided in `options`
@@ -15,11 +15,11 @@ const lib = require('./lib/index.js');
  * @returns {void}
  */
 module.exports = function bootstrap(options) {
-	const logger = lib.getLogger(_.get(options, 'args.logLevel'));
+	const logger = getLogger(_.get(options, 'args.logLevel'));
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
 	const sharedLibs = { _, immutable, logger };
 
-	return lib.getKernel(sharedLibs);
+	return api(sharedLibs);
 };
