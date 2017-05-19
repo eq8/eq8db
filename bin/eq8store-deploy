@@ -24,18 +24,32 @@ program
 	.option('--replicas <num>', 'Number of worker replicas to create', parseInt)
   .parse(process.argv);
 
+const _ = require('lodash');
+const options = _.pick(program, [
+	'httpPort',
+	'amqpPort'
+]);
+
+const defaults = require('../defaults.json');
+const env = _.defaultsDeep(Object.create(process.env), {
+	HTTP_PORT: options.httpPort,
+	AMQP_PORT: options.amqpPort
+}, defaults);
+
 const spawn = require('child_process').spawn;
+const path = require('path');
+const composeFilepath = path.join(__dirname, '../docker-compose.yml');
 
-const deploy = spawn('docker-compose', ['up', '-d']);
+const deploy = spawn('docker-compose', ['-f', composeFilepath, 'up', '-d'], { env });
 
-deploy.stdout.on('data', (data) => {
-		process.stdout.write(data);
+deploy.stdout.on('data', data => {
+	process.stdout.write(data);
 });
 
-deploy.stderr.on('data', (data) => {
-		process.stderr.write(data);
+deploy.stderr.on('data', data => {
+	process.stderr.write(data);
 });
 
-deploy.on('close', (code) => {
+deploy.on('close', code => {
 	process.exit(code);
 });
