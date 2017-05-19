@@ -1,3 +1,50 @@
-#!/usr/bin/env sh
+#!/usr/bin/env node
 
-docker-compose down
+'use strict';
+
+const program = require('commander');
+
+const pkg = require('../package.json');
+
+/**
+ * Program Options
+ */
+program
+	.description('Tears down an eq8store stack in Docker')
+  .version(pkg.version)
+	.option('--stack-name', 'The eq8store stack name to teardown in Docker')
+	.option('--http-port <num>', 'HTTP service port', parseInt)
+	.option('--amqp-port <num>', 'AMQP service port', parseInt)
+	.option('--disable-amqp', 'Disable and use an external AMQP service')
+	.option('--dockerd <uri>', 'Docker daemon socket to connect to')
+  .parse(process.argv);
+
+const _ = require('lodash');
+const options = _.pick(program, [
+	'httpPort',
+	'amqpPort'
+]);
+
+const defaults = require('../defaults.json');
+const env = _.defaultsDeep(Object.create(process.env), {
+	HTTP_PORT: options.httpPort,
+	AMQP_PORT: options.amqpPort
+}, defaults);
+
+const spawn = require('child_process').spawn;
+const path = require('path');
+const composeFilepath = path.join(__dirname, '../docker-compose.yml');
+
+const teardown = spawn('docker-compose', ['-f', composeFilepath, 'down'], { env });
+
+teardown.stdout.on('data', data => {
+	process.stdout.write(data);
+});
+
+teardown.stderr.on('data', data => {
+	process.stderr.write(data);
+});
+
+teardown.on('close', code => {
+	process.exit(code);
+});
