@@ -13,16 +13,11 @@ program
 	.description('Tears down an eq8store stack in Docker')
   .version(pkg.version)
 	.option('--stack-name', 'The eq8store stack name to teardown in Docker')
-	.option('--http-port <num>', 'HTTP service port', parseInt)
-	.option('--amqp-port <num>', 'AMQP service port', parseInt)
 	.option('--docker-host <uri>', 'Docker host to connect to')
-	.option('--disable-amqp', 'Disable and use an external AMQP service')
   .parse(process.argv);
 
 const _ = require('lodash');
 const options = _.pick(program, [
-	'httpPort',
-	'amqpPort',
 	'dockerHost'
 ]);
 
