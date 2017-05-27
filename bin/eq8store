@@ -2,18 +2,21 @@
 
 'use strict';
 
-const program = require('commander');
 const pkg = require('../package.json');
 
 /**
  * Program Commands
  */
-program
+const program = require('commander')
   .description(pkg.description)
   .version(pkg.version)
   .command('deploy', 'Deploy an eq8store stack in Docker')
   .command('teardown', 'Tear down an eq8store stack in Docker')
   .command('status', 'Show the status of the eq8store stack deployed in Docker')
   .command('manage', 'Run an instance of the eq8store manager') // e.g. `--scale`, `--interactive`
-  .command('run', 'Run an instance of the eq8store worker')
+  .command('run', 'Run an instance of the eq8store worker');
+
+require('commander-tabtab').init(program, 'eq8store');
+
+program
   .parse(process.argv);
