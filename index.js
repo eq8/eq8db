@@ -15,7 +15,8 @@ const { createLogger, createAPI } = require('./lib');
  * @returns {void}
  */
 module.exports = function bootstrap(options) {
-	const logger = createLogger(_.get(options, 'args.logLevel'));
+	const { logLevel } = options;
+	const logger = createLogger(logLevel);
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
