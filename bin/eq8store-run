@@ -15,6 +15,7 @@ program
   .version(pkg.version)
 	.option('--log-level <string>', 'Set the log level for the instance', /^(info|debug|trace)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
+	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--amqp-dsn <uri>', 'The Data Source Notation (DSN) providing the AMQP service')
 	.option('--amqp-queue <string>', 'The queue to subscribe RPC messages on')
 	.option('--trx-dsn <uri>', 'The DSN for the service providing transactions')
@@ -28,7 +29,7 @@ program
   .parse(process.argv);
 
 const logLevel = _.pick(program, ['logLevel']);
-const options = _.pick(program, ['port']);
+const options = _.pick(program, ['apiPath', 'port']);
 const eq8store = require('..')(logLevel);
 
 eq8store.run(options);
