@@ -1,7 +1,8 @@
 'use strict';
 
 const _ = require('lodash');
-const immutable = require('immutable');
+const Immutable = require('immutable');
+const Rx = require('rx');
 
 const pkg = require('./package.json');
 const NAME = _.get(pkg, 'name');
@@ -20,7 +21,7 @@ module.exports = function bootstrap(options) {
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
-	const commons = { _, immutable, logger };
+	const commons = { _, Immutable, Rx, logger };
 
 	return createAPI(commons);
 };
