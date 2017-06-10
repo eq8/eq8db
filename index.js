@@ -21,7 +21,7 @@ module.exports = function bootstrap(options) {
 
 	logger.info(`${NAME}#v${VERSION}:`, options);
 
-	const commons = { _, Immutable, Rx, logger };
+	const commons = { _, Immutable, Rx, logger, VERSION };
 
 	return createAPI(commons);
 };
