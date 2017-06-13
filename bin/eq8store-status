@@ -24,7 +24,6 @@ const options = _.pick(program, [
 const defaults = require('../defaults.json');
 const env = _.defaultsDeep(Object.create(process.env), {
 	HTTP_PORT: options.httpPort,
-	AMQP_PORT: options.amqpPort,
 	DOCKER_HOST: options.dockerHost
 }, defaults);
 

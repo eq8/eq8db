@@ -1,5 +1,4 @@
 {
 	"HTTP_PORT": 443,
-	"AMQP_PORT": 5672,
 	"DOCKER_HOST": "unix:///var/run/docker.sock"
 }
