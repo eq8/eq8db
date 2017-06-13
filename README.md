@@ -1,4 +1,4 @@
-# EQuate Store (eq8store)
+# EQuateDB (@eq8/db)
 
 A predictable state container for the backend.
 

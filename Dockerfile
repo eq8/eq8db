@@ -15,17 +15,17 @@ RUN apk update && apk add curl
 RUN curl -o /usr/local/bin/docker-compose -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` \
 	&& chmod +x /usr/local/bin/docker-compose
 
-# install eq8store
-WORKDIR /opt/eq8store
+# install eq8db
+WORKDIR /opt/eq8db
 
-COPY ./defaults.json /opt/eq8store/defaults.json
-COPY ./bin /opt/eq8store/bin
-COPY package.json /opt/eq8store/package.json
+COPY ./defaults.json /opt/eq8db/defaults.json
+COPY ./bin /opt/eq8db/bin
+COPY package.json /opt/eq8db/package.json
 RUN npm link --production
 
-COPY ./docker-compose.yml /opt/eq8store/docker-compose.yml
+COPY ./docker-compose.yml /opt/eq8db/docker-compose.yml
 
-COPY ./index.js /opt/eq8store/index.js
-COPY ./lib /opt/eq8store/lib
+COPY ./index.js /opt/eq8db/index.js
+COPY ./lib /opt/eq8db/lib
 
-CMD eq8store
+CMD eq8db

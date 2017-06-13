@@ -19,20 +19,20 @@ services:
     image: rethinkdb:2.3.5
     restart: always
   manager:
-    image: equate/store:latest
+    image: equate/db:latest
     restart: always
-    command: eq8store manage
+    command: eq8db manage
     links:
      - elasticsearch
      - mysql
      - rabbitmq
      - redis
   worker:
-    image: equate/store:latest
+    image: equate/db:latest
     restart: always
-    command: eq8store run
+    command: eq8db run
     ports:
-     - "${HTTP_PORT}:8080"
+     - "${HTTP_PORT}:8000"
     links:
      - elasticsearch
      - mysql

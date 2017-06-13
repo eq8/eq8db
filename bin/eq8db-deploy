@@ -10,14 +10,14 @@ const pkg = require('../package.json');
  * Program Options
  */
 program
-	.description('Deploys an eq8store stack in Docker')
+	.description('Deploys an eq8db stack in Docker')
   .version(pkg.version)
-	.option('--stack-name', 'The eq8store stack name to deploy in Docker')
+	.option('--stack-name', 'The eq8db stack name to deploy in Docker')
 	.option('--http-port <num>', 'HTTP service port', parseInt)
 	.option('--docker-host <uri>', 'Docker host to connect to')
 	.option('--tls', 'Use TLS')
-	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8store/cert.pem')
-	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8store/key.pem')
+	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8db/cert.pem')
+	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8db/key.pem')
 	.option('--replicas <num>', 'Number of worker replicas to create', parseInt)
   .parse(process.argv);
 

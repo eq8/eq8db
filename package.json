@@ -1,10 +1,10 @@
 {
-  "name": "@eq8/store",
+  "name": "@eq8/db",
   "version": "0.0.0",
   "description": "A predictable state container for the backend",
   "main": "index.js",
   "bin": {
-    "eq8store": "./bin/eq8store"
+    "eq8db": "./bin/eq8db"
   },
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",

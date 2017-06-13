@@ -11,14 +11,14 @@ const pkg = require('../package.json');
  * Program Options
  */
 program
-	.description('Runs an instance of the eq8store manager')
+	.description('Runs an instance of the eq8db manager')
   .version(pkg.version)
 	.option('--log-level <string>', 'Set the log level for the instance', /^(trace|debug|info|error)$/i)
-	.option('--join <uri>', 'Join an existing eq8store stack')
+	.option('--join <uri>', 'Join an existing eq8db stack')
   .parse(process.argv);
 
 const logLevel = _.pick(program, ['logLevel']);
 const options = _.pick(program, ['join']);
-const eq8store = require('..')(logLevel);
+const eq8db = require('..')(logLevel);
 
-eq8store.run(options);
+eq8db.run(options);

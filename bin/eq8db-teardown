@@ -10,9 +10,9 @@ const pkg = require('../package.json');
  * Program Options
  */
 program
-	.description('Show the status of the eq8store stack in Docker')
+	.description('Tears down an eq8db stack in Docker')
   .version(pkg.version)
-	.option('--stack-name', 'The eq8store stack name deployed in Docker')
+	.option('--stack-name', 'The eq8db stack name to teardown in Docker')
 	.option('--docker-host <uri>', 'Docker host to connect to')
   .parse(process.argv);
 
@@ -32,12 +32,16 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const composeFilepath = path.join(__dirname, '../docker-compose.yml');
 
-const status = spawn('docker-compose', ['-f', composeFilepath, 'ps'], { env });
+const teardown = spawn('docker-compose', ['-f', composeFilepath, 'down'], { env });
 
-status.stdout.on('data', data => {
+teardown.stdout.on('data', data => {
 	process.stdout.write(data);
 });
 
-status.on('close', code => {
+teardown.stderr.on('data', data => {
+	process.stderr.write(data);
+});
+
+teardown.on('close', code => {
 	process.exit(code);
 });
