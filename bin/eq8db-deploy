@@ -12,9 +12,10 @@ const pkg = require('../package.json');
 program
 	.description('Deploys an eq8db stack in Docker')
   .version(pkg.version)
-	.option('--stack-name', 'The eq8db stack name to deploy in Docker')
+	.option('--stack-name <string>', 'The eq8db stack name to deploy in Docker')
 	.option('--http-port <num>', 'HTTP service port', parseInt)
 	.option('--docker-host <uri>', 'Docker host to connect to')
+	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
 	.option('--tls', 'Use TLS')
 	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8db/cert.pem')
 	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8db/key.pem')
@@ -23,8 +24,10 @@ program
 
 const _ = require('lodash');
 const options = _.pick(program, [
+	'stackName',
 	'httpPort',
-	'dockerHost'
+	'dockerHost',
+	'dev'
 ]);
 
 const defaults = require('../defaults.json');
@@ -38,7 +41,30 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const composeFilepath = path.join(__dirname, '../docker-compose.yml');
 
-const deploy = spawn('docker-compose', ['-f', composeFilepath, 'up', '-d'], { env });
+// TODO: launch services as needed
+const stackName = options.stackName || 'eq8db';
+
+const coreServices = [
+	'manager',
+	'worker'
+];
+
+const backingServices = [
+	'elasticsearch',
+	'mysqlmgr',
+	'mysql',
+	'rabbitmq',
+	'redis',
+	'rethinkdb'
+];
+
+const services = options.dev
+	? _.concat(coreServices, backingServices)
+	: coreServices;
+
+const args = ['-f', composeFilepath, `--project=${stackName}`, 'up', '-d'];
+
+const deploy = spawn('docker-compose', _.concat(args, services), { env });
 
 deploy.stdout.on('data', data => {
 	process.stdout.write(data);

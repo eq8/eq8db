@@ -3,12 +3,16 @@ services:
   elasticsearch:
     image: elasticsearch:5.3.2-alpine
     restart: always
-  mysql:
-    image: mysql:5.7.18
+  mysqlmgr:
+    image: mysql/mysql-cluster:7.5
     restart: always
-    environment:
-      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
-      - "MYSQL_DATABASE=eq8"
+    command: "ndb_mgmd"
+  mysql:
+    depends_on:
+     - mysqlmgr
+    image: mysql/mysql-cluster:7.5
+    restart: always
+    command: "ndbd"
   rabbitmq:
     image: rabbitmq:3.6.9-alpine
     restart: always
@@ -22,19 +26,9 @@ services:
     image: equate/db:latest
     restart: always
     command: eq8db manage
-    links:
-     - elasticsearch
-     - mysql
-     - rabbitmq
-     - redis
   worker:
     image: equate/db:latest
     restart: always
     command: eq8db run
     ports:
      - "${HTTP_PORT}:8000"
-    links:
-     - elasticsearch
-     - mysql
-     - rabbitmq
-     - redis

@@ -12,12 +12,13 @@ const pkg = require('../package.json');
 program
 	.description('Tears down an eq8db stack in Docker')
   .version(pkg.version)
-	.option('--stack-name', 'The eq8db stack name to teardown in Docker')
+	.option('--stack-name <string>', 'The eq8db stack name to teardown in Docker')
 	.option('--docker-host <uri>', 'Docker host to connect to')
   .parse(process.argv);
 
 const _ = require('lodash');
 const options = _.pick(program, [
+	'stackName',
 	'dockerHost'
 ]);
 
@@ -32,7 +33,8 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const composeFilepath = path.join(__dirname, '../docker-compose.yml');
 
-const teardown = spawn('docker-compose', ['-f', composeFilepath, 'down'], { env });
+const stackName = options.stackName || 'eq8db';
+const teardown = spawn('docker-compose', ['-f', composeFilepath, `--project=${stackName}`, 'down'], { env });
 
 teardown.stdout.on('data', data => {
 	process.stdout.write(data);
