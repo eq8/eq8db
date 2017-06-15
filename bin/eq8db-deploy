@@ -37,7 +37,6 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const composeFilepath = path.join(__dirname, '../docker-compose.yml');
 
-// TODO: launch services as needed
 const stackName = options.stackName || 'eq8db';
 
 const coreServices = [
