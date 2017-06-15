@@ -1,27 +1,6 @@
 'use strict';
 
-const _ = require('lodash');
-const Immutable = require('immutable');
-const Rx = require('rx');
-
 const pkg = require('./package.json');
-const NAME = _.get(pkg, 'name');
-const VERSION = _.get(pkg, 'version');
+const createInstance = require('./lib');
 
-const { createLogger, createInstance } = require('./lib');
-
-/**
- * Bootstrap the process provided in `options`
- * @param {Object} options Provides the information needed to load the correct process
- * @returns {void}
- */
-module.exports = function bootstrap(options) {
-	const { logLevel } = options;
-	const logger = createLogger(logLevel);
-
-	logger.info(`${NAME}#v${VERSION}:`, options);
-
-	const commons = { _, Immutable, Rx, logger, VERSION };
-
-	return createInstance(commons);
-};
+module.exports = createInstance(pkg);

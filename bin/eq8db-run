@@ -21,7 +21,7 @@ program
   .parse(process.argv);
 
 const logLevel = _.pick(program, ['logLevel']);
-const options = _.pick(program, ['port', 'apiPath']);
-const eq8db = require('..')(logLevel);
+const options = _.pick(program, ['logLevel', 'port', 'apiPath']);
+const eq8db = require('..');
 
 eq8db(options);
