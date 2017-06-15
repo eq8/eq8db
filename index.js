@@ -8,7 +8,7 @@ const pkg = require('./package.json');
 const NAME = _.get(pkg, 'name');
 const VERSION = _.get(pkg, 'version');
 
-const { createLogger, createAPI } = require('./lib');
+const { createLogger, createInstance } = require('./lib');
 
 /**
  * Bootstrap the process provided in `options`
@@ -23,5 +23,5 @@ module.exports = function bootstrap(options) {
 
 	const commons = { _, Immutable, Rx, logger, VERSION };
 
-	return createAPI(commons);
+	return createInstance(commons);
 };

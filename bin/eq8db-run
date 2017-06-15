@@ -24,4 +24,4 @@ const logLevel = _.pick(program, ['logLevel']);
 const options = _.pick(program, ['port', 'apiPath']);
 const eq8db = require('..')(logLevel);
 
-eq8db.run(options);
+eq8db(options);
