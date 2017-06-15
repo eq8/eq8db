@@ -18,9 +18,6 @@ program
 	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--db-host <string>', 'The hostname/IP address of the database')
 	.option('--db-port <string>', 'The host port of the database')
-	.option('--tls', 'Use TLS')
-	.option('--tlscert <path>', 'Path to TLS certificate file - e.g. /opt/eq8db/cert.pem')
-	.option('--tlskey <path>', 'Path to TLS key file - e.g. /opt/eq8db/key.pem')
   .parse(process.argv);
 
 const logLevel = _.pick(program, ['logLevel']);
