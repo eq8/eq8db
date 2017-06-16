@@ -13,6 +13,8 @@ const pkg = require('../package.json');
 program
 	.description('Runs an instance of the eq8db worker')
   .version(pkg.version)
+	.option('--dev', 'Flag development mode - i.e. run instance as both manager and worker')
+	.option('--worker', 'Run instance as a worker')
 	.option('--log-level <string>', 'The log level for the instance', /^(trace|debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--api-path <string>', 'The API path - e.g. /api')
@@ -20,8 +22,7 @@ program
 	.option('--db-port <string>', 'The host port of the database')
   .parse(process.argv);
 
-const logLevel = _.pick(program, ['logLevel']);
-const options = _.pick(program, ['logLevel', 'port', 'apiPath']);
+const options = _.pick(program, ['dev', 'worker', 'logLevel', 'port', 'apiPath']);
 const eq8db = require('..');
 
 eq8db(options);
