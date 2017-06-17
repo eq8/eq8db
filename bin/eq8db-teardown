@@ -45,5 +45,5 @@ teardown.stderr.on('data', data => {
 });
 
 teardown.on('close', code => {
-	process.exit(code);
+	process.exit(code); // eslint-disable-line no-process-exit
 });

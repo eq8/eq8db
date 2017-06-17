@@ -70,5 +70,5 @@ deploy.stderr.on('data', data => {
 });
 
 deploy.on('close', code => {
-	process.exit(code);
+	process.exit(code); // eslint-disable-line no-process-exit
 });

@@ -42,5 +42,5 @@ status.stdout.on('data', data => {
 });
 
 status.on('close', code => {
-	process.exit(code);
+	process.exit(code); // eslint-disable-line no-process-exit
 });
