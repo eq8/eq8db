@@ -11,18 +11,22 @@ const pkg = require('../package.json');
  * Program Options
  */
 program
-	.description('Runs an instance of the eq8db worker')
+	.description('Runs an instance of eq8db')
   .version(pkg.version)
-	.option('--dev', 'Flag development mode - i.e. run instance as both manager and worker')
-	.option('--worker', 'Run instance as a worker')
+	.option('--processor', 'Run instance as a processor')
 	.option('--log-level <string>', 'The log level for the instance', /^(trace|debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--api-path <string>', 'The API path - e.g. /api')
-	.option('--db-host <string>', 'The hostname/IP address of the database')
-	.option('--db-port <string>', 'The host port of the database')
+	.option('--discovery <uri>', 'The connection string for the discovery backend')
   .parse(process.argv);
 
-const options = _.pick(program, ['dev', 'worker', 'logLevel', 'port', 'apiPath']);
+const options = _.pick(program, ['logLevel', 'port', 'apiPath']);
 const eq8db = require('..');
 
-eq8db(options);
+if(options.dev || options.processor) {
+	eq8db.start(options);
+}
+
+if (options.dev || !options.processor) {
+	eq8db.listen(options);
+}

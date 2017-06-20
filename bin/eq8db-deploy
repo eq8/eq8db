@@ -2,6 +2,7 @@
 
 'use strict';
 
+const _ = require('lodash');
 const program = require('commander');
 
 const pkg = require('../package.json');
@@ -12,63 +13,13 @@ const pkg = require('../package.json');
 program
 	.description('Deploys an eq8db stack in Docker')
   .version(pkg.version)
-	.option('--stack-name <string>', 'The eq8db stack name to deploy in Docker')
-	.option('--http-port <num>', 'HTTP service port', parseInt)
-	.option('--docker-host <uri>', 'Docker host to connect to')
+	.option('--stack <string>', 'The eq8db stack name to deploy in Docker')
+	.option('--docker <uri>', 'Docker host to connect to')
+	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
   .parse(process.argv);
 
-const _ = require('lodash');
-const options = _.pick(program, [
-	'stackName',
-	'httpPort',
-	'dockerHost',
-	'dev'
-]);
+const options = _.pick(program, ['stack', 'docker', 'port', 'dev']);
+const eq8db = require('..');
 
-const defaults = require('../defaults.json');
-const env = _.defaultsDeep(Object.create(process.env), {
-	HTTP_PORT: options.httpPort,
-	DOCKER_HOST: options.dockerHost
-}, defaults);
-
-const spawn = require('child_process').spawn;
-
-const path = require('path');
-const composeFilepath = path.join(__dirname, '../docker-compose.yml');
-
-const stackName = options.stackName || 'eq8db';
-
-const coreServices = [
-	'manager',
-	'worker'
-];
-
-const backingServices = [
-	'elasticsearch',
-	'mysqlmgr',
-	'mysql',
-	'rabbitmq',
-	'redis',
-	'rethinkdb'
-];
-
-const services = options.dev
-	? _.concat(coreServices, backingServices)
-	: coreServices;
-
-const args = ['-f', composeFilepath, `--project=${stackName}`, 'up', '-d'];
-
-const deploy = spawn('docker-compose', _.concat(args, services), { env });
-
-deploy.stdout.on('data', data => {
-	process.stdout.write(data);
-});
-
-deploy.stderr.on('data', data => {
-	process.stderr.write(data);
-});
-
-deploy.on('close', code => {
-	process.exit(code); // eslint-disable-line no-process-exit
-});
+eq8db.deploy(options);
