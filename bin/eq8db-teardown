@@ -12,10 +12,10 @@ const pkg = require('../package.json');
  */
 program
 	.description('Tears down an eq8db stack in Docker')
-  .version(pkg.version)
+	.version(pkg.version)
 	.option('--stack <string>', 'The eq8db stack name to deploy in Docker')
 	.option('--docker <uri>', 'Docker host to connect to')
-  .parse(process.argv);
+	.parse(process.argv);
 
 const options = _.pick(program, ['stack', 'docker']);
 const eq8db = require('..');

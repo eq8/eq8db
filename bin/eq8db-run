@@ -12,18 +12,18 @@ const pkg = require('../package.json');
  */
 program
 	.description('Runs an instance of eq8db')
-  .version(pkg.version)
+	.version(pkg.version)
 	.option('--processor', 'Run instance as a processor')
 	.option('--log-level <string>', 'The log level for the instance', /^(trace|debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--discovery <uri>', 'The connection string for the discovery backend')
-  .parse(process.argv);
+	.parse(process.argv);
 
 const options = _.pick(program, ['logLevel', 'port', 'apiPath']);
 const eq8db = require('..');
 
-if(options.dev || options.processor) {
+if (options.dev || options.processor) {
 	eq8db.start(options);
 }
 
