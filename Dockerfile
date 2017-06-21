@@ -18,12 +18,9 @@ RUN curl -o /usr/local/bin/docker-compose -L https://github.com/docker/compose/r
 # install eq8db
 WORKDIR /opt/eq8db
 
-COPY ./defaults.json /opt/eq8db/defaults.json
 COPY ./bin /opt/eq8db/bin
 COPY package.json /opt/eq8db/package.json
 RUN npm link --production
-
-COPY ./docker-compose.yml /opt/eq8db/docker-compose.yml
 
 COPY ./index.js /opt/eq8db/index.js
 COPY ./lib /opt/eq8db/lib
