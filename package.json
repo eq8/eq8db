@@ -7,7 +7,7 @@
     "eq8db": "./bin/eq8db"
   },
   "scripts": {
-    "test": "npm run lint && npm run test:unit && npm run test:integration",
+    "test": "npm run test:lint && npm run test:unit && npm run test:integration",
     "test:lint": "eslint --cache --ext .js index.js bin/* lib",
     "test:unit": "tape test/test.unit.js | faucet",
     "test:integration": "tape test/test.integration.js | faucet"
