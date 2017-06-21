@@ -1,4 +1,0 @@
-{
-	"HTTP_PORT": 443,
-	"DOCKER_HOST": "unix:///var/run/docker.sock"
-}

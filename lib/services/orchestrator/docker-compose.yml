@@ -19,9 +19,6 @@ services:
   redis:
     image: redis:3.2.8-alpine
     restart: always
-  rethinkdb:
-    image: rethinkdb:2.3.5
-    restart: always
   manager:
     image: equate/db:latest
     restart: always
