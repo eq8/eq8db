@@ -17,7 +17,7 @@ program
 	.option('--log-level <string>', 'The log level for the instance', /^(trace|debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--api-path <string>', 'The API path - e.g. /api')
-	.option('--discovery <uri>', 'The connection string for the discovery backend')
+	.option('--store <uri>', 'The connection string for the store')
 	.parse(process.argv);
 
 const options = _.pick(program, ['logLevel', 'port', 'apiPath']);
