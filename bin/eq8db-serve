@@ -11,10 +11,9 @@ const pkg = require('../package.json');
  * Program Options
  */
 program
-	.description('Runs an instance of eq8db')
+	.description('Runs an eq8db server instance')
 	.version(pkg.version)
-	.option('--processor', 'Run instance as a processor')
-	.option('--log-level <string>', 'The log level for the instance', /^(trace|debug|info|error)$/i)
+	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--store <uri>', 'The connection string for the store')
@@ -23,10 +22,4 @@ program
 const options = _.pick(program, ['logLevel', 'port', 'apiPath', 'store']);
 const eq8db = require('..');
 
-if (options.dev || options.processor) {
-	eq8db.start(options);
-}
-
-if (options.dev || !options.processor) {
-	eq8db.listen(options);
-}
+eq8db.serve(options);

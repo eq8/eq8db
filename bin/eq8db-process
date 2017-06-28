@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const _ = require('lodash');
+const program = require('commander');
+
+const pkg = require('../package.json');
+
+/**
+ * Program Options
+ */
+program
+	.description('Runs an eq8db processor instance')
+	.version(pkg.version)
+	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
+	.option('--store <uri>', 'The connection string for the store')
+	.parse(process.argv);
+
+const options = _.pick(program, ['logLevel', 'store']);
+const eq8db = require('..');
+
+eq8db.process(options);

@@ -12,7 +12,8 @@ const program = require('commander')
 	.version(pkg.version)
 	.command('deploy', 'Deploy an eq8db stack in Docker')
 	.command('teardown', 'Tear down an eq8db stack in Docker')
-	.command('run', 'Run an instance of the eq8db worker');
+	.command('serve', 'Run an instance of the eq8db server')
+	.command('process', 'Run an instance of the eq8db processor');
 
 require('commander-tabtab').init(program, 'eq8db');
 
