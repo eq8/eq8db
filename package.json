@@ -1,7 +1,7 @@
 {
   "name": "@eq8/db",
   "version": "0.0.0",
-  "description": "A predictable state container for the backend",
+  "description": "TBD",
   "main": "index.js",
   "bin": {
     "eq8db": "./bin/eq8db"
