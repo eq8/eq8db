@@ -45,7 +45,7 @@
     "eslint": "4.1.1",
     "eslint-config-eslint": "4.0.0",
     "faucet": "0.0.1",
-    "husky": "0.14.1",
+    "husky": "0.14.2",
     "tape": "4.7.0"
   }
 }
