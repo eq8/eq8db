@@ -37,7 +37,7 @@
     "graphql-tools": "1.1.0",
     "lodash": "4.17.4",
     "rethinkdb": "2.3.3",
-    "semver": "5.3.0",
+    "semver": "5.4.0",
     "url-parse": "1.1.9",
     "winston": "2.3.1"
   },
