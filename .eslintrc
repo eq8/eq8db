@@ -23,6 +23,12 @@
 					"functions": false
 				}
 			],
+			new-cap: [
+				"error",
+				{
+					"capIsNew": false
+				}
+			],
 			"require-jsdoc": "off"
 		}
 }
