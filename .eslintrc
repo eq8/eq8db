@@ -29,6 +29,12 @@
 					"capIsNew": false
 				}
 			],
+			"no-confusing-arrow": [
+				"error",
+				{
+					"allowParens": true
+				}
+			],
 			"require-jsdoc": "off"
 		}
 }
