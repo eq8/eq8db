@@ -65,8 +65,8 @@ module.exports = function createOrchestratorPlugin({ logger }) {
 
 		services.add({ plugin, cmd: 'deploy' }, () => {
 			const coreServices = [
-				'manager',
-				'worker'
+				'server',
+				'processor'
 			];
 
 			const backingServices = [
