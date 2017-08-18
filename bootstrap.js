@@ -9,6 +9,11 @@ const pluginsLoader = require('./plugins');
 const NAME = _.get(pkg, 'name');
 const VERSION = _.get(pkg, 'version');
 
+const optionsWhitelist = [
+	'stack', 'docker',
+	'logLevel', 'store', 'apiPath', 'port', 'dev'
+];
+
 // hoist bootstrap function and export
 module.exports = bootstrap;
 
@@ -23,7 +28,7 @@ module.exports = bootstrap;
 function bootstrap(action, options, callback) {
 
 	// Provide defaults
-	const settings = _.defaultsDeep(options, {
+	const settings = _.defaultsDeep(_.pick(options, optionsWhitelist), {
 		action,
 		port: 8000,
 		logLevel: 'info',

@@ -3,17 +3,46 @@
 'use strict';
 
 const pkg = require('../package.json');
+const eq8db = require('..');
 
 /**
  * Program Commands
  */
 const program = require('commander')
 	.description(pkg.description)
-	.version(pkg.version)
-	.command('deploy', 'Deploy an eq8db stack in Docker')
-	.command('teardown', 'Tear down an eq8db stack in Docker')
-	.command('serve', 'Run an instance of the eq8db server')
-	.command('process', 'Run an instance of the eq8db processor');
+	.version(pkg.version);
+
+program
+	.command('deploy')
+	.description('Deploy an eq8db stack in Docker')
+	.option('--stack <string>', 'The eq8db stack name to deploy in Docker')
+	.option('--docker <uri>', 'Docker host to connect to')
+	.option('--port <num>', 'The port to bind on', parseInt)
+	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
+	.action(options => eq8db.deploy(options));
+
+program
+	.command('teardown')
+	.description('Tear down an eq8db stack in Docker')
+	.option('--stack <string>', 'The eq8db stack name to deploy in Docker')
+	.option('--docker <uri>', 'Docker host to connect to')
+	.action(options => eq8db.teardown(options));
+
+program
+	.command('serve')
+	.description('Run an instance of the eq8db server')
+	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
+	.option('--port <num>', 'The port to bind on', parseInt)
+	.option('--api-path <string>', 'The API path - e.g. /api')
+	.option('--store <uri>', 'The connection string for the store')
+	.action(options => eq8db.serve(options));
+
+program
+	.command('process')
+	.description('Run an instance of the eq8db processor')
+	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
+	.option('--store <uri>', 'The connection string for the store')
+	.action(options => eq8db.process(options));
 
 require('commander-tabtab').init(program, 'eq8db');
 
