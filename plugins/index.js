@@ -19,7 +19,7 @@ module.exports = function pluginsLoader(commons) {
 			framework.use(require('./store')(commons), { store });
 			framework.use(require('./graphql/admin')(commons));
 			framework.use(require('./graphql/db')(commons));
-			framework.use(require('./server.js')(commons), { apiPath, port });
+			framework.use(require('./server')(commons), { apiPath, port });
 			break;
 		}
 
