@@ -9,6 +9,9 @@ const pluginsLoader = require('./plugins');
 const NAME = _.get(pkg, 'name');
 const VERSION = _.get(pkg, 'version');
 
+// hoist bootstrap function and export
+module.exports = bootstrap;
+
 /**
  * The main function that signals the start of the application
  *
@@ -63,5 +66,3 @@ function bootstrap(action, options, callback) {
 		});
 	});
 }
-
-module.exports = bootstrap;
