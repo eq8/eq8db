@@ -3,7 +3,7 @@
 const bootstrap = require('./bootstrap.js');
 
 function run(action) {
-	return options => bootstrap(action, options);
+	return (options, callback) => bootstrap(action, options, callback);
 }
 
 module.exports = {

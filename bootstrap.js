@@ -14,9 +14,10 @@ const VERSION = _.get(pkg, 'version');
  *
  * @param {string} [action] Runtime action - e.g. deploy, teardown, etc.
  * @param {Object} [options] Runtime options - i.e. log level and port
+ * @param {Function} [callback] Function to receive the service locator
  * @returns {undefined}
  */
-function bootstrap(action, options) {
+function bootstrap(action, options, callback) {
 
 	// Provide defaults
 	const settings = _.defaultsDeep(options, {
@@ -45,23 +46,17 @@ function bootstrap(action, options) {
 		services.ready(function ready() {
 			switch (action) {
 			case 'process':
-				this.act({ plugin: 'processor', cmd: 'start' });
+				this.act({ plugin: 'processor', cmd: 'start' }, callback);
 				break;
 			case 'deploy':
-				this.act({ plugin: 'orchestrator', cmd: 'deploy' });
+				this.act({ plugin: 'orchestrator', cmd: 'deploy' }, callback);
 				break;
 			case 'teardown':
-				this.act({ plugin: 'orchestrator', cmd: 'teardown' });
+				this.act({ plugin: 'orchestrator', cmd: 'teardown' }, callback);
 				break;
 			case 'serve':
 			default:
-				this.act({ plugin: 'server', cmd: 'start' }, err => {
-					if (err) {
-						logger.error(err);
-					} else {
-						logger.info(`Listening on port: ${settings.port}`);
-					}
-				});
+				this.act({ plugin: 'server', cmd: 'start' }, callback);
 				break;
 			}
 		});
