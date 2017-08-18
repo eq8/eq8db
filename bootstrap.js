@@ -39,7 +39,9 @@ function bootstrap(action, options, callback) {
 	logger.info(`${NAME}#v${VERSION}`, settings);
 
 	// Initialize the framework
-	const framework = require('@eq8/framework')({ logger: { transports: [logger] } });
+	const framework = require('@eq8/framework')({
+		logger: { transports: [logger] }
+	});
 
 	// Provide the framework to the plugins loader
 	const commons = { VERSION, logger, framework };
