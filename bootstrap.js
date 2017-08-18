@@ -3,7 +3,7 @@
 const _ = require('lodash');
 
 const pkg = require('./package.json');
-const createLogger = require('./lib/logger.js');
+const { Logger } = require('./lib/utils');
 const pluginsLoader = require('./plugins');
 
 const NAME = _.get(pkg, 'name');
@@ -31,7 +31,7 @@ function bootstrap(action, options, callback) {
 	const { logLevel } = settings;
 
 	// Initialize the logger
-	const logger = createLogger(logLevel);
+	const logger = Logger(logLevel);
 
 	logger.info(`${NAME}#v${VERSION}`, settings);
 
