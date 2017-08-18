@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function initServicesLoader(commons) {
+module.exports = function pluginsLoader(commons) {
 	const { logger, framework } = commons;
 
-	logger.debug('initServicesLoader');
+	logger.debug('pluginsLoader', __filename);
 
-	return function servicesLoader({ action, docker, apiPath, port, store, dev }, done) {
+	return function loadPlugins({ action, docker, apiPath, port, store, dev }, done) {
 		switch (action) {
 		case 'deploy':
 		case 'teardown':

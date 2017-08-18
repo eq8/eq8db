@@ -13,7 +13,7 @@ module.exports = function createGraphQLAdminPlugin({ VERSION, logger }) {
 	return function graphqlAdminPlugin() {
 		const services = this;
 
-		logger.debug('graphqlPlugin');
+		logger.debug('graphqlAdminPlugin', __filename);
 
 		const typeDefs = require('./type-defs.js');
 

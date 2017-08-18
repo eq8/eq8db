@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const pkg = require('./package.json');
 const createLogger = require('./lib/logger.js');
-const initServicesLoader = require('./plugins');
+const pluginsLoader = require('./plugins');
 
 const NAME = _.get(pkg, 'name');
 const VERSION = _.get(pkg, 'version');
@@ -33,17 +33,18 @@ function bootstrap(action, options, callback) {
 	// Initialize the logger
 	const logger = createLogger(logLevel);
 
-	logger.info(`Started ${NAME}#v${VERSION}:`, settings);
+	logger.info(`${NAME}#v${VERSION}`, settings);
 
+	// Initialize the framework
 	const framework = require('@eq8/framework')({ logger: { transports: [logger] } });
 
-	// Initialize the services
+	// Provide the framework to the plugins loader
 	const commons = { VERSION, logger, framework };
-	const loadServices = initServicesLoader(commons);
+	const loadPlugins = pluginsLoader(commons);
 
-	// Loads services into framework
-	loadServices(settings, services => {
-		services.ready(function ready() {
+	// Loads plugins into the framework
+	loadPlugins(settings, plugins => {
+		plugins.ready(function ready() {
 			switch (action) {
 			case 'process':
 				this.act({ plugin: 'processor', cmd: 'start' }, callback);

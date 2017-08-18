@@ -6,7 +6,7 @@ module.exports = function createGraphQLDBPlugin({ logger }) {
 	return function graphqlDBPlugin() {
 		const services = this;
 
-		logger.debug('graphqlDBPlugin');
+		logger.debug('graphqlDBPlugin', __filename);
 
 		/**
 		 * returns the middleware other than the admin API

@@ -20,7 +20,7 @@ const cache = lru({
 });
 
 module.exports = function createServer({ logger }) {
-	logger.debug('createServer');
+	logger.debug('createServer', __filename);
 
 	return function server(options) {
 		const services = this;
@@ -29,7 +29,7 @@ module.exports = function createServer({ logger }) {
 			apiPath: 'api'
 		});
 
-		logger.info('server:', settings);
+		logger.info('server', settings);
 
 		const { apiPath } = settings;
 
@@ -60,6 +60,8 @@ module.exports = function createServer({ logger }) {
 		});
 
 		services.add({ plugin, cmd: 'start' }, (args, done) => {
+			logger.info('server#start');
+
 			app.listen(settings.port, done);
 		});
 	};

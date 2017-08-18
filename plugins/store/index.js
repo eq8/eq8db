@@ -14,7 +14,7 @@ module.exports = function createStorePlugin({ logger }) {
 			store: 'rethinkdb://admin@127.0.0.1:28015'
 		});
 
-		logger.debug('storePlugin');
+		logger.debug('storePlugin', __filename);
 
 		let conn;
 
