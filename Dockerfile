@@ -23,6 +23,8 @@ COPY package.json /opt/eq8db/package.json
 RUN npm link --production
 
 COPY ./index.js /opt/eq8db/index.js
+COPY ./bootstrap.js /opt/eq8db/bootstrap.js
 COPY ./lib /opt/eq8db/lib
+COPY ./plugins /opt/eq8db/plugins
 
 CMD eq8db
