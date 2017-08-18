@@ -1,10 +1,9 @@
 'use strict';
 
-const pkg = require('./package.json');
-const instantiate = require('./lib')(pkg);
+const bootstrap = require('./bootstrap.js');
 
 function run(action) {
-	return options => instantiate(action, options);
+	return options => bootstrap(action, options);
 }
 
 module.exports = {
