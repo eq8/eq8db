@@ -46,7 +46,7 @@ module.exports = function createServer({ logger }) {
 				cached(req, res, next);
 			} else {
 				services.act({
-					plugin: 'graphql', q: 'middleware', bctxt, v, host
+					plugin: 'graphql', q: 'middleware', host, bctxt, v
 				}, (err, { middleware }) => {
 					if (err) {
 						logger.error(err);
