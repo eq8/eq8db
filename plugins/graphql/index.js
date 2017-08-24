@@ -4,7 +4,6 @@
 
 const plugin = 'graphql';
 
-const _ = require('lodash');
 const { makeExecutableSchema } = require('graphql-tools');
 const graphqlHTTP = require('express-graphql');
 
