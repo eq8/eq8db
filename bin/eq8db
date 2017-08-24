@@ -19,6 +19,7 @@ program
 	.option('--docker <uri>', 'Docker host to connect to')
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
+	.option('--domain <string>', 'The domain of the application')
 	.action(options => eq8db.deploy(options));
 
 program
@@ -33,6 +34,7 @@ program
 	.description('Run an instance of the eq8db server')
 	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
+	.option('--domain <string>', 'The domain of the application')
 	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--store <uri>', 'The connection string for the store')
 	.action(options => eq8db.serve(options));
