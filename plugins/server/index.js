@@ -33,12 +33,12 @@ module.exports = function createServer({ logger }) {
 
 		const { apiPath } = settings;
 
-		app.use(`/:aggregate/${apiPath}/:v`, (req, res, next) => {
+		app.use(`/:bctxt/${apiPath}/:v`, (req, res, next) => {
 			const host = _.get(req, 'headers.host');
-			const aggregate = _.get(req, 'params.aggregate');
+			const bctxt = _.get(req, 'params.bctxt');
 			const v = _.get(req, 'params.v');
 
-			const uri = `${host}/${aggregate}/${v}`;
+			const uri = `${host}/${bctxt}/${v}`;
 
 			const cached = cache.get(uri);
 
@@ -46,7 +46,7 @@ module.exports = function createServer({ logger }) {
 				cached(req, res, next);
 			} else {
 				services.act({
-					plugin: 'graphql', q: 'middleware', aggregate, v, host
+					plugin: 'graphql', q: 'middleware', bctxt, v, host
 				}, (err, { middleware }) => {
 					if (err) {
 						logger.error(err);
