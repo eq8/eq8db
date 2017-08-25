@@ -13,7 +13,7 @@ module.exports = function resolvers(services, host) {
 			addBoundedContext: getResolver((resolve, reject, obj, args) => {
 				const { name } = args;
 
-				obj = obj.set('aggregates', obj.get('boundedContexts').set(name, Map({})));
+				obj = obj.set('boundedContexts', obj.get('boundedContexts').set(name, Map({})));
 
 				resolve(obj);
 			}),
@@ -63,7 +63,7 @@ module.exports = function resolvers(services, host) {
 								.set(aggregate, Map({})
 									.set('queries', Map({})
 										.set(name, Map({ value, isCollection })
-											.set('arguments', Map({}))
+											.set('parameters', Map({}))
 										)
 									)
 								)
