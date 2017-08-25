@@ -4,15 +4,10 @@
 
 const { Map } = require('immutable');
 
-const RESULT_OK = {
-	code: 200,
-	description: 'ok'
-};
-
 module.exports = function resolvers(services, host) {
 	return {
 		Query: {
-			domain: getDomain(services, host)
+			domain: readDomain(services, host)
 		},
 		Transaction: {
 			addAggregate: getResolver((resolve, reject, obj, args) => {
@@ -76,40 +71,33 @@ module.exports = function resolvers(services, host) {
 
 				resolve(obj.mergeDeep(changes));
 			}),
-			commit: getResolver((resolve, reject, obj) => {
-				obj = obj.set('version', obj.get('version') + 1);
-
-				const params = {
-					type: 'domains',
-					object: obj.toJSON()
-				};
-
-				services.act({ plugin: 'store', cmd: 'edit', params }, (err, result) => {
-					if (err) {
-						reject(err);
-					} else {
-						if (result.errors) {
-							reject(result.first_error);
-						} else {
-							resolve(RESULT_OK);
-						}
-					}
-				});
-			})
+			commit: editDomain(services)
 		},
 		Mutation: {
-			transact: getDomain(services, host)
+			transact: readDomain(services, host)
 		}
 	};
 };
 
-function getDomain(services, host) {
+function readDomain(services, host) {
 	return getResolver((resolve, reject) => {
-		services.act({ plugin: 'api', q: 'domain', host }, (err, domain) => {
+		services.act({ plugin: 'api', q: 'readDomain', host }, (err, domain) => {
 			if (err) {
 				reject(err);
 			} else {
 				resolve(domain);
+			}
+		});
+	});
+}
+
+function editDomain(services) {
+	return getResolver((resolve, reject, obj) => {
+		services.act({ plugin: 'api', cmd: 'editDomain', domain: obj }, (err, result) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(result);
 			}
 		});
 	});
