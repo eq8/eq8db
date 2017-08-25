@@ -2,7 +2,6 @@
 
 'use strict';
 
-const _ = require('lodash');
 const { Map } = require('immutable');
 
 const RESULT_OK = {
@@ -106,48 +105,14 @@ module.exports = function resolvers(services, host) {
 
 function getDomain(services, host) {
 	return getResolver((resolve, reject) => {
-		const id = host; // TODO: add default host
-		const params = {
-			type: 'domains',
-			id
-		};
-
-		services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
-			if (result) {
-				const { version, aggregates, entities } = result;
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve(
-						Map({
-							id,
-							version,
-							aggregates: toImmutable(aggregates),
-							entities: toImmutable(entities)
-						})
-					);
-				}
+		services.act({ plugin: 'api', q: 'domain', host }, (err, domain) => {
+			if (err) {
+				reject(err);
 			} else {
-				resolve(
-					Map({
-						id,
-						version: 0,
-						aggregates: Map({}),
-						entities: Map({})
-					})
-				);
+				resolve(domain);
 			}
 		});
 	});
-}
-
-function toImmutable(value) {
-	if (_.isObject(value)) {
-		return Map(_.mapValues(value, v => toImmutable(v)));
-	}
-
-	return value;
 }
 
 function getResolver(resolver) {
