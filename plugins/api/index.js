@@ -10,6 +10,8 @@ const RESULT_OK = {
 	description: 'ok'
 };
 
+const ERROR_DOMAIN_NOT_FOUND = new Error('domain-not-found');
+
 module.exports = function createAPIPlugin({ logger }) {
 	return function APIPlugin(options) {
 		const services = this;
@@ -21,7 +23,7 @@ module.exports = function createAPIPlugin({ logger }) {
 
 		services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
 			readDomain.bind(services)(args, (err, result) => {
-				if (err && err.description === 'domain-not-found') {
+				if (err && err === ERROR_DOMAIN_NOT_FOUND) {
 					done(null, toImmutable({
 						id: domain,
 						version: 0,
@@ -103,7 +105,7 @@ function readDomain({ host }, done) {
 
 	services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
 		if (err || !result) {
-			done(err || new Error('domain-not-found'));
+			done(err || ERROR_DOMAIN_NOT_FOUND);
 		} else {
 			const { version, boundedContexts, entities } = result;
 
