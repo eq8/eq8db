@@ -20,32 +20,34 @@ module.exports = function createAPIPlugin({ logger }) {
 		logger.debug('APIPlugin', __filename);
 
 		services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
-			done(null, toImmutable({
-				id: domain,
-				version: 0,
-				boundaryContexts: {
-					admin: {
-						aggregates: {
-							domain: {
-								root: 'Domain',
-								queries: {},
-								mutations: {
-									addDomain: {
-										parameters: {
-											hostname: {
-												type: 'STRING',
-												required: true
-											},
-											webhook: {
-												type: 'STRING'
+			readDomain.bind(services)(args, (err, result) => {
+				if (err && err.description === 'domain-not-found') {
+					done(null, toImmutable({
+						id: domain,
+						version: 0,
+						boundedContexts: {
+							admin: {
+								aggregates: {
+									domain: {
+										root: 'Domain',
+										queries: {},
+										mutations: {
+											addDomain: {
+												parameters: {
+													hostname: {
+														type: 'STRING',
+														required: true
+													},
+													webhook: {
+														type: 'STRING'
+													}
+												}
 											}
 										}
 									}
 								}
-							}
-						}
 
-						/*
+								/*
 					},
 					model: {
 						aggregates: {
@@ -53,23 +55,27 @@ module.exports = function createAPIPlugin({ logger }) {
 								root: 'DomainModel'
 							}
 						}
-						*/
+								*/
 
-					}
-				},
-				entities: {
-					Domain: {
-						name: 'STRING'
+							}
+						},
+						entities: {
+							Domain: {
+								name: 'STRING'
 
-						/*
+								/*
 					},
 					DomainModel: {
 						name: 'STRING'
-						*/
+								*/
 
-					}
+							}
+						}
+					}));
+				} else {
+					done(err, result);
 				}
-			}));
+			});
 		});
 
 		services.add({ plugin, q: 'readDomain' }, readDomain.bind(services));
@@ -97,7 +103,7 @@ function readDomain({ host }, done) {
 
 	services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
 		if (err || !result) {
-			done(err);
+			done(err || new Error('domain-not-found'));
 		} else {
 			const { version, boundedContexts, entities } = result;
 
@@ -106,8 +112,8 @@ function readDomain({ host }, done) {
 				Map({
 					id,
 					version,
-					boundedContexts: toImmutable(boundedContexts),
-					entities: toImmutable(entities)
+					boundedContexts: toImmutable(boundedContexts || {}),
+					entities: toImmutable(entities || {})
 				})
 			);
 		}
