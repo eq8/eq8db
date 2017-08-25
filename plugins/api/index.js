@@ -21,6 +21,7 @@ module.exports = function createAPIPlugin({ logger }) {
 
 		services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
 			done(null, toImmutable({
+				id: domain,
 				version: 0,
 				boundaryContexts: {
 					admin: {
@@ -71,43 +72,7 @@ module.exports = function createAPIPlugin({ logger }) {
 			}));
 		});
 
-		services.add({ plugin, q: 'readDomain' }, ({ host }, done) => {
-			const id = host;
-			const params = {
-				type: 'domains',
-				id
-			};
-
-			services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
-				if (result) {
-					const { version, aggregates, entities } = result;
-
-					if (err) {
-						done(err);
-					} else {
-						done(
-							null,
-							Map({
-								id,
-								version,
-								aggregates: toImmutable(aggregates),
-								entities: toImmutable(entities)
-							})
-						);
-					}
-				} else {
-					done(
-						null,
-						Map({
-							id,
-							version: 0,
-							aggregates: Map({}),
-							entities: Map({})
-						})
-					);
-				}
-			});
-		});
+		services.add({ plugin, q: 'readDomain' }, readDomain.bind(services));
 
 		services.add({ plugin, cmd: 'editDomain' }, editDomain.bind(services));
 	};
@@ -119,6 +84,34 @@ function toImmutable(value) {
 	}
 
 	return value;
+}
+
+function readDomain({ host }, done) {
+	const services = this;
+
+	const id = host;
+	const params = {
+		type: 'domains',
+		id
+	};
+
+	services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
+		if (err || !result) {
+			done(err);
+		} else {
+			const { version, boundedContexts, entities } = result;
+
+			done(
+				null,
+				Map({
+					id,
+					version,
+					boundedContexts: toImmutable(boundedContexts),
+					entities: toImmutable(entities)
+				})
+			);
+		}
+	});
 }
 
 function editDomain({ domain }, done) {
