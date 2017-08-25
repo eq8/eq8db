@@ -10,18 +10,18 @@ module.exports = function resolvers(services, host) {
 			domain: readDomain(services, host)
 		},
 		Transaction: {
-			addBoundaryContext: getResolver((resolve, reject, obj, args) => {
+			addBoundedContext: getResolver((resolve, reject, obj, args) => {
 				const { name } = args;
 
-				obj = obj.set('aggregates', obj.get('boundaryContexts').set(name, Map({})));
+				obj = obj.set('aggregates', obj.get('boundedContexts').set(name, Map({})));
 
 				resolve(obj);
 			}),
 			addAggregate: getResolver((resolve, reject, obj, args) => {
-				const { boundaryContext, name } = args;
+				const { boundedContext, name } = args;
 				const changes = Map({})
-					.set('boundaryContexts', Map({})
-						.set(boundaryContext, Map({})
+					.set('boundedContexts', Map({})
+						.set(boundedContext, Map({})
 							.set('aggregates', Map({})
 								.set(name, Map({}))
 							)
@@ -55,10 +55,10 @@ module.exports = function resolvers(services, host) {
 				resolve(obj.mergeDeep(changes));
 			}),
 			addQuery: getResolver((resolve, reject, obj, args) => {
-				const { boundaryContext, aggregate, name, value, isCollection } = args;
+				const { boundedContext, aggregate, name, value, isCollection } = args;
 				const changes = Map({})
-					.set('boundaryContexts', Map({})
-						.set(boundaryContext, Map({})
+					.set('boundedContexts', Map({})
+						.set(boundedContext, Map({})
 							.set('aggregates', Map({})
 								.set(aggregate, Map({})
 									.set('queries', Map({})
@@ -74,10 +74,10 @@ module.exports = function resolvers(services, host) {
 				resolve(obj.mergeDeep(changes));
 			}),
 			addMutation: getResolver((resolve, reject, obj, args) => {
-				const { boundaryContext, aggregate, name } = args;
+				const { boundedContext, aggregate, name } = args;
 				const changes = Map({})
-					.set('boundaryContexts', Map({})
-						.set(boundaryContext, Map({})
+					.set('boundedContexts', Map({})
+						.set(boundedContext, Map({})
 							.set('aggregates', Map({})
 								.set(aggregate, Map({})
 									.set('mutations', Map({})
