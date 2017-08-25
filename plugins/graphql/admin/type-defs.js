@@ -44,11 +44,12 @@ type Result {
 
 type Transaction {
 	id: ID!
-	addAggregate(name: String!): Transaction
+	addBoundaryContext(name: String!): Transaction
+	addAggregate(boundaryContext: String!, name: String!): Transaction
 	addEntity(name: String!): Transaction
 	addAttribute(entity: String!, name: String!, value: Value, isCollection: Boolean): Transaction
-	addQuery(aggregate: String!, name: String!, value: Value, isCollection: Boolean): Transaction
-	addMutation(aggregate: String!, name: String!): Transaction
+	addQuery(boundaryContext: String!, aggregate: String!, name: String!, value: Value, isCollection: Boolean): Transaction
+	addMutation(boundaryContext: String!, aggregate: String!, name: String!): Transaction
 	commit: Result
 }
 

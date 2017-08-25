@@ -10,12 +10,25 @@ module.exports = function resolvers(services, host) {
 			domain: readDomain(services, host)
 		},
 		Transaction: {
-			addAggregate: getResolver((resolve, reject, obj, args) => {
+			addBoundaryContext: getResolver((resolve, reject, obj, args) => {
 				const { name } = args;
 
-				obj = obj.set('aggregates', obj.get('aggregates').set(name, Map({})));
+				obj = obj.set('aggregates', obj.get('boundaryContexts').set(name, Map({})));
 
 				resolve(obj);
+			}),
+			addAggregate: getResolver((resolve, reject, obj, args) => {
+				const { boundaryContext, name } = args;
+				const changes = Map({})
+					.set('boundaryContexts', Map({})
+						.set(boundaryContext, Map({})
+							.set('aggregates', Map({})
+								.set(name, Map({}))
+							)
+						)
+					);
+
+				resolve(obj.mergeDeep(changes));
 			}),
 			addEntity: getResolver((resolve, reject, obj, args) => {
 				const { name } = args;
@@ -42,13 +55,17 @@ module.exports = function resolvers(services, host) {
 				resolve(obj.mergeDeep(changes));
 			}),
 			addQuery: getResolver((resolve, reject, obj, args) => {
-				const { aggregate, name, value, isCollection } = args;
+				const { boundaryContext, aggregate, name, value, isCollection } = args;
 				const changes = Map({})
-					.set('aggregates', Map({})
-						.set(aggregate, Map({})
-							.set('queries', Map({})
-								.set(name, Map({ value, isCollection })
-									.set('arguments', Map({}))
+					.set('boundaryContexts', Map({})
+						.set(boundaryContext, Map({})
+							.set('aggregates', Map({})
+								.set(aggregate, Map({})
+									.set('queries', Map({})
+										.set(name, Map({ value, isCollection })
+											.set('arguments', Map({}))
+										)
+									)
 								)
 							)
 						)
@@ -57,13 +74,17 @@ module.exports = function resolvers(services, host) {
 				resolve(obj.mergeDeep(changes));
 			}),
 			addMutation: getResolver((resolve, reject, obj, args) => {
-				const { aggregate, name } = args;
+				const { boundaryContext, aggregate, name } = args;
 				const changes = Map({})
-					.set('aggregates', Map({})
-						.set(aggregate, Map({})
-							.set('mutations', Map({})
-								.set(name, Map({})
-									.set('arguments', Map({}))
+					.set('boundaryContexts', Map({})
+						.set(boundaryContext, Map({})
+							.set('aggregates', Map({})
+								.set(aggregate, Map({})
+									.set('mutations', Map({})
+										.set(name, Map({})
+											.set('arguments', Map({}))
+										)
+									)
 								)
 							)
 						)

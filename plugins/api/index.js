@@ -17,10 +17,11 @@ module.exports = function createAPIPlugin({ logger }) {
 			domain: 'localhost:8000'
 		});
 
-		logger.debug('APIPlugin:', __filename);
+		logger.debug('APIPlugin', __filename);
 
 		services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
 			done(null, toImmutable({
+				version: 0,
 				boundaryContexts: {
 					admin: {
 						aggregates: {
@@ -30,13 +31,20 @@ module.exports = function createAPIPlugin({ logger }) {
 								mutations: {
 									addDomain: {
 										parameters: {
-											domain: 'STRING'
-										},
-										service: ''
+											hostname: {
+												type: 'STRING',
+												required: true
+											},
+											webhook: {
+												type: 'STRING'
+											}
+										}
 									}
 								}
 							}
 						}
+
+						/*
 					},
 					model: {
 						aggregates: {
@@ -44,14 +52,20 @@ module.exports = function createAPIPlugin({ logger }) {
 								root: 'DomainModel'
 							}
 						}
+						*/
+
 					}
 				},
 				entities: {
 					Domain: {
 						name: 'STRING'
+
+						/*
 					},
 					DomainModel: {
 						name: 'STRING'
+						*/
+
 					}
 				}
 			}));
