@@ -45,7 +45,7 @@ type Result {
 type Transaction {
 	id: ID!
 	addBoundedContext(name: String!): Transaction
-	addAggregate(boundedContext: String!, name: String!): Transaction
+	addAggregate(boundedContext: String!, root: String!, name: String!): Transaction
 	addEntity(name: String!): Transaction
 	addAttribute(entity: String!, name: String!, value: Value, isCollection: Boolean): Transaction
 	addQuery(boundedContext: String!, aggregate: String!, name: String!, value: Value, isCollection: Boolean): Transaction

@@ -18,12 +18,12 @@ module.exports = function resolvers(services, host) {
 				resolve(obj);
 			}),
 			addAggregate: getResolver((resolve, reject, obj, args) => {
-				const { boundedContext, name } = args;
+				const { boundedContext, name, root } = args;
 				const changes = Map({})
 					.set('boundedContexts', Map({})
 						.set(boundedContext, Map({})
 							.set('aggregates', Map({})
-								.set(name, Map({}))
+								.set(name, Map({ root }))
 							)
 						)
 					);
