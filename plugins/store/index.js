@@ -6,113 +6,111 @@ const _ = require('lodash');
 const parse = require('url-parse');
 const r = require('rethinkdb');
 
-module.exports = function createStorePlugin({ logger }) {
-	return function storePlugin(options) {
-		const services = this;
+module.exports = function storePlugin(options) {
+	const services = this;
 
-		const settings = _.defaultsDeep(options, {
-			store: 'rethinkdb://admin@127.0.0.1:28015'
+	const settings = _.defaultsDeep(options, {
+		store: 'rethinkdb://admin@127.0.0.1:28015'
+	});
+
+	services.log.debug('storePlugin', __filename);
+
+	let conn;
+
+	services.add({ init: plugin }, (args, done) => {
+		const store = _.defaultsDeep(parse(settings.store), {
+			protocol: 'rethinkdb',
+			hostname: '127.0.0.1',
+			port: 28015,
+			username: 'admin'
 		});
 
-		logger.debug('storePlugin', __filename);
+		if (store.protocol === 'rethinkdb:') {
+			r.connect({
+				host: store.hostname,
+				port: store.port,
+				user: store.username,
+				password: store.password
+			}, (err, newConn) => {
+				conn = newConn;
+				done(err);
+			});
+		}
+	});
 
-		let conn;
+	function connCheck(handler) {
+		return (args, done) => {
+			if (conn) {
+				handler(args, done);
+			} else {
+				done(new Error('Not connected to a store'));
+			}
+		};
+	}
 
-		services.add({ init: plugin }, (args, done) => {
-			const store = _.defaultsDeep(parse(settings.store), {
-				protocol: 'rethinkdb',
-				hostname: '127.0.0.1',
-				port: 28015,
-				username: 'admin'
+	services.add({ plugin, q: 'browse' }, connCheck(({ params }, done) => {
+		let q = r.table(params.type);
+
+		if (_.isObject(params.where)) {
+			let tmp = q;
+
+			_.each(_.keys(params.where), key => {
+				tmp = q.getAll(params.where[key]);
 			});
 
-			if (store.protocol === 'rethinkdb:') {
-				r.connect({
-					host: store.hostname,
-					port: store.port,
-					user: store.username,
-					password: store.password
-				}, (err, newConn) => {
-					conn = newConn;
-					done(err);
-				});
-			}
-		});
-
-		function connCheck(handler) {
-			return (args, done) => {
-				if (conn) {
-					handler(args, done);
-				} else {
-					done(new Error('Not connected to a store'));
-				}
-			};
+			q = tmp;
 		}
 
-		services.add({ plugin, q: 'browse' }, connCheck(({ params }, done) => {
-			let q = r.table(params.type);
+		if (_.isInteger(params.skip)) {
+			q = q.skip(params.skip);
+		}
 
-			if (_.isObject(params.where)) {
-				let tmp = q;
+		if (_.isInteger(params.limit)) {
+			q = q.limit(params.limit);
+		}
 
-				_.each(_.keys(params.where), key => {
-					tmp = q.getAll(params.where[key]);
-				});
+		q.run(conn, done);
+	}));
 
-				q = tmp;
-			}
+	services.add({ plugin, q: 'read' }, connCheck(({ params }, done) => {
+		const { type, id } = params;
 
-			if (_.isInteger(params.skip)) {
-				q = q.skip(params.skip);
-			}
+		r.table(type)
+			.get(id)
+			.run(conn, done);
+	}));
 
-			if (_.isInteger(params.limit)) {
-				q = q.limit(params.limit);
-			}
+	services.add({ plugin, cmd: 'edit' }, connCheck(({ params }, done) => {
+		const { type, object } = params;
 
-			q.run(conn, done);
-		}));
+		r.table(type)
+			.get(object.id)
+			.replace(doc => (
+				(object.version > (doc.version || 0))
+					? object
+					: doc
+			))
+			.run(conn, done);
+	}));
 
-		services.add({ plugin, q: 'read' }, connCheck(({ params }, done) => {
-			const { type, id } = params;
+	services.add({ plugin, cmd: 'add' }, connCheck(({ params }, done) => {
+		const { type, objects } = params;
 
-			r.table(type)
-				.get(id)
-				.run(conn, done);
-		}));
+		r.table(type)
+			.insert(objects)
+			.run(conn, done);
+	}));
 
-		services.add({ plugin, cmd: 'edit' }, connCheck(({ params }, done) => {
-			const { type, object } = params;
+	services.add({ plugin, cmd: 'delete' }, connCheck(({ params }, done) => {
+		const { type, selection } = params;
 
-			r.table(type)
-				.get(object.id)
-				.replace(doc => (
-					(object.version > (doc.version || 0))
-						? object
-						: doc
-				))
-				.run(conn, done);
-		}));
+		r.table(type)
+			.getAll(r.args(selection))
+			.delete()
+			.run(conn, done);
+	}));
 
-		services.add({ plugin, cmd: 'add' }, connCheck(({ params }, done) => {
-			const { type, objects } = params;
-
-			r.table(type)
-				.insert(objects)
-				.run(conn, done);
-		}));
-
-		services.add({ plugin, cmd: 'delete' }, connCheck(({ params }, done) => {
-			const { type, selection } = params;
-
-			r.table(type)
-				.getAll(r.args(selection))
-				.delete()
-				.run(conn, done);
-		}));
-
-		return {
-			name: plugin
-		};
+	return {
+		name: plugin
 	};
 };
