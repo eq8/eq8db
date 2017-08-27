@@ -19,50 +19,46 @@ const cache = lru({
 	maxAge: LRU_MAXAGE
 });
 
-module.exports = function createServer({ logger }) {
-	logger.debug('createServer', __filename);
+module.exports = function server(options) {
+	const services = this;
 
-	return function server(options) {
-		const services = this;
+	const settings = _.defaultsDeep(options, {
+		apiPath: 'api'
+	});
 
-		const settings = _.defaultsDeep(options, {
-			apiPath: 'api'
-		});
+	services.log.info('server', settings);
 
-		logger.info('server', settings);
+	const { apiPath } = settings;
 
-		const { apiPath } = settings;
+	app.use(`/:bctxt/${apiPath}/:v`, (req, res, next) => {
+		const host = _.get(req, 'headers.host');
+		const bctxt = _.get(req, 'params.bctxt');
+		const v = _.get(req, 'params.v');
 
-		app.use(`/:bctxt/${apiPath}/:v`, (req, res, next) => {
-			const host = _.get(req, 'headers.host');
-			const bctxt = _.get(req, 'params.bctxt');
-			const v = _.get(req, 'params.v');
+		const uri = `${host}/${bctxt}/${v}`;
 
-			const uri = `${host}/${bctxt}/${v}`;
+		const cached = cache.get(uri);
 
-			const cached = cache.get(uri);
+		if (cached) {
+			cached(req, res, next);
+		} else {
+			services.act({
+				plugin: 'graphql', q: 'middleware', host, bctxt, v
+			}, (err, { middleware }) => {
+				if (err) {
+					services.log.error(err);
+				}
 
-			if (cached) {
-				cached(req, res, next);
-			} else {
-				services.act({
-					plugin: 'graphql', q: 'middleware', host, bctxt, v
-				}, (err, { middleware }) => {
-					if (err) {
-						logger.error(err);
-					}
+				cache.set(uri, middleware);
+				middleware(req, res, next);
+			});
+		}
 
-					cache.set(uri, middleware);
-					middleware(req, res, next);
-				});
-			}
+	});
 
-		});
+	services.add({ plugin, cmd: 'start' }, (args, done) => {
+		services.log.info('server#start');
 
-		services.add({ plugin, cmd: 'start' }, (args, done) => {
-			logger.info('server#start');
-
-			app.listen(settings.port, done);
-		});
-	};
+		app.listen(settings.port, done);
+	});
 };
