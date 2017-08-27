@@ -13,96 +13,94 @@ function stripNonPrintable(data) {
 		.replace(/[^\x20-\x7E]+/g, '');
 }
 
-module.exports = function createOrchestratorPlugin({ logger }) {
-	return function orchestratorPlugin(options) {
-		const services = this;
+module.exports = function orchestratorPlugin(options) {
+	const services = this;
 
-		const settings = _.defaultsDeep(options, {
-			stack: 'eq8db',
-			docker: 'unix:///var/run/docker.sock'
+	const settings = _.defaultsDeep(options, {
+		stack: 'eq8db',
+		docker: 'unix:///var/run/docker.sock'
+	});
+
+	const env = _.defaultsDeep(Object.create(process.env), {
+		HTTP_PORT: settings.port,
+		DOCKER_HOST: settings.docker
+	});
+
+	const composeFilepath = path.join(__dirname, './docker-compose.yml');
+
+	const stackName = settings.stack || 'eq8db';
+
+	const baseArgs = ['-f', composeFilepath, `--project=${stackName}`];
+
+	services.add({ plugin, cmd: 'spawn' }, ({ opts }, done) => {
+		const deploy = spawn('docker-compose', opts, { env });
+
+		readline.createInterface({
+			input: deploy.stdout,
+			terminal: false
+		}).on('line', data => {
+			const output = stripNonPrintable(data);
+
+			if (output.length) {
+				services.log.info(output);
+			}
 		});
 
-		const env = _.defaultsDeep(Object.create(process.env), {
-			HTTP_PORT: settings.port,
-			DOCKER_HOST: settings.docker
+		readline.createInterface({
+			input: deploy.stderr,
+			terminal: false
+		}).on('line', data => {
+			const output = stripNonPrintable(data);
+
+			if (output.length) {
+				services.log.error(output);
+			}
 		});
 
-		const composeFilepath = path.join(__dirname, './docker-compose.yml');
-
-		const stackName = settings.stack || 'eq8db';
-
-		const baseArgs = ['-f', composeFilepath, `--project=${stackName}`];
-
-		services.add({ plugin, cmd: 'spawn' }, ({ opts }, done) => {
-			const deploy = spawn('docker-compose', opts, { env });
-
-			readline.createInterface({
-				input: deploy.stdout,
-				terminal: false
-			}).on('line', data => {
-				const output = stripNonPrintable(data);
-
-				if (output.length) {
-					logger.info(output);
-				}
-			});
-
-			readline.createInterface({
-				input: deploy.stderr,
-				terminal: false
-			}).on('line', data => {
-				const output = stripNonPrintable(data);
-
-				if (output.length) {
-					logger.error(output);
-				}
-			});
-
-			deploy.on('close', code => {
-				done(null, { code });
-			});
+		deploy.on('close', code => {
+			done(null, { code });
 		});
+	});
 
-		services.add({ plugin, cmd: 'deploy' }, () => {
-			const coreServices = [
-				'server',
-				'processor'
-			];
+	services.add({ plugin, cmd: 'deploy' }, () => {
+		const coreServices = [
+			'server',
+			'processor'
+		];
 
-			const backingServices = [
-				'elasticsearch',
-				'mysqlmgr',
-				'mysql',
-				'rabbitmq',
-				'redis',
-				'rethinkdb'
-			];
+		const backingServices = [
+			'elasticsearch',
+			'mysqlmgr',
+			'mysql',
+			'rabbitmq',
+			'redis',
+			'rethinkdb'
+		];
 
-			const selectedServices = settings.dev
-				? _.concat(coreServices, backingServices)
-				: coreServices;
+		const selectedServices = settings.dev
+			? _.concat(coreServices, backingServices)
+			: coreServices;
 
-			const opts = _.concat(baseArgs, ['up', '-d'], selectedServices);
+		const opts = _.concat(baseArgs, ['up', '-d'], selectedServices);
 
-			services.act({ plugin, cmd: 'spawn', opts }, (err, { code }) => {
-				if (err) {
-					logger.error(err);
-				}
+		services.act({ plugin, cmd: 'spawn', opts }, (err, { code }) => {
+			if (err) {
+				services.log.error(err);
+			}
 
-				process.exit(code); // eslint-disable-line no-process-exit
-			});
+			process.exit(code); // eslint-disable-line no-process-exit
 		});
+	});
 
-		services.add({ plugin, cmd: 'teardown' }, () => {
-			const opts = _.concat(baseArgs, ['down']);
+	services.add({ plugin, cmd: 'teardown' }, () => {
+		const opts = _.concat(baseArgs, ['down']);
 
-			services.act({ plugin, cmd: 'spawn', opts }, (err, { code }) => {
-				if (err) {
-					logger.error(err);
-				}
+		services.act({ plugin, cmd: 'spawn', opts }, (err, { code }) => {
+			if (err) {
+				services.log.error(err);
+			}
 
-				process.exit(code); // eslint-disable-line no-process-exit
-			});
+			process.exit(code); // eslint-disable-line no-process-exit
 		});
-	};
+	});
 };

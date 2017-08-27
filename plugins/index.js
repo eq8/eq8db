@@ -11,7 +11,7 @@ module.exports = function pluginsLoader(commons) {
 		switch (action) {
 		case 'deploy':
 		case 'teardown':
-			framework.use(require('./orchestrator')(commons), { docker, port, dev });
+			framework.use(require('./orchestrator'), { docker, port, dev });
 			break;
 		case 'process':
 			framework.use(require('./processor')(commons));
