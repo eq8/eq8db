@@ -19,32 +19,36 @@ const tmpResolvers = {
 	}
 };
 
-module.exports = function createGraphQLPlugin({ logger }) {
-	return function graphqlPlugin() {
-		const services = this;
+module.exports = function graphqlPlugin() {
+	const services = this;
 
-		logger.debug('graphqlPlugin', __filename);
+	services.log.debug('graphqlPlugin', __filename);
 
-		/**
-		 * returns the middleware other than the admin API
+	/**
+	 * returns the middleware other than the admin API
+	 */
+	services.add({ plugin, q: 'middleware' }, (args, done) => {
+
+		/*
+		 * TODO
+		 * - construct schema based from database
+		 * - construct rootValue from database to queue messages for the worker process
+		 * - create a middleware and store in an LRU cache
+		 *   - use the domain and schema version as the key
 		 */
-		services.add({ plugin, q: 'middleware' }, (args, done) => {
 
-			/*
-			 * TODO
-			 * - construct schema based from database
-			 * - construct rootValue from database to queue messages for the worker process
-			 * - create a middleware and store in an LRU cache
-			 *   - use the domain and schema version as the key
-			 */
-
-			const schema = makeExecutableSchema({ typeDefs: tmpTypeDefs, resolvers: tmpResolvers, logger });
-
-			const middleware = graphqlHTTP({ schema, rootValue: {}, graphiql: true });
-
-			done(null, {
-				middleware
-			});
+		const schema = makeExecutableSchema({
+			typeDefs: tmpTypeDefs,
+			resolvers: tmpResolvers,
+			logger: {
+				log: err => services.log.error(err)
+			}
 		});
-	};
+
+		const middleware = graphqlHTTP({ schema, rootValue: {}, graphiql: true });
+
+		done(null, {
+			middleware
+		});
+	});
 };
