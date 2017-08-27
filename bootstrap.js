@@ -45,7 +45,7 @@ function bootstrap(action, options, callback) {
 
 	// Initialize the framework
 	const framework = require('@eq8/framework')({
-		logger: { transports: [logger] }
+		logger
 	});
 
 	// Provide the framework to the plugins loader
