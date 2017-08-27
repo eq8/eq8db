@@ -2,12 +2,10 @@
 
 const plugin = 'processor';
 
-module.exports = function createProcessorPlugin({ logger }) {
-	return function processorPlugin() {
-		const services = this;
+module.exports = function processorPlugin() {
+	const services = this;
 
-		services.add({ plugin, cmd: 'start' }, () => {
-			logger.info('processor#start');
-		});
-	};
+	services.add({ plugin, cmd: 'start' }, () => {
+		services.log.info('processor#start');
+	});
 };

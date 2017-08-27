@@ -14,7 +14,7 @@ module.exports = function pluginsLoader(commons) {
 			framework.use(require('./orchestrator'), { docker, port, dev });
 			break;
 		case 'process':
-			framework.use(require('./processor')(commons));
+			framework.use(require('./processor'));
 			break;
 		case 'serve':
 		default:
