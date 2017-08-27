@@ -12,44 +12,43 @@ const RESULT_OK = {
 
 const ERROR_DOMAIN_NOT_FOUND = new Error('domain-not-found');
 
-module.exports = function createAPIPlugin({ logger }) {
-	return function APIPlugin(options) {
-		const services = this;
-		const { domain } = _.defaultsDeep(options, {
-			domain: 'localhost:8000'
-		});
+module.exports = function APIPlugin(options) {
+	const services = this;
+	const { domain } = _.defaultsDeep(options, {
+		domain: 'localhost:8000'
+	});
 
-		logger.debug('APIPlugin', __filename);
+	services.log.debug('APIPlugin', __filename);
 
-		services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
-			readDomain.bind(services)(args, (err, result) => {
-				if (err && err === ERROR_DOMAIN_NOT_FOUND) {
-					done(null, toImmutable({
-						id: domain,
-						version: 0,
-						boundedContexts: {
-							admin: {
-								aggregates: {
-									domain: {
-										root: 'Domain',
-										queries: {},
-										mutations: {
-											addDomain: {
-												parameters: {
-													hostname: {
-														type: 'STRING',
-														required: true
-													},
-													webhook: {
-														type: 'STRING'
-													}
+	services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
+		readDomain.bind(services)(args, (err, result) => {
+			if (err && err === ERROR_DOMAIN_NOT_FOUND) {
+				done(null, toImmutable({
+					id: domain,
+					version: 0,
+					boundedContexts: {
+						admin: {
+							aggregates: {
+								domain: {
+									root: 'Domain',
+									queries: {},
+									mutations: {
+										addDomain: {
+											parameters: {
+												hostname: {
+													type: 'STRING',
+													required: true
+												},
+												webhook: {
+													type: 'STRING'
 												}
 											}
 										}
 									}
 								}
+							}
 
-								/*
+							/*
 					},
 					model: {
 						aggregates: {
@@ -57,33 +56,32 @@ module.exports = function createAPIPlugin({ logger }) {
 								root: 'DomainModel'
 							}
 						}
-								*/
+						*/
 
-							}
-						},
-						entities: {
-							Domain: {
-								name: 'STRING'
+						}
+					},
+					entities: {
+						Domain: {
+							name: 'STRING'
 
-								/*
+							/*
 					},
 					DomainModel: {
 						name: 'STRING'
-								*/
+						*/
 
-							}
 						}
-					}));
-				} else {
-					done(err, result);
-				}
-			});
+					}
+				}));
+			} else {
+				done(err, result);
+			}
 		});
+	});
 
-		services.add({ plugin, q: 'readDomain' }, readDomain.bind(services));
+	services.add({ plugin, q: 'readDomain' }, readDomain.bind(services));
 
-		services.add({ plugin, cmd: 'editDomain' }, editDomain.bind(services));
-	};
+	services.add({ plugin, cmd: 'editDomain' }, editDomain.bind(services));
 };
 
 function toImmutable(value) {
