@@ -43,7 +43,7 @@ Here's a [real issue](https://github.com/woothemes/woocommerce/issues/8563#issue
 * Clone your fork of the repo to your dev system
 
 ```
-git clone https://github.com/eq8/eq8db.git
+git clone https://github.com/eq8/mvp.git
 ```
 
 ### If there's no issue, please create one

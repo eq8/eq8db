@@ -17,7 +17,7 @@ module.exports = function orchestratorPlugin(options) {
 	const services = this;
 
 	const settings = _.defaultsDeep(options, {
-		stack: 'eq8db',
+		stack: 'mvp',
 		docker: 'unix:///var/run/docker.sock'
 	});
 
@@ -28,9 +28,9 @@ module.exports = function orchestratorPlugin(options) {
 
 	const composeFilepath = path.join(__dirname, './docker-compose.yml');
 
-	const stackName = settings.stack || 'eq8db';
+	const { stack } = settings;
 
-	const baseArgs = ['-f', composeFilepath, `--project=${stackName}`];
+	const baseArgs = ['-f', composeFilepath, `--project=${stack}`];
 
 	services.add({ plugin, cmd: 'spawn' }, ({ opts }, done) => {
 		const deploy = spawn('docker-compose', opts, { env });

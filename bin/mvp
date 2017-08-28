@@ -3,7 +3,7 @@
 'use strict';
 
 const pkg = require('../package.json');
-const eq8db = require('..');
+const mvp = require('..');
 
 /**
  * Program Commands
@@ -14,39 +14,39 @@ const program = require('commander')
 
 program
 	.command('deploy')
-	.description('Deploy an eq8db stack in Docker')
-	.option('--stack <string>', 'The eq8db stack name to deploy in Docker')
+	.description('Deploy an mvp stack in Docker')
+	.option('--stack <string>', 'The mvp stack name to deploy in Docker')
 	.option('--docker <uri>', 'Docker host to connect to')
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
 	.option('--domain <string>', 'The domain of the application')
-	.action(options => eq8db.deploy(options));
+	.action(options => mvp.deploy(options));
 
 program
 	.command('teardown')
-	.description('Tear down an eq8db stack in Docker')
-	.option('--stack <string>', 'The eq8db stack name to deploy in Docker')
+	.description('Tear down an mvp stack in Docker')
+	.option('--stack <string>', 'The mvp stack name to deploy in Docker')
 	.option('--docker <uri>', 'Docker host to connect to')
-	.action(options => eq8db.teardown(options));
+	.action(options => mvp.teardown(options));
 
 program
 	.command('serve')
-	.description('Run an instance of the eq8db server')
+	.description('Run an instance of the mvp server')
 	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--domain <string>', 'The domain of the application')
 	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--store <uri>', 'The connection string for the store')
-	.action(options => eq8db.serve(options));
+	.action(options => mvp.serve(options));
 
 program
 	.command('process')
-	.description('Run an instance of the eq8db processor')
+	.description('Run an instance of the mvp processor')
 	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
 	.option('--store <uri>', 'The connection string for the store')
-	.action(options => eq8db.process(options));
+	.action(options => mvp.process(options));
 
-require('commander-tabtab').init(program, 'eq8db');
+require('commander-tabtab').init(program, 'mvp');
 
 program
 	.parse(process.argv);

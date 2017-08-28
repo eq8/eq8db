@@ -1,10 +1,10 @@
 {
-  "name": "@eq8/db",
+  "name": "@eq8/mvp",
   "version": "0.0.0",
   "description": "TBD",
   "main": "index.js",
   "bin": {
-    "eq8db": "./bin/eq8db"
+    "mvp": "./bin/mvp"
   },
   "scripts": {
     "precommit": "npm run test:lint",
@@ -16,17 +16,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eq8/eq8js.git"
+    "url": "git+https://github.com/eq8/mvp.git"
   },
   "keywords": [
-    "eq8"
+    "eq8",
+    "mvp"
   ],
   "author": "bbartolome",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/eq8/eq8js/issues"
+    "url": "https://github.com/eq8/mvp/issues"
   },
-  "homepage": "https://github.com/eq8/eq8js#readme",
+  "homepage": "https://github.com/eq8/mvp#readme",
   "dependencies": {
     "@eq8/framework": "0.2.0",
     "commander": "2.11.0",

@@ -15,16 +15,16 @@ RUN apk update && apk add curl
 RUN curl -o /usr/local/bin/docker-compose -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` \
 	&& chmod +x /usr/local/bin/docker-compose
 
-# install eq8db
-WORKDIR /opt/eq8db
+# install mvp
+WORKDIR /opt/mvp
 
-COPY ./bin /opt/eq8db/bin
-COPY package.json /opt/eq8db/package.json
+COPY ./bin /opt/mvp/bin
+COPY package.json /opt/mvp/package.json
 RUN npm link --production
 
-COPY ./index.js /opt/eq8db/index.js
-COPY ./bootstrap.js /opt/eq8db/bootstrap.js
-COPY ./lib /opt/eq8db/lib
-COPY ./plugins /opt/eq8db/plugins
+COPY ./index.js /opt/mvp/index.js
+COPY ./bootstrap.js /opt/mvp/bootstrap.js
+COPY ./lib /opt/mvp/lib
+COPY ./plugins /opt/mvp/plugins
 
-CMD eq8db
+CMD mvp

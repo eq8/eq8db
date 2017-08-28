@@ -23,12 +23,12 @@ services:
     image: rethinkdb:2.3.5
     restart: always
   server:
-    image: equate/db:latest
+    image: equate/mvp:latest
     restart: always
-    command: "eq8db serve --store=rethinkdb://admin@rethinkdb:28015"
+    command: "mvp serve --store=rethinkdb://admin@rethinkdb:28015"
     ports:
      - "${HTTP_PORT}:8000"
   processor:
-    image: equate/db:latest
+    image: equate/mvp:latest
     restart: always
-    command: "eq8db process --store=rethinkdb://admin@rethinkdb:28015"
+    command: "mvp process --store=rethinkdb://admin@rethinkdb:28015"
