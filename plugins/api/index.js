@@ -31,16 +31,23 @@ module.exports = function APIPlugin(options) {
 							aggregates: {
 								domain: {
 									root: 'Domain',
-									queries: {},
-									mutations: {
-										addDomain: {
-											parameters: {
-												hostname: {
-													type: 'STRING',
-													required: true
-												},
-												webhook: {
-													type: 'STRING'
+									tags: {
+										latest: 'v0.0'
+									},
+									versions: {
+										'v0.0': {
+											queries: {},
+											mutations: {
+												addDomain: {
+													parameters: {
+														hostname: {
+															type: 'STRING',
+															required: true
+														},
+														webhook: {
+															type: 'STRING'
+														}
+													}
 												}
 											}
 										}
