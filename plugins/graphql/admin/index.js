@@ -23,7 +23,7 @@ module.exports = function createGraphQLAdminPlugin({ VERSION }) {
 		 * returns the middleware for the admin API
 		 */
 		services.add({
-			plugin, q: 'middleware', bctxt: 'admin', v
+			plugin, q: 'middleware', bctxt: 'admin', aggregate: 'domain', v
 		}, ({ host }, done) => {
 			const resolvers = require('./resolvers.js')(services, host);
 			const logger = {

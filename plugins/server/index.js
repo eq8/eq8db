@@ -24,12 +24,13 @@ module.exports = function server(options) {
 
 	services.log.info('server', options);
 
-	app.use('/:bctxt/:v', (req, res, next) => {
+	app.use('/:bctxt/:aggregate/:v', (req, res, next) => {
 		const host = _.get(req, 'headers.host');
 		const bctxt = _.get(req, 'params.bctxt');
+		const aggregate = _.get(req, 'params.aggregate');
 		const v = _.get(req, 'params.v');
 
-		const uri = `${host}/${bctxt}/${v}`;
+		const uri = `${host}/${bctxt}/${aggregate}/${v}`;
 
 		const cached = cache.get(uri);
 
@@ -37,7 +38,7 @@ module.exports = function server(options) {
 			cached(req, res, next);
 		} else {
 			services.act({
-				plugin: 'graphql', q: 'middleware', host, bctxt, v
+				plugin: 'graphql', q: 'middleware', host, bctxt, aggregate, v
 			}, (err, { middleware }) => {
 				if (err) {
 					services.log.error(err);
