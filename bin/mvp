@@ -35,7 +35,6 @@ program
 	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
 	.option('--port <num>', 'The port to bind on', parseInt)
 	.option('--domain <string>', 'The domain of the application')
-	.option('--api-path <string>', 'The API path - e.g. /api')
 	.option('--store <uri>', 'The connection string for the store')
 	.action(options => mvp.serve(options));
 

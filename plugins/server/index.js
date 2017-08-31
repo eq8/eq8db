@@ -22,15 +22,9 @@ const cache = lru({
 module.exports = function server(options) {
 	const services = this;
 
-	const settings = _.defaultsDeep(options, {
-		apiPath: 'api'
-	});
+	services.log.info('server', options);
 
-	services.log.info('server', settings);
-
-	const { apiPath } = settings;
-
-	app.use(`/:bctxt/${apiPath}/:v`, (req, res, next) => {
+	app.use('/:bctxt/:v', (req, res, next) => {
 		const host = _.get(req, 'headers.host');
 		const bctxt = _.get(req, 'params.bctxt');
 		const v = _.get(req, 'params.v');
@@ -59,6 +53,6 @@ module.exports = function server(options) {
 	services.add({ plugin, cmd: 'start' }, (args, done) => {
 		services.log.info('server#start');
 
-		app.listen(settings.port, done);
+		app.listen(options.port, done);
 	});
 };

@@ -6,7 +6,7 @@ module.exports = function pluginsLoader(commons) {
 	logger.debug('pluginsLoader', __filename);
 
 	return function loadPlugins({
-		action, docker, domain, apiPath, port, store, dev
+		action, docker, domain, port, store, dev
 	}, done) {
 		switch (action) {
 		case 'deploy':
@@ -22,7 +22,7 @@ module.exports = function pluginsLoader(commons) {
 			framework.use(require('./api'), { domain });
 			framework.use(require('./graphql/admin')(commons));
 			framework.use(require('./graphql'), { domain });
-			framework.use(require('./server'), { apiPath, port });
+			framework.use(require('./server'), { port });
 			break;
 		}
 

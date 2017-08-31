@@ -11,7 +11,7 @@ const VERSION = _.get(pkg, 'version');
 
 const optionsWhitelist = [
 	'stack', 'docker',
-	'logLevel', 'store', 'domain', 'apiPath', 'port', 'dev'
+	'logLevel', 'store', 'domain', 'port', 'dev'
 ];
 
 // hoist bootstrap function and export
