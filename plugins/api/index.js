@@ -5,6 +5,8 @@ const plugin = 'api';
 const _ = require('lodash');
 const { Map } = require('Immutable');
 
+const config = require('./config.js');
+
 const RESULT_OK = {
 	code: 200,
 	description: 'ok'
@@ -23,63 +25,7 @@ module.exports = function APIPlugin(options) {
 	services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
 		readDomain.bind(services)(args, (err, result) => {
 			if (err && err === ERROR_DOMAIN_NOT_FOUND) {
-				done(null, toImmutable({
-					id: domain,
-					version: 0,
-					boundedContexts: {
-						admin: {
-							aggregates: {
-								domain: {
-									root: 'Domain',
-									tags: {
-										latest: 'v0.0'
-									},
-									versions: {
-										'v0.0': {
-											queries: {},
-											mutations: {
-												addDomain: {
-													parameters: {
-														hostname: {
-															type: 'STRING',
-															required: true
-														},
-														webhook: {
-															type: 'STRING'
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-
-							/*
-					},
-					model: {
-						aggregates: {
-							domain: {
-								root: 'DomainModel'
-							}
-						}
-						*/
-
-						}
-					},
-					entities: {
-						Domain: {
-							name: 'STRING'
-
-							/*
-					},
-					DomainModel: {
-						name: 'STRING'
-						*/
-
-						}
-					}
-				}));
+				done(null, toImmutable(config(domain)));
 			} else {
 				done(err, result);
 			}
