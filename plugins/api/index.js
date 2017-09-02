@@ -16,16 +16,16 @@ const ERROR_DOMAIN_NOT_FOUND = new Error('domain-not-found');
 
 module.exports = function APIPlugin(options) {
 	const services = this;
-	const { domain } = _.defaultsDeep(options, {
-		domain: 'localhost:8000'
+	const { host } = _.defaultsDeep(options, {
+		host: process.env.HOST || 'localhost'
 	});
 
 	services.log.debug('APIPlugin', __filename);
 
-	services.add({ plugin, q: 'readDomain', host: domain }, (args, done) => {
+	services.add({ plugin, q: 'readDomain', domain: host }, (args, done) => {
 		readDomain.bind(services)(args, (err, result) => {
 			if (err && err === ERROR_DOMAIN_NOT_FOUND) {
-				done(null, toImmutable(config(domain)));
+				done(null, toImmutable(config(host)));
 			} else {
 				done(err, result);
 			}
@@ -45,10 +45,10 @@ function toImmutable(value) {
 	return value;
 }
 
-function readDomain({ host }, done) {
+function readDomain({ domain }, done) {
 	const services = this;
 
-	const id = host;
+	const id = domain;
 	const params = {
 		type: 'domains',
 		id
