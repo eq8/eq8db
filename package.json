@@ -1,7 +1,7 @@
 {
   "name": "@eq8/mvp",
   "version": "0.0.0",
-  "description": "TBD",
+  "description": "Microservices Viable Platform",
   "main": "index.js",
   "bin": {
     "mvp": "./bin/mvp"
