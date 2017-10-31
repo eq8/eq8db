@@ -49,3 +49,7 @@ require('commander-tabtab').init(program, 'mvp');
 
 program
 	.parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+	program.outputHelp();
+}
