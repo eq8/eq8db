@@ -3,7 +3,7 @@
 const plugin = 'api';
 
 const _ = require('lodash');
-const { Map } = require('Immutable');
+const { Map } = require('immutable');
 
 const config = require('./config.js');
 

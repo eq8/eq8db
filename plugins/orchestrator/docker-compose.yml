@@ -1,24 +1,5 @@
 version: '2'
 services:
-  elasticsearch:
-    image: elasticsearch:5.3.2-alpine
-    restart: always
-  mysqlmgr:
-    image: mysql/mysql-cluster:7.5
-    restart: always
-    command: "ndb_mgmd"
-  mysql:
-    depends_on:
-     - mysqlmgr
-    image: mysql/mysql-cluster:7.5
-    restart: always
-    command: "ndbd"
-  rabbitmq:
-    image: rabbitmq:3.6.9-alpine
-    restart: always
-  redis:
-    image: redis:3.2.8-alpine
-    restart: always
   rethinkdb:
     image: rethinkdb:2.3.5
     restart: always
@@ -28,7 +9,3 @@ services:
     command: "mvp serve --store=rethinkdb://admin@rethinkdb:28015"
     ports:
      - "${HTTP_PORT}:8000"
-  processor:
-    image: equate/mvp:latest
-    restart: always
-    command: "mvp process --store=rethinkdb://admin@rethinkdb:28015"

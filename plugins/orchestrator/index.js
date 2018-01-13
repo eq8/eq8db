@@ -1,21 +1,12 @@
+/* global define */
 'use strict';
 
-const plugin = 'orchestrator';
-
-const _ = require('lodash');
-const spawn = require('child_process').spawn;
-const path = require('path');
-const readline = require('readline');
-
-function stripNonPrintable(data) {
-	return data
-		.replace(/\x1B\[[0-9A-Z]{2}/g, '') // eslint-disable-line no-control-regex
-		.replace(/[^\x20-\x7E]+/g, '');
-}
-
-module.exports = function orchestratorPlugin(options) {
-	const services = this;
-
+define([
+	'lodash',
+	'path',
+	'utils/index.js',
+	'plugins/orchestrator/lib/spawn.js'
+], (_, path, { logger }, spawn) => function pluginOrchestrator(options) {
 	const settings = _.defaultsDeep(options, {
 		stack: 'mvp',
 		docker: 'unix:///var/run/docker.sock'
@@ -32,75 +23,41 @@ module.exports = function orchestratorPlugin(options) {
 
 	const baseArgs = ['-f', composeFilepath, `--project=${stack}`];
 
-	services.add({ plugin, cmd: 'spawn' }, ({ opts }, done) => {
-		const deploy = spawn('docker-compose', opts, { env });
+	return {
+		deploy: () => {
+			const coreServices = [
+				'server'
+			];
 
-		readline.createInterface({
-			input: deploy.stdout,
-			terminal: false
-		}).on('line', data => {
-			const output = stripNonPrintable(data);
+			const backingServices = [
+				'rethinkdb'
+			];
 
-			if (output.length) {
-				services.log.info(output);
-			}
-		});
+			const selectedServices = settings.dev
+				? _.concat(coreServices, backingServices)
+				: coreServices;
 
-		readline.createInterface({
-			input: deploy.stderr,
-			terminal: false
-		}).on('line', data => {
-			const output = stripNonPrintable(data);
+			const opts = _.concat(baseArgs, ['up', '-d'], selectedServices);
 
-			if (output.length) {
-				services.log.error(output);
-			}
-		});
+			spawn({ opts, env }, (err, { code }) => {
+				if (err) {
+					logger.error(err);
+				}
 
-		deploy.on('close', code => {
-			done(null, { code });
-		});
-	});
+				process.exit(code); // eslint-disable-line no-process-exit
+			});
+		},
+		teardown: () => {
+			const opts = _.concat(baseArgs, ['down']);
 
-	services.add({ plugin, cmd: 'deploy' }, () => {
-		const coreServices = [
-			'server',
-			'processor'
-		];
 
-		const backingServices = [
-			'elasticsearch',
-			'mysqlmgr',
-			'mysql',
-			'rabbitmq',
-			'redis',
-			'rethinkdb'
-		];
+			spawn({ opts, env }, (err, { code }) => {
+				if (err) {
+					logger.error(err);
+				}
 
-		const selectedServices = settings.dev
-			? _.concat(coreServices, backingServices)
-			: coreServices;
-
-		const opts = _.concat(baseArgs, ['up', '-d'], selectedServices);
-
-		services.act({ plugin, cmd: 'spawn', opts }, (err, { code }) => {
-			if (err) {
-				services.log.error(err);
-			}
-
-			process.exit(code); // eslint-disable-line no-process-exit
-		});
-	});
-
-	services.add({ plugin, cmd: 'teardown' }, () => {
-		const opts = _.concat(baseArgs, ['down']);
-
-		services.act({ plugin, cmd: 'spawn', opts }, (err, { code }) => {
-			if (err) {
-				services.log.error(err);
-			}
-
-			process.exit(code); // eslint-disable-line no-process-exit
-		});
-	});
-};
+				process.exit(code); // eslint-disable-line no-process-exit
+			});
+		}
+	};
+});

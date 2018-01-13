@@ -7,8 +7,10 @@ const graphqlHTTP = require('express-graphql');
 
 const { getVersion } = require('../utils.js');
 
-module.exports = function createGraphQLAdminPlugin({ VERSION }) {
-	const v = getVersion(VERSION);
+module.exports = function createGraphQLAdminPlugin({ api }) {
+
+	// strips out the patch version
+	const v = getVersion(api.version());
 
 	return function graphqlAdminPlugin() {
 		const services = this;

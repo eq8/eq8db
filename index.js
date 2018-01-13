@@ -1,14 +1,14 @@
 'use strict';
 
-const bootstrap = require('./bootstrap.js');
+const { version } = require('./package.json');
 
-function run(action) {
-	return (options, callback) => bootstrap(action, options, callback);
-}
+module.exports = function mvp() {
 
-module.exports = {
-	serve: run('serve'),
-	process: run('process'),
-	deploy: run('deploy'),
-	teardown: run('teardown')
+	// const settings = _.defaultsDeep(options, {});
+
+	// const { host, store, logger } = settings;
+
+	return {
+		version: () => version
+	};
 };
