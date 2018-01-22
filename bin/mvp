@@ -10,35 +10,10 @@ const bootstrap = require('./bootstrap.js');
  */
 const program = require('commander')
 	.description(pkg.description)
-	.version(pkg.version);
-
-program
-	.command('deploy')
-	.description('Deploy an mvp stack in Docker')
-	.option('--stack <string>', 'The mvp stack name to deploy in Docker')
-	.option('--docker <uri>', 'Docker host to connect to')
-	.option('--host <string>', 'The hostname of the application')
+	.version(pkg.version)
 	.option('--port <num>', 'The port to bind on', parseInt)
-	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
-	.action(options => bootstrap('deploy', options));
-
-program
-	.command('teardown')
-	.description('Tear down an mvp stack in Docker')
-	.option('--stack <string>', 'The mvp stack name to deploy in Docker')
-	.option('--docker <uri>', 'Docker host to connect to')
-	.action(options => bootstrap('teardown', options));
-
-program
-	.command('serve')
-	.description('Run an instance of the mvp server')
-	.option('--port <num>', 'The port to bind on', parseInt)
-	.option('--host <string>', 'The hostname of the application')
 	.option('--store <uri>', 'The connection string for the store')
-	.option('--overrides <path>', 'The absolute path to the file containing mappings to override default implementations')
-	.action(options => bootstrap('serve', options));
-
-require('commander-tabtab').init(program, 'mvp');
-
-program
+	.option('--overrides-file <path>', 'The absolute path to the file containing mappings for overriding the default implementations')
 	.parse(process.argv);
+
+bootstrap(program);

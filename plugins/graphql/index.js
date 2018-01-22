@@ -4,8 +4,8 @@
 define([
 	'graphql-tools',
 	'express-graphql',
-	'utils/index.js'
-], ({ makeExecutableSchema }, graphqlHTTP, { logger }) => {
+	'-/logger/index.js'
+], ({ makeExecutableSchema }, graphqlHTTP, logger) => {
 
 	// TODO: replace me with actual dynamic type definitions and resolvers
 	const tmpTypeDefs = `

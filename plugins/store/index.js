@@ -1,42 +1,12 @@
+/* global define */
 'use strict';
 
-const plugin = 'store';
-
-const _ = require('lodash');
-const parse = require('url-parse');
-const r = require('rethinkdb');
-
-module.exports = function storePlugin(options) {
-	const services = this;
-
-	const settings = _.defaultsDeep(options, {
-		store: 'rethinkdb://admin@127.0.0.1:28015'
-	});
-
-	services.log.debug('storePlugin', __filename);
-
+define([
+	'lodash',
+	'url-parse',
+	'rethinkdb'
+], (_, parse, r) => {
 	let conn;
-
-	services.add({ init: plugin }, (args, done) => {
-		const store = _.defaultsDeep(parse(settings.store), {
-			protocol: 'rethinkdb',
-			hostname: '127.0.0.1',
-			port: 28015,
-			username: 'admin'
-		});
-
-		if (store.protocol === 'rethinkdb:') {
-			r.connect({
-				host: store.hostname,
-				port: store.port,
-				user: store.username,
-				password: store.password
-			}, (err, newConn) => {
-				conn = newConn;
-				done(err);
-			});
-		}
-	});
 
 	function connCheck(handler) {
 		return (args, done) => {
@@ -48,69 +18,79 @@ module.exports = function storePlugin(options) {
 		};
 	}
 
-	services.add({ plugin, q: 'browse' }, connCheck(({ params }, done) => {
-		let q = r.table(params.type);
-
-		if (_.isObject(params.where)) {
-			let tmp = q;
-
-			_.each(_.keys(params.where), key => {
-				tmp = q.getAll(params.where[key]);
+	return {
+		connect: function connect(options, done) {
+			const settings = _.defaultsDeep(options, {
+				store: 'rethinkdb://admin@127.0.0.1:28015'
 			});
 
-			q = tmp;
-		}
+			const storeOpts = _.defaultsDeep(parse(settings.store), {
+				protocol: 'rethinkdb',
+				hostname: '127.0.0.1',
+				port: 28015,
+				username: 'admin'
+			});
 
-		if (_.isInteger(params.skip)) {
-			q = q.skip(params.skip);
-		}
+			if (storeOpts.protocol === 'rethinkdb:') {
+				r.connect({
+					host: storeOpts.hostname,
+					port: storeOpts.port,
+					user: storeOpts.username,
+					password: storeOpts.password
+				}, (err, newConn) => {
+					conn = newConn;
+					done(err);
+				});
+			}
+		},
+		browse: connCheck(({ type, where, skip, limit }, done) => {
+			let q = r.table(type);
 
-		if (_.isInteger(params.limit)) {
-			q = q.limit(params.limit);
-		}
+			if (_.isObject(where)) {
+				let tmp = q;
 
-		q.run(conn, done);
-	}));
+				_.each(_.keys(where), key => {
+					tmp = q.getAll(where[key]);
+				});
 
-	services.add({ plugin, q: 'read' }, connCheck(({ params }, done) => {
-		const { type, id } = params;
+				q = tmp;
+			}
 
-		r.table(type)
-			.get(id)
-			.run(conn, done);
-	}));
+			if (_.isInteger(skip)) {
+				q = q.skip(skip);
+			}
 
-	services.add({ plugin, cmd: 'edit' }, connCheck(({ params }, done) => {
-		const { type, object } = params;
+			if (_.isInteger(limit)) {
+				q = q.limit(limit);
+			}
 
-		r.table(type)
-			.get(object.id)
-			.replace(doc => (
-				(object.version > (doc.version || 0))
-					? object
-					: doc
-			))
-			.run(conn, done);
-	}));
-
-	services.add({ plugin, cmd: 'add' }, connCheck(({ params }, done) => {
-		const { type, objects } = params;
-
-		r.table(type)
-			.insert(objects)
-			.run(conn, done);
-	}));
-
-	services.add({ plugin, cmd: 'delete' }, connCheck(({ params }, done) => {
-		const { type, selection } = params;
-
-		r.table(type)
-			.getAll(r.args(selection))
-			.delete()
-			.run(conn, done);
-	}));
-
-	return {
-		name: plugin
+			q.run(conn, done);
+		}),
+		read: connCheck(({ type, id }, done) => {
+			r.table(type)
+				.get(id)
+				.run(conn, done);
+		}),
+		edit: connCheck(({ type, object }, done) => {
+			r.table(type)
+				.get(object.id)
+				.replace(doc => (
+					(object.version > (doc.version || 0))
+						? object
+						: doc
+				))
+				.run(conn, done);
+		}),
+		add: connCheck(({ type, objects }, done) => {
+			r.table(type)
+				.insert(objects)
+				.run(conn, done);
+		}),
+		delete: connCheck(({ type, selection }, done) => {
+			r.table(type)
+				.getAll(r.args(selection))
+				.delete()
+				.run(conn, done);
+		})
 	};
-};
+});

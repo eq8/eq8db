@@ -1,12 +1,9 @@
 'use strict';
 
 const _ = require('lodash');
-const rjs = require('requirejs');
 
 const optionsWhitelist = [
-	'overrides',
-	'stack', 'docker',
-	'store', 'host', 'port', 'dev'
+	'store', 'port', 'overridesFile'
 ];
 
 // hoist bootstrap function and export
@@ -15,47 +12,48 @@ module.exports = bootstrap;
 /**
  * The main function that signals the start of the application
  *
- * @param {string} [cmd] Runtime command - e.g. deploy, teardown, etc.
  * @param {Object} [options] Runtime options - i.e. log level and port
- * @param {Function} [callback] Function to receive the service locator
  * @returns {undefined}
  */
-function bootstrap(cmd, options) {
+function bootstrap(options) {
 
 	// Provide defaults
 	const settings = _.defaultsDeep(_.pick(options, optionsWhitelist), {
-		cmd,
-		port: 8000,
-		dev: false
+		port: 8000
 	});
 
 	// Extract the settings
-	const { docker, host, port, dev, store, overrides } = settings;
+	const { port, store, overridesFile } = settings;
 
-	rjs.config({
-		map: overrides,
-		nodeRequire: require
-	});
+	const overrides = overridesFile
+		? require(overridesFile)
+		: {};
 
-	rjs([
-		'utils/index.js',
-		'plugins/orchestrator/index.js',
-		'plugins/server/index.js'
-	], ({ logger }, orchestrator, server) => {
+	const mvp = require('..');
 
-		logger.info(settings);
-
-		switch (cmd) {
-		case 'deploy':
-			orchestrator.deploy({ docker, port, dev });
-			break;
-		case 'teardown':
-			orchestrator.teardown({ docker, port, dev });
-			break;
-		case 'serve':
-		default:
-			server.start({ store, host, port });
-			break;
+	mvp({ overrides }, (initError, { logger, api, server }) => {
+		if (initError) {
+			return logger.error(initError);
 		}
+
+		logger.info('settings', settings);
+
+		return server.listen({ store, port }, listenError => {
+			if (listenError) {
+				return logger.error(listenError);
+			}
+
+			logger.info('server started');
+
+			const repl = require('repl');
+
+			return api({ store }, (err, apiInstance) => {
+				if (err) {
+					logger.error(err);
+				}
+
+				repl.start().context.api = apiInstance;
+			});
+		});
 	});
 }

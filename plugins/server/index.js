@@ -5,9 +5,9 @@ define([
 	'lodash',
 	'express',
 	'lru-cache',
-	'utils/index.js',
-	'plugins/graphql/index.js'
-], (_, express, lru, { logger }, pluginGraphQL) => {
+	'-/logger/index.js',
+	'-/graphql/index.js'
+], (_, express, lru, logger, pluginGraphQL) => {
 	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.LRU_MAXSIZE, 10))
 		? parseInt(process.env.LRU_MAXSIZE, 10)
 		: 500;
@@ -24,35 +24,46 @@ define([
 	const app = express();
 
 	return {
-		start: function server(options, done) {
+		listen: function server(options, done) {
+			const { port } = _.defaultsDeep(options, {
+				port: 8000
+			});
+
 			app.use('/:bctxt/:aggregate/:v', (req, res, next) => {
-				const host = _.get(req, 'headers.host');
+				const domain = _.get(req, 'headers.host');
 				const bctxt = _.get(req, 'params.bctxt');
 				const aggregate = _.get(req, 'params.aggregate');
 				const v = _.get(req, 'params.v');
 
-				const uri = `${host}/${bctxt}/${aggregate}/${v}`;
+				const uri = `${domain}/${bctxt}/${aggregate}/${v}`;
+
+				logger.debug('uri', uri);
 
 				const cached = cache.get(uri);
 
+
 				if (cached) {
+					logger.trace(`using cached middleware for ${uri}`);
+
 					cached(req, res, next);
 				} else {
+					logger.trace(`loading middleware for ${uri}`);
+
 					pluginGraphQL.middleware({
-						host, bctxt, aggregate, v
+						domain, bctxt, aggregate, v
 					}, (err, { middleware }) => {
 						if (err) {
-							logger.error(err);
+							return logger.error(err);
 						}
 
 						cache.set(uri, middleware);
-						middleware(req, res, next);
+						return middleware(req, res, next);
 					});
 				}
 
 			});
 
-			app.listen(options.port, done);
+			app.listen(port, done);
 		}
 	};
 });

@@ -1,97 +1,48 @@
+/* global define */
 'use strict';
 
-const plugin = 'api';
+define([
+	'lodash',
+	'immutable',
+	'-/logger/index.js',
+	'-/store/index.js',
+	'-/api/classes/Domain/index.js'
+], (_, { Map }, logger, store, Domain) => function(options, done) {
+	const settings = _.pick(options, ['store']);
 
-const _ = require('lodash');
-const { Map } = require('immutable');
+	function toImmutable(value) {
+		if (_.isObject(value)) {
+			return Map(_.mapValues(value, v => toImmutable(v)));
+		}
 
-const config = require('./config.js');
+		return value;
+	}
 
-const RESULT_OK = {
-	code: 200,
-	description: 'ok'
-};
+	store.connect(settings, err => {
+		if (err) {
+			logger.error(err);
 
-const ERROR_DOMAIN_NOT_FOUND = new Error('domain-not-found');
+			return done(err);
+		}
 
-module.exports = function APIPlugin(options) {
-	const services = this;
-	const { host } = _.defaultsDeep(options, {
-		host: process.env.HOST || 'localhost'
-	});
+		return done(null, {
+			domain: ({ id }) => {
+				const domain = new Domain();
 
-	services.log.debug('APIPlugin', __filename);
+				if (!id) {
+					domain.emit('reject', new Error('Domain identifier was not provided'));
+				}
 
-	services.add({ plugin, q: 'readDomain', domain: host }, (args, done) => {
-		readDomain.bind(services)(args, (err, result) => {
-			if (err && err === ERROR_DOMAIN_NOT_FOUND) {
-				done(null, toImmutable(config(host)));
-			} else {
-				done(err, result);
+				store.read({ type: 'domain', id }, (readError, result) => {
+					if (readError) {
+						return domain.emit('reject', readError);
+					}
+
+					return domain.emit('resolve', toImmutable(result || { id }));
+				});
+
+				return domain;
 			}
 		});
 	});
-
-	services.add({ plugin, q: 'readDomain' }, readDomain.bind(services));
-
-	services.add({ plugin, cmd: 'editDomain' }, editDomain.bind(services));
-};
-
-function toImmutable(value) {
-	if (_.isObject(value)) {
-		return Map(_.mapValues(value, v => toImmutable(v)));
-	}
-
-	return value;
-}
-
-function readDomain({ domain }, done) {
-	const services = this;
-
-	const id = domain;
-	const params = {
-		type: 'domains',
-		id
-	};
-
-	services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
-		if (err || !result) {
-			done(err || ERROR_DOMAIN_NOT_FOUND);
-		} else {
-			const { version, boundedContexts, entities } = result;
-
-			done(
-				null,
-				Map({
-					id,
-					version,
-					boundedContexts: toImmutable(boundedContexts || {}),
-					entities: toImmutable(entities || {})
-				})
-			);
-		}
-	});
-}
-
-function editDomain({ domain }, done) {
-	const services = this;
-
-	domain = domain.set('version', domain.get('version') + 1);
-
-	const params = {
-		type: 'domains',
-		object: domain.toJSON()
-	};
-
-	services.act({ plugin: 'store', cmd: 'edit', params }, (err, result) => {
-		if (err) {
-			done(err);
-		} else {
-			if (result.errors) {
-				done(result.first_error);
-			} else {
-				done(null, RESULT_OK);
-			}
-		}
-	});
-}
+});
