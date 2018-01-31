@@ -34,11 +34,9 @@ define([
 			const self = this;
 
 			return new Domain((resolve, reject) => {
-				self.catch(reject);
-
 				self.then(result => {
-					resolvers[name](result, args).then(resolve).catch(reject);
-				});
+					resolvers[name](result, args).then(resolve, reject);
+				}, reject);
 			});
 		};
 	});
@@ -50,11 +48,9 @@ define([
 			if (!domain.committed) {
 				domain.committed = true;
 
-				domain.catch(reject);
-
 				const save = saveWithCtxt({ resolve, reject });
 
-				domain.then(save);
+				domain.then(save, reject);
 			} else {
 				reject(new Error(ERRORS.TRANSACTION_ALREADY_COMMITTED));
 			}
