@@ -2,14 +2,20 @@
 'use strict';
 
 define([
+	'lodash',
 	'immutable',
 	'-/api/classes/Domain/errors.js'
-], ({ Map }, ERRORS) => (result, args) => new Promise((resolve, reject) => {
-	const { bctxt, name, repository, rootEntity } = args || {};
+], (_, { Map }, ERRORS) => (result, args) => new Promise((resolve, reject) => {
+	const { bctxt, name } = args || {};
 
-	if (!bctxt || !name || !repository || !rootEntity) {
+	if (!bctxt || !name) {
 		return reject(ERRORS.INSUFFICIENT_ARGUMENTS);
 	}
+
+	const { repository, rootEntity } = _.defaultsDeep(args, {
+		repository: 'default',
+		rootEntity: name
+	});
 
 	/*
 	 * TODO
@@ -34,7 +40,7 @@ define([
 		}),
 		'0.0': Map({
 			repository,
-			rootEntity: rootEntity || name,
+			rootEntity,
 			queries: Map({}),
 			mutations: Map({})
 		})
