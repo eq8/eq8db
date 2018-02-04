@@ -35,7 +35,7 @@
     "graphql": "0.11.2",
     "graphql-tools": "1.2.1",
     "immutable": "3.8.1",
-    "lodash": "4.17.4",
+    "lodash": "4.17.5",
     "lru-cache": "4.1.1",
     "requirejs": "2.3.5",
     "rethinkdb": "2.3.3",
