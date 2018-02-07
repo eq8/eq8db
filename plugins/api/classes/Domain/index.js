@@ -1,66 +1,90 @@
-/* global define */
+/* global define, Promise */
 'use strict';
 
 define([
 	'lodash',
-	'event-emitter',
-	'immutable',
-	'-/store/index.js'
-], (_, ee, { Map }, store) => {
+	'-/store/index.js',
+	'-/api/classes/Domain/resolvers/index.js',
+	'-/api/classes/Domain/errors.js'
+], (_, store, resolvers, ERRORS) => {
 
-	function Domain() {}
+	class Domain extends Promise {
+		constructor(handler) {
+			super(handler);
+			this.committed = false;
+		}
 
-	Domain.prototype.addBoundedContext = function addBoundedContext(args) {
-		const { name } = args;
-		const domain = new Domain();
+		commit(done) {
+			const handler = handlerWithContext(this);
 
-		this.on('reject', err => {
-			domain.emit('reject', err);
-		});
-
-		this.on('resolve', result => {
-			const boundedContexts = result.get('boundedContexts') || Map({});
-			const resolved = result
-				.set(
-					'boundedContexts',
-					boundedContexts.set(name, Map({}))
-				);
-
-			domain.emit('resolve', resolved);
-		});
-
-		return domain;
-	};
-
-	Domain.prototype.commit = function commit(done) {
-		let committed = false;
-
-		this.on('reject', err => {
-			if (!committed) {
-				committed = true;
-
-				done(err);
+			if (!done) {
+				return new Promise(handler);
 			}
-		});
 
-		this.on('resolve', domain => {
-			if (!committed) {
-				committed = true;
+			const fnResolve = _.partial(done, null);
+			const fnReject = _.unary(done);
 
-				const args = {
-					type: 'domain',
-					object: domain
-						.set('version', (domain.get('version') || 0) + 1)
-						.toJSON()
-				};
+			return handler(fnResolve, fnReject);
+		}
+	}
 
-				store.edit(args, done);
+	// add methods to the Domain class
+	_.each(_.keys(resolvers), name => {
+		Domain.prototype[name] = function(args) {
+			const self = this;
+
+			return new Domain((resolve, reject) => {
+				self.then(result => {
+					resolvers[name](result, args).then(resolve, reject);
+				}, reject);
+			});
+		};
+	});
+
+	// HELPER FUNCTIONS
+
+	function handlerWithContext(domain) {
+		return (resolve, reject) => {
+			if (!domain.committed) {
+				domain.committed = true;
+
+				const save = saveWithCtxt({ resolve, reject });
+
+				domain.then(save, reject);
+			} else {
+				reject(new Error(ERRORS.TRANSACTION_ALREADY_COMMITTED));
 			}
-		});
+		};
+	}
 
-	};
+	function saveWithCtxt({ resolve, reject }) {
+		return domain => {
+			const object = domain
+				.set('version', (domain.get('version') || 0) + 1)
+				.toJSON();
+			const args = {
+				type: 'domain',
+				object
+			};
 
-	ee(Domain.prototype);
+			const callback = callbackWithCtxt({ resolve, reject, object });
+
+			store.edit(args, callback);
+		};
+	}
+
+	function callbackWithCtxt({ resolve, reject, object }) {
+		return (err, result) => {
+
+			const skipped = _.get(result, 'skipped');
+
+			if (err || skipped) {
+				return reject(err || new Error(ERRORS.TRANSACTION_COMMIT_FAILED));
+			}
+
+			return resolve(object);
+		};
+	}
 
 	return Domain;
 });

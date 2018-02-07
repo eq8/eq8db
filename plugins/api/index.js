@@ -10,14 +10,6 @@ define([
 ], (_, { Map }, logger, store, Domain) => function(options, done) {
 	const settings = _.pick(options, ['store']);
 
-	function toImmutable(value) {
-		if (_.isObject(value)) {
-			return Map(_.mapValues(value, v => toImmutable(v)));
-		}
-
-		return value;
-	}
-
 	store.connect(settings, err => {
 		if (err) {
 			logger.error(err);
@@ -25,24 +17,54 @@ define([
 			return done(err);
 		}
 
-		return done(null, {
-			domain: ({ id }) => {
-				const domain = new Domain();
-
-				if (!id) {
-					domain.emit('reject', new Error('Domain identifier was not provided'));
-				}
-
-				store.read({ type: 'domain', id }, (readError, result) => {
-					if (readError) {
-						return domain.emit('reject', readError);
-					}
-
-					return domain.emit('resolve', toImmutable(result || { id }));
-				});
-
-				return domain;
-			}
-		});
+		return done(null, { domain });
 	});
+
+	function domain(params) {
+		const handler = handlerWithContext(params);
+
+		return new Domain(handler);
+	}
+
+	function handlerWithContext(params) {
+		const { id } = params || {};
+
+		return (resolve, reject) => {
+			if (!id) {
+				reject(new Error('Domain identifier was not provided'));
+			}
+
+			const onRead = onReadWithCtxt({ id, resolve, reject });
+
+			store.read({ type: 'domain', id }, onRead);
+		};
+	}
+
+	function onReadWithCtxt({ id, resolve, reject }) {
+		return (readError, result) => {
+			if (readError) {
+				return reject(readError);
+			}
+
+			const immutableResult = toImmutable(result || {
+				id,
+				version: 0,
+				repositories: {
+					default: {
+						type: 'memory'
+					}
+				}
+			});
+
+			return resolve(immutableResult);
+		};
+	}
+
+	function toImmutable(value) {
+		if (_.isObject(value)) {
+			return Map(_.mapValues(value, v => toImmutable(v)));
+		}
+
+		return value;
+	}
 });
