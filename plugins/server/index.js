@@ -1,59 +1,69 @@
+/* global define */
 'use strict';
 
-const plugin = 'server';
+define([
+	'lodash',
+	'express',
+	'lru-cache',
+	'-/logger/index.js',
+	'-/graphql/index.js'
+], (_, express, lru, logger, pluginGraphQL) => {
+	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.LRU_MAXSIZE, 10))
+		? parseInt(process.env.LRU_MAXSIZE, 10)
+		: 500;
+	const LRU_MAXAGE = !_.isNaN(parseInt(process.env.LRU_MAXAGE, 10))
+		? parseInt(process.env.LRU_MAXAGE, 10)
+		: 1000 * 60 * 60;
+	const cache = lru({
+		max: LRU_MAXSIZE,
+		length: (n, key) => n * 2 + key.length,
+		dispose: (key, n) => n.close(),
+		maxAge: LRU_MAXAGE
+	});
 
-const _ = require('lodash');
-const app = require('express')();
-const lru = require('lru-cache');
+	const app = express();
 
-const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.LRU_MAXSIZE, 10))
-	? parseInt(process.env.LRU_MAXSIZE, 10)
-	: 500;
-const LRU_MAXAGE = !_.isNaN(parseInt(process.env.LRU_MAXAGE, 10))
-	? parseInt(process.env.LRU_MAXAGE, 10)
-	: 1000 * 60 * 60;
-const cache = lru({
-	max: LRU_MAXSIZE,
-	length: (n, key) => n * 2 + key.length,
-	dispose: (key, n) => n.close(),
-	maxAge: LRU_MAXAGE
-});
+	return {
+		listen: function server(options, done) {
+			const { port } = _.defaultsDeep(options, {
+				port: 8000
+			});
 
-module.exports = function server(options) {
-	const services = this;
+			app.use('/:bctxt/:aggregate/:v', (req, res, next) => {
+				const domain = _.get(req, 'headers.host');
+				const bctxt = _.get(req, 'params.bctxt');
+				const aggregate = _.get(req, 'params.aggregate');
+				const v = _.get(req, 'params.v');
 
-	services.log.info('server', options);
+				const uri = `${domain}/${bctxt}/${aggregate}/${v}`;
 
-	app.use('/:bctxt/:aggregate/:v', (req, res, next) => {
-		const host = _.get(req, 'headers.host');
-		const bctxt = _.get(req, 'params.bctxt');
-		const aggregate = _.get(req, 'params.aggregate');
-		const v = _.get(req, 'params.v');
+				logger.debug('uri', uri);
 
-		const uri = `${host}/${bctxt}/${aggregate}/${v}`;
+				const cached = cache.get(uri);
 
-		const cached = cache.get(uri);
 
-		if (cached) {
-			cached(req, res, next);
-		} else {
-			services.act({
-				plugin: 'graphql', q: 'middleware', host, bctxt, aggregate, v
-			}, (err, { middleware }) => {
-				if (err) {
-					services.log.error(err);
+				if (cached) {
+					logger.trace(`using cached middleware for ${uri}`);
+
+					cached(req, res, next);
+				} else {
+					logger.trace(`loading middleware for ${uri}`);
+
+					pluginGraphQL.middleware({
+						domain, bctxt, aggregate, v
+					}, (err, { middleware }) => {
+						if (err) {
+							return logger.error(err);
+						}
+
+						cache.set(uri, middleware);
+						return middleware(req, res, next);
+					});
 				}
 
-				cache.set(uri, middleware);
-				middleware(req, res, next);
 			});
+
+			app.listen(port, done);
 		}
-
-	});
-
-	services.add({ plugin, cmd: 'start' }, (args, done) => {
-		services.log.info('server#start');
-
-		app.listen(options.port, done);
-	});
-};
+	};
+});

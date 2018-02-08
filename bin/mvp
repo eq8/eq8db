@@ -3,49 +3,17 @@
 'use strict';
 
 const pkg = require('../package.json');
-const mvp = require('..');
+const bootstrap = require('./bootstrap.js');
 
 /**
  * Program Commands
  */
 const program = require('commander')
 	.description(pkg.description)
-	.version(pkg.version);
-
-program
-	.command('deploy')
-	.description('Deploy an mvp stack in Docker')
-	.option('--stack <string>', 'The mvp stack name to deploy in Docker')
-	.option('--docker <uri>', 'Docker host to connect to')
-	.option('--host <string>', 'The hostname of the application')
+	.version(pkg.version)
 	.option('--port <num>', 'The port to bind on', parseInt)
-	.option('--dev', 'Enable development mode - i.e. also deploy backing services')
-	.action(options => mvp.deploy(options));
-
-program
-	.command('teardown')
-	.description('Tear down an mvp stack in Docker')
-	.option('--stack <string>', 'The mvp stack name to deploy in Docker')
-	.option('--docker <uri>', 'Docker host to connect to')
-	.action(options => mvp.teardown(options));
-
-program
-	.command('serve')
-	.description('Run an instance of the mvp server')
-	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
-	.option('--port <num>', 'The port to bind on', parseInt)
-	.option('--host <string>', 'The hostname of the application')
 	.option('--store <uri>', 'The connection string for the store')
-	.action(options => mvp.serve(options));
-
-program
-	.command('process')
-	.description('Run an instance of the mvp processor')
-	.option('--log-level <string>', 'The log level for the instance', /^(debug|info|error)$/i)
-	.option('--store <uri>', 'The connection string for the store')
-	.action(options => mvp.process(options));
-
-require('commander-tabtab').init(program, 'mvp');
-
-program
+	.option('--overrides-file <path>', 'The absolute path to the file containing mappings for overriding the default implementations')
 	.parse(process.argv);
+
+bootstrap(program);

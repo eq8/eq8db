@@ -102,7 +102,7 @@ module.exports = function resolvers(services, host) {
 
 function readDomain(services, host) {
 	return getResolver((resolve, reject) => {
-		services.act({ plugin: 'api', q: 'readDomain', host }, (err, domain) => {
+		services.act({ plugin: 'api', q: 'readDomain', domain: host }, (err, domain) => {
 			if (err) {
 				reject(err);
 			} else {
