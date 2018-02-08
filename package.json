@@ -29,10 +29,10 @@
   },
   "homepage": "https://github.com/eq8/mvp#readme",
   "dependencies": {
-    "commander": "2.11.0",
+    "commander": "2.14.1",
     "express": "4.15.3",
     "express-graphql": "0.6.11",
-    "graphql": "0.12.3",
+    "graphql": "0.13.0",
     "graphql-tools": "2.20.2",
     "immutable": "3.8.1",
     "lodash": "4.17.5",
@@ -41,11 +41,11 @@
     "rethinkdb": "2.3.3",
     "semver": "5.4.1",
     "seneca": "3.4.3",
-    "url-parse": "1.1.9",
+    "url-parse": "1.2.0",
     "winston": "2.3.1"
   },
   "devDependencies": {
-    "eslint": "4.6.1",
+    "eslint": "4.16.0",
     "eslint-config-eslint": "4.0.0",
     "faucet": "0.0.1",
     "husky": "0.14.3",
