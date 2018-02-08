@@ -39,7 +39,7 @@
     "lru-cache": "4.1.1",
     "requirejs": "2.3.5",
     "rethinkdb": "2.3.3",
-    "semver": "5.4.1",
+    "semver": "5.5.0",
     "seneca": "3.4.3",
     "url-parse": "1.2.0",
     "winston": "2.3.1"
