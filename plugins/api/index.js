@@ -7,7 +7,7 @@ define([
 	'-/logger/index.js',
 	'-/store/index.js',
 	'-/api/classes/Domain/index.js'
-], (_, { Map }, logger, store, Domain) => function(options, done) {
+], (_, { Map }, logger, store, Domain) => function pluginAPI(options, done) {
 	const settings = _.pick(options, ['store']);
 
 	store.connect(settings, err => {

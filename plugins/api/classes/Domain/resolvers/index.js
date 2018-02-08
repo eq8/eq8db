@@ -4,7 +4,6 @@
 define([
 	'-/api/classes/Domain/resolvers/add-repository.js',
 	'-/api/classes/Domain/resolvers/add-entity.js',
-	'-/api/classes/Domain/resolvers/add-properties.js',
 	'-/api/classes/Domain/resolvers/add-bounded-context.js',
 	'-/api/classes/Domain/resolvers/add-aggregate.js',
 	'-/api/classes/Domain/resolvers/add-queries.js',
@@ -12,7 +11,6 @@ define([
 ], (
 	addRepository,
 	addEntity,
-	addProperties,
 	addBoundedContext,
 	addAggregate,
 	addQueries,
@@ -20,7 +18,6 @@ define([
 ) => ({
 	addRepository,
 	addEntity,
-	addProperties,
 	addBoundedContext,
 	addAggregate,
 	addQueries,
