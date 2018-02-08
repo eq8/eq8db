@@ -6,13 +6,23 @@ define([
 	'express',
 	'lru-cache',
 	'-/logger/index.js',
-	'-/graphql/index.js'
-], (_, express, lru, logger, pluginGraphQL) => {
-	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.LRU_MAXSIZE, 10))
-		? parseInt(process.env.LRU_MAXSIZE, 10)
+	'-/authentication/index.js',
+	'-/graphql/index.js',
+	'-/server/layers/error-handling.js'
+], (
+	_,
+	express,
+	lru,
+	logger,
+	pluginAuthentication,
+	pluginGraphQL,
+	layerErrorHandling
+) => {
+	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10))
+		? parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10)
 		: 500;
-	const LRU_MAXAGE = !_.isNaN(parseInt(process.env.LRU_MAXAGE, 10))
-		? parseInt(process.env.LRU_MAXAGE, 10)
+	const LRU_MAXAGE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXAGE, 10))
+		? parseInt(process.env.MVP_SERVER_LRU_MAXAGE, 10)
 		: 1000 * 60 * 60;
 	const cache = lru({
 		max: LRU_MAXSIZE,
@@ -23,12 +33,17 @@ define([
 
 	const app = express();
 
-	return {
+	const plugin = {
 		listen: function server(options, done) {
 			const { port } = _.defaultsDeep(options, {
 				port: 8000
 			});
 
+			app.use(pluginAuthentication.initialize());
+
+			// TODO: add pre-middleware plugin
+
+			// TODO: move to a file
 			app.use('/:bctxt/:aggregate/:v', (req, res, next) => {
 				const domain = _.get(req, 'headers.host');
 				const bctxt = _.get(req, 'params.bctxt');
@@ -39,8 +54,9 @@ define([
 
 				logger.debug('uri', uri);
 
-				const cached = cache.get(uri);
+				pluginAuthentication.authenticate(req, res, next);
 
+				const cached = cache.get(uri);
 
 				if (cached) {
 					logger.trace(`using cached middleware for ${uri}`);
@@ -53,17 +69,26 @@ define([
 						domain, bctxt, aggregate, v
 					}, (err, { middleware }) => {
 						if (err) {
-							return logger.error(err);
+							logger.error('middleware error:', err);
+
+							return next(err);
 						}
 
 						cache.set(uri, middleware);
+
 						return middleware(req, res, next);
 					});
 				}
-
 			});
+
+			// TODO: add post-middleware plugin
+
+			// TODO: move to a file
+			app.use(layerErrorHandling);
 
 			app.listen(port, done);
 		}
 	};
+
+	return plugin;
 });
