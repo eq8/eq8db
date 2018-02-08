@@ -8,17 +8,7 @@ define([
 ], (_, parse, r) => {
 	let conn;
 
-	function connCheck(handler) {
-		return (args, done) => {
-			if (conn) {
-				handler(args, done);
-			} else {
-				done(new Error('Not connected to a store'));
-			}
-		};
-	}
-
-	return {
+	const plugin = {
 		connect: function connect(options, done) {
 			const settings = _.defaultsDeep(options, {
 				store: 'rethinkdb://admin@127.0.0.1:28015'
@@ -93,4 +83,16 @@ define([
 				.run(conn, done);
 		})
 	};
+
+	function connCheck(handler) {
+		return (args, done) => {
+			if (conn) {
+				handler(args, done);
+			} else {
+				done(new Error('Not connected to a store'));
+			}
+		};
+	}
+
+	return plugin;
 });

@@ -19,7 +19,7 @@ define([
 		}
 	};
 
-	return {
+	const plugin = {
 		middleware: (args, done) => {
 
 			/*
@@ -38,12 +38,16 @@ define([
 				}
 			});
 
-			const middleware = graphqlHTTP({ schema, rootValue: {}, graphiql: true });
-
-			done(null, {
-				middleware
+			const middleware = graphqlHTTP({
+				schema,
+				rootValue: {},
+				graphiql: true
 			});
+
+			done(null, { middleware });
 		}
 	};
+
+	return plugin;
 });
 
