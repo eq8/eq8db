@@ -41,6 +41,8 @@ define([
 
 			app.use(pluginAuthentication.initialize());
 
+			app.use('/:bctxt/:aggregate/:v', pluginAuthentication.authenticate);
+
 			// TODO: add pre-middleware plugin
 
 			// TODO: move to a file
@@ -54,8 +56,6 @@ define([
 
 				logger.debug('uri', uri);
 
-				pluginAuthentication.authenticate(req, res, next);
-
 				const cached = cache.get(uri);
 
 				if (cached) {
@@ -67,16 +67,11 @@ define([
 
 					pluginGraphQL.middleware({
 						domain, bctxt, aggregate, v
-					}, (err, { middleware }) => {
-						if (err) {
-							logger.error('middleware error:', err);
-
-							return next(err);
-						}
-
+					}).then(middleware => {
 						cache.set(uri, middleware);
-
-						return middleware(req, res, next);
+						middleware(req, res, next);
+					}, err => {
+						logger.error('middleware error:', err);
 					});
 				}
 			});
