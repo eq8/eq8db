@@ -6,9 +6,9 @@ define([
 	'immutable',
 	'-/api/classes/Domain/errors.js'
 ], (_, { Map }, ERRORS) => (result, args) => new Promise((resolve, reject) => {
-	const { bctxt, name } = args || {};
+	const { bctxt, name, schemaVersion } = args || {};
 
-	if (!bctxt || !name) {
+	if (!bctxt || !name || !schemaVersion) {
 		return reject(ERRORS.INSUFFICIENT_ARGUMENTS);
 	}
 
@@ -35,14 +35,17 @@ define([
 
 	const initialAggregateState = Map({
 		tags: Map({
-			latest: '0.0',
-			stable: '0.0'
+			latest: '0.0.0',
+			stable: '0.0.0'
 		}),
-		'0.0': Map({
-			repository,
-			rootEntity,
-			queries: Map({}),
-			mutations: Map({})
+		versions: Map({
+			'0.0': Map({
+				repository,
+				rootEntity,
+				schemaVersion,
+				queries: Map({}),
+				mutations: Map({})
+			})
 		})
 	});
 	const withNewAggregate = aggregates

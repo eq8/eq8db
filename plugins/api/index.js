@@ -3,22 +3,20 @@
 
 define([
 	'lodash',
-	'immutable',
 	'-/logger/index.js',
 	'-/store/index.js',
+	'-/utils/index.js',
 	'-/api/classes/Domain/index.js'
-], (_, { Map }, logger, store, Domain) => function pluginAPI(options, done) {
+], (_, logger, store, { toImmutable }, Domain) => function pluginAPI(options, done) {
 	const settings = _.pick(options, ['store']);
 
-	store.connect(settings, err => {
-		if (err) {
-			logger.error(err);
-
-			return done(err);
-		}
-
-		return done(null, { domain });
-	});
+	store
+		.connect(settings)
+		.then(() => {
+			done(null, { domain });
+		}, err => {
+			done(err);
+		});
 
 	function domain(params) {
 		const handler = handlerWithContext(params);
@@ -34,24 +32,21 @@ define([
 				reject(new Error('Domain identifier was not provided'));
 			}
 
-			const onRead = onReadWithCtxt({ id, resolve, reject });
+			const onRead = onReadWithCtxt({ id, resolve });
 
-			store.read({ type: 'domain', id }, onRead);
+			store.read({ type: 'domain', id }).then(onRead, reject);
 		};
 	}
 
-	function onReadWithCtxt({ id, resolve, reject }) {
-		return (readError, result) => {
-			if (readError) {
-				return reject(readError);
-			}
-
+	function onReadWithCtxt({ id, resolve }) {
+		return result => {
 			const immutableResult = toImmutable(result || {
 				id,
 				version: 0,
 				repositories: {
 					default: {
-						type: 'memory'
+						type: 'memory',
+						entities: {}
 					}
 				}
 			});
@@ -60,11 +55,4 @@ define([
 		};
 	}
 
-	function toImmutable(value) {
-		if (_.isObject(value)) {
-			return Map(_.mapValues(value, v => toImmutable(v)));
-		}
-
-		return value;
-	}
 });
