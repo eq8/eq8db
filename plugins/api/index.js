@@ -9,14 +9,25 @@ define([
 	'-/api/classes/Domain/index.js'
 ], (_, logger, store, { toImmutable }, Domain) => function pluginAPI(options, done) {
 	const settings = _.pick(options, ['store']);
+	const retryInterval = parseInt(process.env.MVP_STORE_RETRY_INTERVAL, 10) || 1000;
+	let retryTimerId;
 
-	store
-		.connect(settings)
-		.then(() => {
-			done(null, { domain });
-		}, err => {
-			done(err);
-		});
+	connect(done);
+
+	function connect(callback) {
+		store
+			.connect(settings)
+			.then(() => {
+				if (retryTimerId) {
+					clearTimeout(retryTimerId);
+				}
+
+				callback(null, { domain });
+			}, err => {
+				logger.error(err);
+				retryTimerId = setTimeout(connect, retryInterval, callback);
+			});
+	}
 
 	function domain(params) {
 		const handler = handlerWithContext(params);
