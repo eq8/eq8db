@@ -70,15 +70,13 @@ define([
 					}).then(middleware => {
 						cache.set(uri, middleware);
 						middleware(req, res, next);
-					}, err => {
-						logger.error('middleware error:', err);
-					});
+					}, next);
 				}
 			});
 
 			// TODO: add post-middleware plugin
 
-			// TODO: move to a file
+			// TODO: only bubble up safe errors
 			app.use(layerErrorHandling);
 
 			app.listen(port, done);
