@@ -1,10 +1,10 @@
+/* global define */
 'use strict';
 
-const winston = require('winston');
-const Logger = winston.Logger;
+define(['winston'], winston => {
+	const { Logger } = winston;
 
-module.exports = {
-	Logger: logLevel => new Logger({
+	const plugin = new Logger({
 		levels: {
 			trace: 5, debug: 4, info: 3, warn: 2, error: 1, fatal: 0
 		},
@@ -18,10 +18,12 @@ module.exports = {
 		},
 		transports: [
 			new (winston.transports.Console)({
-				level: logLevel || 'info',
+				level: process.env.MVP_LOGGER_LEVEL || 'info',
 				timestamp: () => (new Date()).toISOString(),
 				colorize: true
 			})
 		]
-	})
-};
+	});
+
+	return plugin;
+});

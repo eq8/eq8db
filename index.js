@@ -1,14 +1,39 @@
 'use strict';
 
-const bootstrap = require('./bootstrap.js');
+const _ = require('lodash');
+const path = require('path');
+const rjs = require('requirejs');
 
-function run(action) {
-	return (options, callback) => bootstrap(action, options, callback);
-}
+const { version } = require('./package.json');
 
-module.exports = {
-	serve: run('serve'),
-	process: run('process'),
-	deploy: run('deploy'),
-	teardown: run('teardown')
+module.exports = function mvp(options, done) {
+
+	const settings = _.defaultsDeep(options, {});
+
+	const { overrides } = settings;
+
+	const mapOverrides = overrides
+		? overrides
+		: {};
+
+	const map = _.defaultsDeep({}, mapOverrides, {
+		'*': {
+			'-': path.join(__dirname, './plugins')
+		}
+	});
+
+	rjs.config({ map });
+
+	rjs([
+		'-/logger/index.js',
+		'-/api/index.js',
+		'-/server/index.js'
+	], (logger, api, server) => {
+		done(null, {
+			version,
+			logger,
+			api,
+			server
+		});
+	});
 };

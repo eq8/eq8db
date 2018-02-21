@@ -1,116 +1,98 @@
+/* global define, Promise */
 'use strict';
 
-const plugin = 'store';
-
-const _ = require('lodash');
-const parse = require('url-parse');
-const r = require('rethinkdb');
-
-module.exports = function storePlugin(options) {
-	const services = this;
-
-	const settings = _.defaultsDeep(options, {
-		store: 'rethinkdb://admin@127.0.0.1:28015'
-	});
-
-	services.log.debug('storePlugin', __filename);
-
+define([
+	'lodash',
+	'url-parse',
+	'rethinkdb',
+	'-/logger/index.js'
+], (_, parse, r, logger) => {
 	let conn;
 
-	services.add({ init: plugin }, (args, done) => {
-		const store = _.defaultsDeep(parse(settings.store), {
-			protocol: 'rethinkdb',
-			hostname: '127.0.0.1',
-			port: 28015,
-			username: 'admin'
-		});
-
-		if (store.protocol === 'rethinkdb:') {
-			r.connect({
-				host: store.hostname,
-				port: store.port,
-				user: store.username,
-				password: store.password
-			}, (err, newConn) => {
-				conn = newConn;
-				done(err);
+	const plugin = {
+		connect: function connect(options) {
+			const settings = _.defaultsDeep(options, {
+				store: 'rethinkdb://admin@127.0.0.1:28015'
 			});
-		}
-	});
 
-	function connCheck(handler) {
-		return (args, done) => {
-			if (conn) {
-				handler(args, done);
-			} else {
-				done(new Error('Not connected to a store'));
+			const storeOpts = _.defaultsDeep(parse(settings.store), {
+				protocol: 'rethinkdb',
+				hostname: '127.0.0.1',
+				port: 28015,
+				username: 'admin'
+			});
+
+			if (storeOpts.protocol === 'rethinkdb:') {
+				logger.debug('store setings:', settings);
+
+				return r.connect({
+					host: storeOpts.hostname,
+					port: storeOpts.port,
+					user: storeOpts.username,
+					password: storeOpts.password
+				}).then(newConn => {
+					conn = newConn;
+				});
 			}
-		};
-	}
 
-	services.add({ plugin, q: 'browse' }, connCheck(({ params }, done) => {
-		let q = r.table(params.type);
+			return Promise.reject(new Error('Unsupported store protocol'));
+		},
+		browse: connCheck(({ type, where, skip, limit }) => {
+			let q = r.table(type);
 
-		if (_.isObject(params.where)) {
-			let tmp = q;
+			if (_.isObject(where)) {
+				let tmp = q;
 
-			_.each(_.keys(params.where), key => {
-				tmp = q.getAll(params.where[key]);
-			});
+				_.each(_.keys(where), key => {
+					tmp = q.getAll(where[key]);
+				});
 
-			q = tmp;
-		}
+				q = tmp;
+			}
 
-		if (_.isInteger(params.skip)) {
-			q = q.skip(params.skip);
-		}
+			if (_.isInteger(skip)) {
+				q = q.skip(skip);
+			}
 
-		if (_.isInteger(params.limit)) {
-			q = q.limit(params.limit);
-		}
+			if (_.isInteger(limit)) {
+				q = q.limit(limit);
+			}
 
-		q.run(conn, done);
-	}));
-
-	services.add({ plugin, q: 'read' }, connCheck(({ params }, done) => {
-		const { type, id } = params;
-
-		r.table(type)
+			return q.run(conn);
+		}),
+		read: connCheck(({ type, id }) => r.table(type)
 			.get(id)
-			.run(conn, done);
-	}));
-
-	services.add({ plugin, cmd: 'edit' }, connCheck(({ params }, done) => {
-		const { type, object } = params;
-
-		r.table(type)
+			.run(conn)
+		),
+		edit: connCheck(({ type, object }) => r.table(type)
 			.get(object.id)
 			.replace(doc => (
 				(object.version > (doc.version || 0))
 					? object
 					: doc
 			))
-			.run(conn, done);
-	}));
-
-	services.add({ plugin, cmd: 'add' }, connCheck(({ params }, done) => {
-		const { type, objects } = params;
-
-		r.table(type)
+			.run(conn)
+		),
+		add: connCheck(({ type, objects }) => r.table(type)
 			.insert(objects)
-			.run(conn, done);
-	}));
-
-	services.add({ plugin, cmd: 'delete' }, connCheck(({ params }, done) => {
-		const { type, selection } = params;
-
-		r.table(type)
+			.run(conn)
+		),
+		delete: connCheck(({ type, selection }) => r.table(type)
 			.getAll(r.args(selection))
 			.delete()
-			.run(conn, done);
-	}));
-
-	return {
-		name: plugin
+			.run(conn)
+		)
 	};
-};
+
+	function connCheck(handler) {
+		return args => {
+			if (conn) {
+				return handler(args);
+			}
+
+			return Promise.reject(new Error('Not connected to a store'));
+		};
+	}
+
+	return plugin;
+});

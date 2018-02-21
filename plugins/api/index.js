@@ -1,97 +1,58 @@
+/* global define */
 'use strict';
 
-const plugin = 'api';
+define([
+	'lodash',
+	'-/logger/index.js',
+	'-/store/index.js',
+	'-/utils/index.js',
+	'-/api/classes/Domain/index.js'
+], (_, logger, store, { toImmutable }, Domain) => function pluginAPI(options, done) {
+	const settings = _.pick(options, ['store']);
 
-const _ = require('lodash');
-const { Map } = require('Immutable');
-
-const config = require('./config.js');
-
-const RESULT_OK = {
-	code: 200,
-	description: 'ok'
-};
-
-const ERROR_DOMAIN_NOT_FOUND = new Error('domain-not-found');
-
-module.exports = function APIPlugin(options) {
-	const services = this;
-	const { host } = _.defaultsDeep(options, {
-		host: process.env.HOST || 'localhost'
-	});
-
-	services.log.debug('APIPlugin', __filename);
-
-	services.add({ plugin, q: 'readDomain', domain: host }, (args, done) => {
-		readDomain.bind(services)(args, (err, result) => {
-			if (err && err === ERROR_DOMAIN_NOT_FOUND) {
-				done(null, toImmutable(config(host)));
-			} else {
-				done(err, result);
-			}
+	store
+		.connect(settings)
+		.then(() => {
+			done(null, { domain });
+		}, err => {
+			done(err);
 		});
-	});
 
-	services.add({ plugin, q: 'readDomain' }, readDomain.bind(services));
+	function domain(params) {
+		const handler = handlerWithContext(params);
 
-	services.add({ plugin, cmd: 'editDomain' }, editDomain.bind(services));
-};
-
-function toImmutable(value) {
-	if (_.isObject(value)) {
-		return Map(_.mapValues(value, v => toImmutable(v)));
+		return new Domain(handler);
 	}
 
-	return value;
-}
+	function handlerWithContext(params) {
+		const { id } = params || {};
 
-function readDomain({ domain }, done) {
-	const services = this;
-
-	const id = domain;
-	const params = {
-		type: 'domains',
-		id
-	};
-
-	services.act({ plugin: 'store', q: 'read', params }, (err, result) => {
-		if (err || !result) {
-			done(err || ERROR_DOMAIN_NOT_FOUND);
-		} else {
-			const { version, boundedContexts, entities } = result;
-
-			done(
-				null,
-				Map({
-					id,
-					version,
-					boundedContexts: toImmutable(boundedContexts || {}),
-					entities: toImmutable(entities || {})
-				})
-			);
-		}
-	});
-}
-
-function editDomain({ domain }, done) {
-	const services = this;
-
-	domain = domain.set('version', domain.get('version') + 1);
-
-	const params = {
-		type: 'domains',
-		object: domain.toJSON()
-	};
-
-	services.act({ plugin: 'store', cmd: 'edit', params }, (err, result) => {
-		if (err) {
-			done(err);
-		} else {
-			if (result.errors) {
-				done(result.first_error);
-			} else {
-				done(null, RESULT_OK);
+		return (resolve, reject) => {
+			if (!id) {
+				reject(new Error('Domain identifier was not provided'));
 			}
-		}
-	});
-}
+
+			const onRead = onReadWithCtxt({ id, resolve });
+
+			store.read({ type: 'domain', id }).then(onRead, reject);
+		};
+	}
+
+	function onReadWithCtxt({ id, resolve }) {
+		return result => {
+			const immutableResult = toImmutable(result || {
+				id,
+				version: 0,
+				repositories: {
+					default: {
+						type: 'memory',
+						entities: {}
+					}
+				}
+			});
+
+			return resolve(immutableResult);
+		};
+	}
+
+});
