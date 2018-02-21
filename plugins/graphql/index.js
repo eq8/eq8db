@@ -4,23 +4,14 @@
 define([
 	'graphql-tools',
 	'express-graphql',
-	'-/logger/index.js'
-], ({ makeExecutableSchema }, graphqlHTTP, logger) => {
-
-	// TODO: replace me with actual dynamic type definitions and resolvers
-	const tmpTypeDefs = `
-	type Query {
-		up: Boolean
-	}
-	`;
-	const tmpResolvers = {
-		Query: {
-			up: () => Promise.resolve(true)
-		}
-	};
+	'-/logger/index.js',
+	'-/store/index.js',
+	'-/graphql/lib/index.js'
+], ({ makeExecutableSchema }, graphqlHTTP, logger, store, utils) => {
+	const { getTypeDefinitions, getResolvers } = utils;
 
 	const plugin = {
-		middleware: (args, done) => {
+		middleware: args => new Promise((resolve, reject) => {
 
 			/*
 			 * TODO
@@ -30,22 +21,40 @@ define([
 			 *   - use the domain and schema version as the key
 			 */
 
-			const schema = makeExecutableSchema({
-				typeDefs: tmpTypeDefs,
-				resolvers: tmpResolvers,
-				logger: {
-					log: err => logger.error(err)
-				}
-			});
+			const { domain: id } = args || {};
 
-			const middleware = graphqlHTTP({
-				schema,
-				rootValue: {},
-				graphiql: true
-			});
+			if (!id) {
+				return reject(new Error('Domain was not found'));
+			}
 
-			done(null, { middleware });
-		}
+			logger.trace(`reading domain info for ${id}`);
+
+			return store.read({
+				type: 'domain',
+				id
+			}).then(domain => {
+				logger.trace('domain info found:', domain);
+
+				const tmpTypeDefs = getTypeDefinitions(domain, args);
+				const tmpResolvers = getResolvers(domain, args);
+
+				const schema = makeExecutableSchema({
+					typeDefs: tmpTypeDefs,
+					resolvers: tmpResolvers,
+					logger: {
+						log: resolveError => logger.error(resolveError)
+					}
+				});
+
+				const middleware = graphqlHTTP({
+					schema,
+					rootValue: {},
+					graphiql: true
+				});
+
+				resolve(middleware);
+			}, reject);
+		})
 	};
 
 	return plugin;

@@ -67,22 +67,17 @@ define([
 				object
 			};
 
-			const callback = callbackWithCtxt({ resolve, reject, object });
+			store
+				.edit(args)
+				.then(result => {
+					const skipped = _.get(result, 'skipped');
 
-			store.edit(args, callback);
-		};
-	}
+					if (skipped) {
+						return reject(new Error(ERRORS.TRANSACTION_COMMIT_FAILED));
+					}
 
-	function callbackWithCtxt({ resolve, reject, object }) {
-		return (err, result) => {
-
-			const skipped = _.get(result, 'skipped');
-
-			if (err || skipped) {
-				return reject(err || new Error(ERRORS.TRANSACTION_COMMIT_FAILED));
-			}
-
-			return resolve(object);
+					return resolve(object);
+				}, reject);
 		};
 	}
 
