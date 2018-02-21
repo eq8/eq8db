@@ -56,7 +56,7 @@ define([
 			const { id } = args;
 
 			client
-				.load(args)
+				.load(args, { create: true })
 				.then(result => {
 					const record = !_.isEmpty(result)
 						? result

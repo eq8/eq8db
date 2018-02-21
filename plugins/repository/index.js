@@ -3,13 +3,10 @@
 
 define([
 	'lodash',
-	'seneca',
-	'seneca-entity',
+	'immutable',
 	'-/logger/index.js'
-], (_, seneca, senecaEntity, logger) => {
-	const serviceLocator = seneca();
-
-	serviceLocator.use(senecaEntity);
+], (_, { Map }, logger) => {
+	let db = Map({});
 
 	return {
 		connect: (config, { domain, aggregate, v }) => {
@@ -17,34 +14,44 @@ define([
 			const schemaVersion = v;
 
 			const client = {
-				load: args => new Promise((resolve, reject) => {
-					const canon = `${domain}/${rootEntity}/${schemaVersion}`;
-					const entity = serviceLocator.make$(canon);
+				load: (args, opts) => new Promise((resolve, reject) => {
+					const { id, version } = _.defaultsDeep(args, { version: 0 });
+					const { create } = _.defaultsDeep(opts, { create: false });
 
-					logger.trace('client load');
-					entity.load$(args, (err, record) => {
-						logger.trace('client load callback');
-						if (err) {
-							logger.error(err);
-							return reject(err);
-						}
+					if (!id) {
+						return reject(new Error('Unable to load a record without an id'));
+					}
 
-						logger.trace('client load record', record);
-						return resolve(record || {});
-					});
+					const path = `${domain}/${rootEntity}/${schemaVersion}/${id}`;
+
+					const record = db.get(path);
+					const result = (!record && create)
+						? { id, version }
+						: record;
+
+					if (!result) {
+						return reject(new Error('Unable to load record:', id));
+					}
+
+					return resolve(result);
 				}),
 				save: args => new Promise((resolve, reject) => {
-					const canon = `${domain}/${rootEntity}/${schemaVersion}`;
-					const entity = serviceLocator.make$(canon);
+					const { id, version } = _.defaultsDeep(args, { version: 0 });
+					const path = `${domain}/${rootEntity}/${schemaVersion}/${id}`;
 
-					logger.trace('save');
-					entity.save$(args, (err, record) => {
-						if (err) {
-							return reject(err);
-						}
+					const record = db.get(path) || { id, version: 0 };
 
-						return resolve(record);
-					});
+					logger.trace('record:', record);
+
+					const conflict = version < _.get(record, 'version');
+
+					if (conflict) {
+						return reject(new Error('Unable to save record', { id, version }));
+					}
+
+					db = db.set(path, args);
+
+					return resolve(args);
 				})
 			};
 
