@@ -9,6 +9,7 @@
   "scripts": {
     "precommit": "npm run test:lint",
     "prepush": "npm run test:lint && npm run test:unit",
+    "start": "nodemon",
     "test": "npm run test:lint && npm run test:unit && npm run test:integration",
     "test:lint": "eslint --cache --ext .js index.js bin/* lib plugins",
     "test:unit": "tape test/test.unit.js | faucet",
@@ -43,8 +44,6 @@
     "requirejs": "2.3.5",
     "rethinkdb": "2.3.3",
     "semver": "5.5.0",
-    "seneca": "3.4.3",
-    "seneca-entity": "2.0.2",
     "url-parse": "1.2.0",
     "winston": "2.4.0"
   },
@@ -53,6 +52,11 @@
     "eslint-config-eslint": "4.0.0",
     "faucet": "0.0.1",
     "husky": "0.14.3",
+    "nodemon": "1.15.1",
     "tape": "4.9.0"
+  },
+  "nodemonConfig": {
+    "exec": "docker-compose up --build",
+    "ignore": ["test/*", "docs/*"]
   }
 }

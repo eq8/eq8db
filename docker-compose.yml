@@ -1,0 +1,14 @@
+version: "3"
+services:
+   rethinkdb:
+      image: rethinkdb:2.3.6
+      ports:
+         - "8080:8080"
+         - "28015:28015"
+   mvp:
+      image: equate/mvp
+      build: ./
+      ports:
+         - "8000:8000"
+      depends_on:
+         - rethinkdb
