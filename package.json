@@ -45,7 +45,7 @@
     "rethinkdb": "2.3.3",
     "semver": "5.5.0",
     "url-parse": "1.2.0",
-    "winston": "2.4.0"
+    "winston": "2.4.1"
   },
   "devDependencies": {
     "eslint": "4.18.1",
