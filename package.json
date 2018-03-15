@@ -7,6 +7,7 @@
     "mvp": "./bin/mvp"
   },
   "scripts": {
+    "install": "npm-license-crawler > ./NOTICE.txt",
     "precommit": "npm run test:lint",
     "prepush": "npm run test:lint && npm run test:unit",
     "start": "nodemon",
@@ -53,10 +54,14 @@
     "faucet": "0.0.1",
     "husky": "0.14.3",
     "nodemon": "1.15.1",
+    "npm-license-crawler": "0.1.7",
     "tape": "4.9.0"
   },
   "nodemonConfig": {
     "exec": "docker-compose up --build",
-    "ignore": ["test/*", "docs/*"]
+    "ignore": [
+      "test/*",
+      "docs/*"
+    ]
   }
 }
