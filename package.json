@@ -34,7 +34,7 @@
     "commander": "2.14.1",
     "express": "4.15.3",
     "express-graphql": "0.6.12",
-    "graphql": "0.13.1",
+    "graphql": "0.13.2",
     "graphql-tools": "2.21.0",
     "immutable": "3.8.1",
     "lodash": "4.17.5",
