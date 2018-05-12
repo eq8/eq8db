@@ -37,7 +37,7 @@
     "graphql": "0.13.2",
     "graphql-tools": "2.23.1",
     "immutable": "3.8.1",
-    "lodash": "4.17.5",
+    "lodash": "4.17.9",
     "lru-cache": "4.1.2",
     "passport": "0.4.0",
     "passport-anonymous": "1.0.1",
