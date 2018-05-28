@@ -3,15 +3,30 @@
 
 define([
 	'lodash',
+	'-/utils/index.js',
 	'-/store/index.js',
 	'-/api/classes/Domain/resolvers/index.js',
 	'-/api/classes/Domain/errors.js'
-], (_, store, resolvers, ERRORS) => {
+], (_, { toImmutable }, store, resolvers, ERRORS) => {
 
 	class Domain extends Promise {
 		constructor(handler) {
 			super(handler);
 			this.committed = false;
+		}
+
+		static chain(params) {
+			const { id } = params || {};
+
+			return new Domain((resolve, reject) => {
+				if (!id) {
+					reject(new Error('Domain identifier was not provided'));
+				}
+
+				const onRead = onReadWithCtxt({ id, resolve });
+
+				store.read({ type: 'domain', id }).then(onRead, reject);
+			});
 		}
 
 		commit(done) {
@@ -54,6 +69,23 @@ define([
 			} else {
 				reject(new Error(ERRORS.TRANSACTION_ALREADY_COMMITTED));
 			}
+		};
+	}
+
+	function onReadWithCtxt({ id, resolve }) {
+		return result => {
+			const immutableResult = toImmutable(result || {
+				id,
+				version: 0,
+				repositories: {
+					default: {
+						type: 'memory',
+						entities: {}
+					}
+				}
+			});
+
+			return resolve(immutableResult);
 		};
 	}
 

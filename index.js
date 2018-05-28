@@ -22,16 +22,20 @@ module.exports = function mvp(options, done) {
 		}
 	});
 
+	// Leverage AMD for the plugin architecture
+	// We'll be using the `overrides` to re-map the implementation of internal dependencies
 	rjs.config({ map });
 
 	rjs([
 		'-/logger/index.js',
+		'-/store/index.js',
 		'-/api/index.js',
 		'-/server/index.js'
-	], (logger, api, server) => {
+	], (logger, store, api, server) => {
 		done(null, {
 			version,
 			logger,
+			store,
 			api,
 			server
 		});

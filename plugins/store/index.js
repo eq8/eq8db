@@ -12,10 +12,10 @@ define([
 	const plugin = {
 		connect: function connect(options) {
 			const settings = _.defaultsDeep(options, {
-				store: process.env.MVP_STORE_URI || 'rethinkdb://admin@127.0.0.1:28015'
+				storeUri: process.env.MVP_STORE_URI || 'rethinkdb://admin@127.0.0.1:28015'
 			});
 
-			const storeOpts = _.defaultsDeep(parse(settings.store), {
+			const storeOpts = _.defaultsDeep(parse(settings.storeUri), {
 				protocol: 'rethinkdb',
 				hostname: '127.0.0.1',
 				port: 28015,

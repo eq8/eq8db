@@ -6,13 +6,14 @@ const pkg = require('../package.json');
 const bootstrap = require('./bootstrap.js');
 
 /**
- * Program Commands
+ * Define the options for running MVP
  */
 const program = require('commander')
 	.description(pkg.description)
 	.version(pkg.version)
 	.option('--port <num>', 'The port to bind on', parseInt)
-	.option('--store <uri>', 'The connection string for the store')
+	.option('--store-uri <uri>', 'The connection string for the store')
+	.option('--retry-interval <num>', 'The interval to retry connecting the store plugin', parseInt)
 	.option('--overrides-file <path>', 'The absolute path to the file containing mappings for overriding the default implementations')
 	.parse(process.argv);
 
