@@ -12,23 +12,43 @@ define([
 		getResolvers
 	};
 
-	function getTypeDefinitions() {
+	function getTypeDefinitions(domain, args) {
+		const { bctxt, aggregate, v } = args || {};
+
+		const queryPath = `boundedContexts.${bctxt}.aggregates.${aggregate}.versions[${v}]queries`;
+		const queries = _.get(domain, queryPath);
+
+		let typeDefinitionQueries = '';
+
+		_.each(_.keys(queries), queryName => {
+
+			// TODO populate related <Entities>, Queries, Mutations
+			typeDefinitionQueries = `${typeDefinitionQueries}${queryName}: Entity
+`;
+		});
+
 		return `
-			"""
-			Sample documentation for Aggregate
-			"""
-			type Aggregate {
-				version: Int
-			}
-			type Transaction {
-				commit(readWrites: Boolean): Aggregate
-			}
-			type Query {
-				load(id: String): Aggregate
-			}
-			type Mutation {
-				begin(id: String): Transaction
-			}
+"""
+Sample documentation for Aggregate
+"""
+type Aggregate {
+	version: Int
+	${typeDefinitionQueries}
+}
+
+type Entity {
+	version: Int
+}
+
+type Transaction {
+	commit(readWrites: Boolean): Aggregate
+}
+type Query {
+	load(id: String): Aggregate
+}
+type Mutation {
+	begin(id: String): Transaction
+}
 		`;
 	}
 
