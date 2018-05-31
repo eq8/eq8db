@@ -1,4 +1,4 @@
-FROM node:8.9.4-alpine
+FROM node:8.11.1-alpine
 
 ENV MVP_AUTHENTICATION_SECRET=secret
 ENV MVP_STORE_URI=rethinkdb://admin@rethinkdb:28015
