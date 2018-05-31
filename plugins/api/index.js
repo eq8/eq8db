@@ -8,7 +8,7 @@
 define([
 	'lodash',
 	'-/logger/index.js',
-	'-/api/classes/Domain/index.js'
+	'-/api/classes/domain/index.js'
 ], (
 	_,
 	logger,

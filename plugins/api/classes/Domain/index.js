@@ -5,8 +5,8 @@ define([
 	'lodash',
 	'-/utils/index.js',
 	'-/store/index.js',
-	'-/api/classes/Domain/resolvers/index.js',
-	'-/api/classes/Domain/errors.js'
+	'-/api/classes/domain/resolvers/index.js',
+	'-/api/classes/domain/errors.js'
 ], (_, { toImmutable }, store, resolvers, ERRORS) => {
 
 	class Domain extends Promise {
@@ -23,23 +23,23 @@ define([
 					reject(new Error('Domain identifier was not provided'));
 				}
 
-				const onRead = onReadWithCtxt({ id, resolve });
+				const onRead = getOnReadHandler({ id, resolve });
 
 				store.read({ type: 'domain', id }).then(onRead, reject);
 			});
 		}
 
 		commit(done) {
-			const handler = handlerWithContext(this);
+			const executor = getCommitExecutor(this);
 
 			if (!done) {
-				return new Promise(handler);
+				return new Promise(executor);
 			}
 
 			const fnResolve = _.partial(done, null);
 			const fnReject = _.unary(done);
 
-			return handler(fnResolve, fnReject);
+			return executor(fnResolve, fnReject);
 		}
 	}
 
@@ -58,21 +58,21 @@ define([
 
 	// HELPER FUNCTIONS
 
-	function handlerWithContext(domain) {
+	function getCommitExecutor(domain) {
 		return (resolve, reject) => {
 			if (!domain.committed) {
 				domain.committed = true;
 
-				const save = saveWithCtxt({ resolve, reject });
+				const saveOnResolve = getDomainResolver({ resolve, reject });
 
-				domain.then(save, reject);
+				domain.then(saveOnResolve, reject);
 			} else {
 				reject(new Error(ERRORS.TRANSACTION_ALREADY_COMMITTED));
 			}
 		};
 	}
 
-	function onReadWithCtxt({ id, resolve }) {
+	function getOnReadHandler({ id, resolve }) {
 		return result => {
 			const immutableResult = toImmutable(result || {
 				id,
@@ -89,7 +89,7 @@ define([
 		};
 	}
 
-	function saveWithCtxt({ resolve, reject }) {
+	function getDomainResolver({ resolve, reject }) {
 		return domain => {
 			const object = domain
 				.set('version', (domain.get('version') || 0) + 1)

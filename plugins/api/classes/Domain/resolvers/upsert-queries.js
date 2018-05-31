@@ -6,7 +6,7 @@ define([
 	'semver',
 	'immutable',
 	'-/logger/index.js',
-	'-/api/classes/Domain/errors.js'
+	'-/api/classes/domain/errors.js'
 ], (_, semver, { Map }, logger, ERRORS) => (result, args) => new Promise((resolve, reject) => {
 	const { bctxt, aggregate, queries } = args || {};
 
@@ -45,6 +45,11 @@ define([
 	const latestVersion = selectedAggregate
 		.get('versions')
 		.get(shortLatest) || Map({});
+
+	// TODO: validate each query object
+	// - it needs a return type
+	// - parameters could be optional but it should have a type
+	// - return and parameter type should match entities
 	const newVersion = latestVersion.mergeDeep(Map({
 		queries: Map(queries).map(v => (_.isObject(v) ? Map(v) : v))
 	}));

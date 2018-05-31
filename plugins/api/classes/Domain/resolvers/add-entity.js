@@ -4,7 +4,7 @@
 define([
 	'lodash',
 	'immutable',
-	'-/api/classes/Domain/errors.js'
+	'-/api/classes/domain/errors.js'
 ], (_, { Map }, ERRORS) => (result, args) => new Promise((resolve, reject) => {
 	const { repository, name } = args || {};
 

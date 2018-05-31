@@ -2,13 +2,13 @@
 'use strict';
 
 define([
-	'-/api/classes/Domain/resolvers/add-repository.js',
-	'-/api/classes/Domain/resolvers/add-entity.js',
-	'-/api/classes/Domain/resolvers/upsert-attributes.js',
-	'-/api/classes/Domain/resolvers/add-bounded-context.js',
-	'-/api/classes/Domain/resolvers/add-aggregate.js',
-	'-/api/classes/Domain/resolvers/upsert-queries.js',
-	'-/api/classes/Domain/resolvers/upsert-mutations.js'
+	'-/api/classes/domain/resolvers/add-repository.js',
+	'-/api/classes/domain/resolvers/add-entity.js',
+	'-/api/classes/domain/resolvers/upsert-attributes.js',
+	'-/api/classes/domain/resolvers/add-bounded-context.js',
+	'-/api/classes/domain/resolvers/add-aggregate.js',
+	'-/api/classes/domain/resolvers/upsert-queries.js',
+	'-/api/classes/domain/resolvers/upsert-mutations.js'
 ], (
 	addRepository,
 	addEntity,

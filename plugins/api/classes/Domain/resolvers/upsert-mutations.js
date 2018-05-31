@@ -6,7 +6,7 @@ define([
 	'semver',
 	'immutable',
 	'-/logger/index.js',
-	'-/api/classes/Domain/errors.js'
+	'-/api/classes/domain/errors.js'
 ], (_, semver, { Map }, logger, ERRORS) => (result, args) => new Promise((resolve, reject) => {
 	const { bctxt, aggregate, mutations } = args || {};
 
