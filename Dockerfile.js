@@ -13,4 +13,6 @@ RUN npm link --production
 COPY ./index.js /opt/mvp/index.js
 COPY ./plugins /opt/mvp/plugins
 
+COPY ./test /opt/mvp/test
+
 CMD mvp
