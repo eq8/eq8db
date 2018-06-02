@@ -7,22 +7,19 @@ define([
 	'-/api/classes/domain/resolvers/upsert-attributes.js',
 	'-/api/classes/domain/resolvers/add-bounded-context.js',
 	'-/api/classes/domain/resolvers/add-aggregate.js',
-	'-/api/classes/domain/resolvers/upsert-queries.js',
-	'-/api/classes/domain/resolvers/upsert-mutations.js'
+	'-/api/classes/domain/resolvers/upsert-queries.js'
 ], (
 	addRepository,
 	addEntity,
 	upsertAttributes,
 	addBoundedContext,
 	addAggregate,
-	upsertQueries,
-	upsertMutations
+	upsertQueries
 ) => ({
 	addRepository,
 	addEntity,
 	upsertAttributes,
 	addBoundedContext,
 	addAggregate,
-	upsertQueries,
-	upsertMutations
+	upsertQueries
 }));
