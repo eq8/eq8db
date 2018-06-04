@@ -4,56 +4,103 @@
 define([
 	'lodash',
 	'-/logger/index.js',
-	'-/utils/index.js',
-	'-/repository/index.js'
-], (_, logger, { toImmutable }, repository) => {
+	'-/utils/index.js'
+], (_, logger, { toImmutable }) => {
 	const plugin = {
-		getTypeDefinitions,
+		getQueries,
+		getMethods,
+		getActions,
+		getTypeDefs,
 		getResolvers
 	};
 
 	const LF = '\n';
 
-	function getTypeDefinitions(domain, args) {
-		const typeDefinitionQueries = getTypeDefinition(domain, _.assign({ type: 'queries' }, args));
-		const typeDefinitionMethods = getTypeDefinition(domain, _.assign({ type: 'methods' }, args));
-		const typeDefinitionActions = getTypeDefinition(domain, _.assign({ type: 'actions' }, args));
+	function getQueries() {
+		return {
+			isValid: {
+				returnType: 'Boolean'
+			}
+		};
+	}
+
+	function getMethods() {
+		return {
+			isValid: {
+				returnType: 'Boolean'
+			}
+		};
+	}
+
+	function getActions() {
+		return {
+			isValid: {
+				returnType: 'Boolean'
+			}
+		};
+	}
+
+	function getTypeDefs(args) {
+		const queries = _.assign({
+			load: {
+				returnType: 'Aggregate',
+				params: {
+					id: 'String'
+				}
+			},
+			transact: {
+				returnType: 'Transaction',
+				params: {
+					id: 'String'
+				}
+			}
+		}, _.get(args, 'queries'));
+
+		const methods = _.assign({
+			version: {
+				returnType: 'Int'
+			}
+		}, _.get(args, 'methods'));
+
+		const actions = _.assign({
+			commit: {
+				returnType: 'Aggregate',
+				params: {
+					readWrites: 'Boolean'
+				}
+			}
+		}, _.get(args, 'actions'));
+
+		const typeDefQuery = getTypeDef('Query', queries);
+		const typeDefAggregate = getTypeDef('Aggregate', methods);
+		const typeDefTransaction = getTypeDef('Transaction', actions);
 
 		const typeDef = `
 """
 Sample documentation for Aggregate
 """
-type Aggregate {
-	version: Int
-${typeDefinitionMethods}
-}
+${typeDefAggregate}
 
-type Transaction {
-${typeDefinitionActions}
-	commit(readWrites: Boolean): Aggregate
-}
+${typeDefTransaction}
 
-type Query {
-	load(id: String): Aggregate
-${typeDefinitionQueries}
-	transact(id: String): Transaction
-}
-		`;
+${typeDefQuery}
+`;
 
 		return typeDef;
 	}
 
-	function getTypeDefinition(domain, args) {
-		const { bctxt, aggregate, v, type } = args || {};
+	function getTypeDef(type, queries) {
+		const queryDefs = getQueryDefs(queries);
 
-		const queryPath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}][${type}]`;
-		const queries = _.get(domain, queryPath);
+		return `type ${type} {${LF}${queryDefs}${LF}}${LF}`;
+	}
 
+	function getQueryDefs(queries) {
 		let typeDefinitionQueries = '';
 
-		_.each(_.keys(queries), name => {
+		_.each(_.keys(queries || {}), name => {
 			const query = _.get(queries, name);
-			const params = getTypeDefinitionQueryParams(_.get(query, 'params'));
+			const params = getQueryParams(_.get(query, 'params'));
 			const returnType = _.get(query, 'returnType') || 'Aggregate'; // TODO: remove and validate
 
 			// TODO populate related <Entities>, Queries, Mutations
@@ -63,7 +110,7 @@ ${typeDefinitionQueries}
 		return typeDefinitionQueries;
 	}
 
-	function getTypeDefinitionQueryParams(args) {
+	function getQueryParams(args) {
 		let typeDefinitionQueryParams = '';
 
 		_.each(_.keys(args), name => {
@@ -77,18 +124,17 @@ ${typeDefinitionQueries}
 		return typeDefinitionQueryParams ? `(${typeDefinitionQueryParams})` : '';
 	}
 
-	function getResolvers(domain, args) {
-		const client = repository.connect(domain, args);
+	function getResolvers(client, args) {
 
 		return {
 			Query: {
 				load: getAggregate(client),
 				transact: getAggregate(client)
 			},
-			Aggregate: getAggregateResolvers(domain, args),
+			Aggregate: getAggregateResolvers(args),
 			Transaction: _.assign({
 				commit: setAggregate(client)
-			}, getTransactionResolvers(client, domain, args))
+			}, getTransactionResolvers(client, args))
 		};
 	}
 

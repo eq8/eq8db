@@ -6,9 +6,16 @@ define([
 	'express-graphql',
 	'-/logger/index.js',
 	'-/store/index.js',
+	'-/repository/index.js',
 	'-/graphql/lib/index.js'
-], ({ makeExecutableSchema }, graphqlHTTP, logger, store, utils) => {
-	const { getTypeDefinitions, getResolvers } = utils;
+], ({ makeExecutableSchema }, graphqlHTTP, logger, store, repository, utils) => {
+	const {
+		getQueries,
+		getMethods,
+		getActions,
+		getTypeDefs,
+		getResolvers
+	} = utils;
 
 	const plugin = {
 		middleware: args => new Promise((resolve, reject) => {
@@ -35,12 +42,24 @@ define([
 			}).then(domain => {
 				logger.trace('domain info found:', domain);
 
-				const tmpTypeDefs = getTypeDefinitions(domain, args);
-				const tmpResolvers = getResolvers(domain, args);
+				const queries = getQueries(domain, args);
+				const methods = getMethods(domain, args);
+				const actions = getActions(domain, args);
+				const typeDefsRaw = {
+					queries,
+					methods,
+					actions
+				};
+				const typeDefs = getTypeDefs(typeDefsRaw);
+
+				// TODO: remove repository concept and move into it's own service
+				// - i.e. make every query a remote call and not in-memory
+				const client = repository.connect(domain, args);
+				const resolvers = getResolvers(client, typeDefsRaw);
 
 				const schema = makeExecutableSchema({
-					typeDefs: tmpTypeDefs,
-					resolvers: tmpResolvers,
+					typeDefs,
+					resolvers,
 					logger: {
 						log: resolveError => logger.error(resolveError)
 					}
