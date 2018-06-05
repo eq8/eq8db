@@ -11,6 +11,8 @@ services:
          dockerfile: Dockerfile.js
          context: ./
       stdin_open: true
+      environment:
+        - "NODE_ENV=development"
       tty: true
       ports:
          - "8000:8000"

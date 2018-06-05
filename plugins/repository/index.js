@@ -6,7 +6,9 @@ define([
 	'immutable',
 	'-/logger/index.js'
 ], (_, { Map }, logger) => {
-	logger.warn('MVP instance is using a development version of the `-/repository` plugin');
+	if (process.env.NODE_ENV !== 'development') {
+		logger.warn('MVP instance is using a development version of the `-/repository` plugin');
+	}
 
 	let db = Map({});
 

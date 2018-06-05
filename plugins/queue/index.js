@@ -5,7 +5,9 @@ define([
 	'-/logger/index.js',
 	'immutable'
 ], (logger, { Map, List }) => {
-	logger.warn('MVP instance is using a development version of the `-/queue` plugin');
+	if (process.env.NODE_ENV !== 'development') {
+		logger.warn('MVP instance is using a development version of the `-/queue` plugin');
+	}
 
 	let queues = Map({});
 
