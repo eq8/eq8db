@@ -3,9 +3,11 @@
 
 define([
 	'lodash',
+	'uuid/v4',
 	'-/logger/index.js',
-	'-/utils/index.js'
-], (_, logger, { toImmutable }) => {
+	'-/utils/index.js',
+	'-/queue/index.js'
+], (_, uuidv4, logger, { toImmutable }, queue) => {
 	const plugin = {
 		getQueries,
 		getMethods,
@@ -63,6 +65,9 @@ define([
 		}, _.get(args, 'methods'));
 
 		const actions = _.assign({
+			id: {
+				returnType: 'String'
+			},
 			commit: {
 				returnType: 'Aggregate',
 				params: {
@@ -129,7 +134,7 @@ ${typeDefQuery}
 		return {
 			Query: {
 				load: getAggregate(client),
-				transact: getAggregate(client)
+				transact: getTransaction(client)
 			},
 			Aggregate: getAggregateResolvers(args),
 			Transaction: _.assign({
@@ -157,23 +162,38 @@ ${typeDefQuery}
 		});
 	}
 
+	function getTransaction(client) {
+		return (obj, args) => new Promise((resolve, reject) => {
+			const id = uuidv4();
+
+			getAggregate(client)(obj, args).then(result => {
+				queue.queue(id, result).then(() => resolve({ id }), reject);
+			}, reject);
+		});
+	}
+
 	function setAggregate(client) {
 		return obj => {
-			logger.trace('obj:', obj.toJSON());
-			const changes = toImmutable({
-				version: obj.get('version') + 1,
-				meta: {
-					lastUpdatedDate: new Date()
-				}
-			});
-
-			const record = obj.mergeDeep(changes).toJSON();
-
-			logger.trace('commit', record);
+			const { id } = obj || {};
 
 			return new Promise((resolve, reject) => {
-				client.save(record)
-					.then(result => resolve(result), reject);
+				queue.dequeue(id).then(result => {
+					logger.trace('result:', result.toJSON());
+
+					const changes = toImmutable({
+						version: result.get('version') + 1,
+						meta: {
+							lastUpdatedDate: new Date()
+						}
+					});
+
+					const record = result.mergeDeep(changes).toJSON();
+
+					logger.trace('commit', record);
+
+					client.save(record)
+						.then(resolve, reject);
+				}, reject);
 			});
 		};
 	}
