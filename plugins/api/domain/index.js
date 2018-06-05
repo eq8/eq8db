@@ -5,8 +5,8 @@ define([
 	'lodash',
 	'-/utils/index.js',
 	'-/store/index.js',
-	'-/api/classes/domain/resolvers/index.js',
-	'-/api/classes/domain/errors.js'
+	'-/api/domain/resolvers/index.js',
+	'-/api/domain/errors.js'
 ], (_, { toImmutable }, store, resolvers, ERRORS) => {
 
 	class Domain extends Promise {
