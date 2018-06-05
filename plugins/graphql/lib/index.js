@@ -182,6 +182,8 @@ ${typeDefQuery}
 
 					const changes = toImmutable({
 						version: result.get('version') + 1,
+
+						// TODO: create a meta provider
 						meta: {
 							lastUpdatedDate: new Date()
 						}
@@ -192,7 +194,7 @@ ${typeDefQuery}
 					logger.trace('commit', record);
 
 					client.save(record)
-						.then(resolve, reject);
+						.then(saved => resolve(toImmutable(saved)), reject);
 				}, reject);
 			});
 		};
@@ -200,7 +202,7 @@ ${typeDefQuery}
 
 	function getAggregateResolvers() {
 		return {
-			version: obj => new Promise(resolve => resolve(obj.version || 0))
+			version: obj => new Promise(resolve => resolve(obj.get('version') || 0))
 		};
 	}
 
