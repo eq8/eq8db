@@ -132,10 +132,10 @@ ${typeDefQuery}
 	function getResolvers(client, args) {
 
 		return {
-			Query: {
+			Query: _.assign({
 				load: getAggregate(client),
 				transact: getTransaction(client)
-			},
+			}, getQueryResolvers(args)),
 			Aggregate: getAggregateResolvers(args),
 			Transaction: _.assign({
 				commit: setAggregate(client)
@@ -144,12 +144,12 @@ ${typeDefQuery}
 	}
 
 	function getAggregate(client) {
-		return (obj, args) => new Promise((resolve, reject) => {
+		return (obj, args) => {
 			logger.trace('resolver load:', args);
 
 			const { id } = args;
 
-			client
+			return client
 				.load(args, { create: true })
 				.then(result => {
 					const record = !_.isEmpty(result)
@@ -157,9 +157,10 @@ ${typeDefQuery}
 						: { id, version: 0 };
 
 					logger.trace('resolver load result:', record);
-					resolve(toImmutable(record));
-				}, reject);
-		});
+
+					return toImmutable(record);
+				});
+		};
 	}
 
 	function getTransaction(client) {
@@ -176,28 +177,27 @@ ${typeDefQuery}
 		return obj => {
 			const { id } = obj || {};
 
-			return new Promise((resolve, reject) => {
-				queue.dequeue(id).then(result => {
-					logger.trace('result:', result.toJSON());
+			return queue.dequeue(id).then(result => {
+				logger.trace('result:', result.toJSON());
 
-					const changes = toImmutable({
-						version: result.get('version') + 1,
+				const changes = toImmutable({
+					version: result.get('version') + 1,
 
-						// TODO: create a meta provider
-						meta: {
-							lastUpdatedDate: new Date()
-						}
-					});
+					// TODO: create a meta provider
+					meta: {
+						lastUpdatedDate: new Date()
+					}
+				});
 
-					const record = result.mergeDeep(changes).toJSON();
-
-					logger.trace('commit', record);
-
-					client.save(record)
-						.then(saved => resolve(toImmutable(saved)), reject);
-				}, reject);
-			});
+				return result.mergeDeep(changes).toJSON();
+			})
+				.then(result => client.save(result))
+				.then(result => toImmutable(result));
 		};
+	}
+
+	function getQueryResolvers() {
+		return {};
 	}
 
 	function getAggregateResolvers() {
