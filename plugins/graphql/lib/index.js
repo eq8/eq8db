@@ -71,7 +71,7 @@ define([
 			commit: {
 				returnType: 'Aggregate',
 				params: {
-					readWrites: 'Boolean'
+					timeout: 'Int'
 				}
 			}
 		}, _.get(args, 'actions'));
