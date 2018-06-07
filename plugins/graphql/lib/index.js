@@ -178,25 +178,25 @@ input CommitOptions {
 	}
 
 	function setAggregate(client) {
-		return obj => {
+		return async obj => {
 			const { id } = obj || {};
 
-			return queue.dequeue(id).then(result => {
-				logger.trace('result:', result.toJSON());
+			const fromQueue = await queue.dequeue(id);
 
-				const changes = toImmutable({
-					version: result.get('version') + 1,
+			const changes = toImmutable({
+				version: fromQueue.get('version') + 1,
 
-					// TODO: create a meta provider
-					meta: {
-						lastUpdatedDate: new Date()
-					}
-				});
+				// TODO: create a meta provider
+				meta: {
+					lastUpdatedDate: new Date()
+				}
+			});
 
-				return result.mergeDeep(changes).toJSON();
-			})
-				.then(result => client.save(result))
-				.then(result => toImmutable(result));
+			const merged = fromQueue.mergeDeep(changes).toJSON();
+
+			const saved = await client.save(merged);
+
+			return toImmutable(saved);
 		};
 	}
 
