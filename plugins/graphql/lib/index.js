@@ -47,13 +47,13 @@ define([
 			load: {
 				returnType: 'Aggregate',
 				params: {
-					id: 'String'
+					id: 'ID'
 				}
 			},
 			transact: {
 				returnType: 'Transaction',
 				params: {
-					id: 'String'
+					id: 'ID'
 				}
 			}
 		}, _.get(args, 'queries'));
@@ -66,7 +66,7 @@ define([
 
 		const actions = _.assign({
 			id: {
-				returnType: 'String'
+				returnType: 'ID'
 			},
 			commit: {
 				returnType: 'Aggregate',
