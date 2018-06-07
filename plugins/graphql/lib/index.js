@@ -168,7 +168,7 @@ ${typeDefQuery}
 			const id = uuidv4();
 
 			getAggregate(client)(obj, args).then(result => {
-				queue.queue(id, result).then(() => resolve({ id }), reject);
+				queue.enqueue(id, result).then(() => resolve({ id }), reject);
 			}, reject);
 		});
 	}

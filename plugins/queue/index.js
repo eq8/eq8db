@@ -12,7 +12,7 @@ define([
 	let queues = Map({});
 
 	return {
-		queue: (id, obj) => {
+		enqueue: (id, obj) => {
 			const queue = queues.get(id) || List([]);
 
 			queues = queues.set(id, queue.push(obj));
