@@ -71,7 +71,7 @@ define([
 			commit: {
 				returnType: 'Aggregate',
 				params: {
-					timeout: 'Int'
+					options: 'CommitOptions'
 				}
 			}
 		}, _.get(args, 'actions'));
@@ -89,6 +89,10 @@ ${typeDefAggregate}
 ${typeDefTransaction}
 
 ${typeDefQuery}
+
+input CommitOptions {
+	timeout: Int
+}
 `;
 
 		return typeDef;
