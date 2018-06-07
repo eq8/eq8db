@@ -148,33 +148,32 @@ input CommitOptions {
 	}
 
 	function getAggregate(client) {
-		return (obj, args) => {
+		return async(obj, args) => {
 			logger.trace('resolver load:', args);
 
 			const { id } = args;
 
-			return client
-				.load(args, { create: true })
-				.then(result => {
-					const record = !_.isEmpty(result)
-						? result
-						: { id, version: 0 };
+			const root = await client.load(args, { create: true });
+			const record = !_.isEmpty(root)
+				? root
+				: { id, version: 0 };
 
-					logger.trace('resolver load result:', record);
+			logger.trace('resolver load result:', record);
 
-					return toImmutable(record);
-				});
+			return toImmutable(record);
 		};
 	}
 
 	function getTransaction(client) {
-		return (obj, args) => new Promise((resolve, reject) => {
+		return async(obj, args) => {
 			const id = uuidv4();
 
-			getAggregate(client)(obj, args).then(result => {
-				queue.enqueue(id, result).then(() => resolve({ id }), reject);
-			}, reject);
-		});
+			const root = await getAggregate(client)(null, args);
+
+			await queue.enqueue(id, root);
+
+			return { id };
+		};
 	}
 
 	function setAggregate(client) {
