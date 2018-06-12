@@ -6,9 +6,8 @@ define([
 	'express-graphql',
 	'-/logger/index.js',
 	'-/store/index.js',
-	'-/repository/index.js',
 	'-/graphql/lib/index.js'
-], ({ makeExecutableSchema }, graphqlHTTP, logger, store, repository, utils) => {
+], ({ makeExecutableSchema }, graphqlHTTP, logger, store, utils) => {
 	const {
 		getQueries,
 		getMethods,
@@ -51,11 +50,7 @@ define([
 					actions
 				};
 				const typeDefs = getTypeDefs(typeDefsRaw);
-
-				// TODO: remove repository concept and move into it's own service
-				// - i.e. make every query a remote call and not in-memory
-				const client = repository.connect(domain, args);
-				const resolvers = getResolvers(client, typeDefsRaw);
+				const resolvers = getResolvers(typeDefsRaw);
 
 				const schema = makeExecutableSchema({
 					typeDefs,

@@ -4,10 +4,9 @@
 define([
 	'lodash',
 	'uuid/v4',
-	'-/logger/index.js',
-	'-/utils/index.js',
-	'-/queue/index.js'
-], (_, uuidv4, logger, { toImmutable }, queue) => {
+	'immutable',
+	'-/utils/index.js'
+], (_, uuidv4, { Map, List }, { toImmutable }) => {
 	const plugin = {
 		getQueries,
 		getMethods,
@@ -44,16 +43,10 @@ define([
 
 	function getTypeDefs(args) {
 		const queries = _.assign({
-			load: {
-				returnType: 'Aggregate',
-				params: {
-					id: 'ID'
-				}
-			},
 			transact: {
 				returnType: 'Transaction',
 				params: {
-					id: 'ID'
+					options: 'TransactOptions'
 				}
 			}
 		}, _.get(args, 'queries'));
@@ -69,7 +62,7 @@ define([
 				returnType: 'ID'
 			},
 			commit: {
-				returnType: 'Aggregate',
+				returnType: 'Result',
 				params: {
 					options: 'CommitOptions'
 				}
@@ -89,6 +82,14 @@ ${typeDefAggregate}
 ${typeDefTransaction}
 
 ${typeDefQuery}
+
+type Result {
+	id: ID!
+}
+
+input TransactOptions {
+	subscribe: Boolean
+}
 
 input CommitOptions {
 	timeout: Int
@@ -125,7 +126,7 @@ input CommitOptions {
 		_.each(_.keys(args), name => {
 
 			// TODO: remove default and replace with validation
-			const type = _.get(args, name) || 'Aggregate';
+			const type = _.get(args, name) || '[Aggregate]';
 
 			typeDefinitionQueryParams = `${typeDefinitionQueryParams}${name}:${type},`;
 		});
@@ -133,70 +134,41 @@ input CommitOptions {
 		return typeDefinitionQueryParams ? `(${typeDefinitionQueryParams})` : '';
 	}
 
-	function getResolvers(client, args) {
-
+	function getResolvers() {
 		return {
 			Query: _.assign({
-				load: getAggregate(client),
-				transact: getTransaction(client)
-			}, getQueryResolvers(args)),
-			Aggregate: getAggregateResolvers(args),
+				transact: getTransaction()
+			}, getQueryResolvers()),
+			Aggregate: getAggregateResolvers(),
+			Result: getResultResolvers(),
 			Transaction: _.assign({
-				commit: setAggregate(client)
-			}, getTransactionResolvers(client, args))
+				commit
+			}, getTransactionResolvers())
 		};
 	}
 
-	function getAggregate(client) {
-		return async(obj, args) => {
-			logger.trace('resolver load:', args);
-
-			const { id } = args;
-
-			const root = await client.load(args, { create: true });
-			const record = !_.isEmpty(root)
-				? root
-				: { id, version: 0 };
-
-			logger.trace('resolver load result:', record);
-
-			return toImmutable(record);
-		};
-	}
-
-	function getTransaction(client) {
-		return async(obj, args) => {
+	function getTransaction() {
+		return (/* obj, args, ctxt */) => {
 			const id = uuidv4();
 
-			const root = await getAggregate(client)(null, args);
+			// TODO: extract repository info
+			return Promise.resolve(toImmutable({
+				id,
 
-			await queue.enqueue(id, root);
+				// repository,
 
-			return { id };
+				tasks: List([])
+			}));
 		};
 	}
 
-	function setAggregate(client) {
-		return async obj => {
-			const { id } = obj || {};
-
-			const fromQueue = await queue.dequeue(id);
-
-			const changes = toImmutable({
-				version: fromQueue.get('version') + 1,
-
-				// TODO: create a meta provider
-				meta: {
-					lastUpdatedDate: new Date()
-				}
-			});
-
-			const merged = fromQueue.mergeDeep(changes).toJSON();
-
-			const saved = await client.save(merged);
-
-			return toImmutable(saved);
+	function commit(obj) {
+		const result = {
+			id: obj.get('id'),
+			tasks: obj.get('tasks') || List([])
 		};
+
+		return Promise.resolve(Map(result));
 	}
 
 	function getQueryResolvers() {
@@ -206,6 +178,12 @@ input CommitOptions {
 	function getAggregateResolvers() {
 		return {
 			version: obj => new Promise(resolve => resolve(obj.get('version') || 0))
+		};
+	}
+
+	function getResultResolvers() {
+		return {
+			id: obj => Promise.resolve(obj.get('id'))
 		};
 	}
 
