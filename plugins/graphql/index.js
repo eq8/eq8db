@@ -8,7 +8,13 @@ define([
 	'-/store/index.js',
 	'-/graphql/lib/index.js'
 ], ({ makeExecutableSchema }, graphqlHTTP, logger, store, utils) => {
-	const { getTypeDefinitions, getResolvers } = utils;
+	const {
+		getQueries,
+		getMethods,
+		getActions,
+		getTypeDefs,
+		getResolvers
+	} = utils;
 
 	const plugin = {
 		middleware: args => new Promise((resolve, reject) => {
@@ -35,12 +41,20 @@ define([
 			}).then(domain => {
 				logger.trace('domain info found:', domain);
 
-				const tmpTypeDefs = getTypeDefinitions(domain, args);
-				const tmpResolvers = getResolvers(domain, args);
+				const queries = getQueries(domain, args);
+				const methods = getMethods(domain, args);
+				const actions = getActions(domain, args);
+				const typeDefsRaw = {
+					queries,
+					methods,
+					actions
+				};
+				const typeDefs = getTypeDefs(typeDefsRaw);
+				const resolvers = getResolvers(typeDefsRaw);
 
 				const schema = makeExecutableSchema({
-					typeDefs: tmpTypeDefs,
-					resolvers: tmpResolvers,
+					typeDefs,
+					resolvers,
 					logger: {
 						log: resolveError => logger.error(resolveError)
 					}

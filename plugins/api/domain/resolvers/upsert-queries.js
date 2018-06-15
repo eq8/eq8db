@@ -6,11 +6,25 @@ define([
 	'semver',
 	'immutable',
 	'-/logger/index.js',
-	'-/api/classes/domain/errors.js'
+	'-/api/domain/errors.js'
 ], (_, semver, { Map }, logger, ERRORS) => (result, args) => new Promise((resolve, reject) => {
 	const { bctxt, aggregate, queries } = args || {};
 
 	if (!bctxt || !aggregate || !queries) {
+		return reject(new Error(ERRORS.INSUFFICIENT_ARGUMENTS));
+	}
+
+	const hasInvalidQuery = _.reduce(_.keys(queries), (hasError, query) => {
+		const { returnType } = _.get(queries, query) || {};
+
+		if (!returnType) {
+			hasError = hasError || true;
+		}
+
+		return hasError;
+	}, false);
+
+	if (hasInvalidQuery) {
 		return reject(new Error(ERRORS.INSUFFICIENT_ARGUMENTS));
 	}
 
@@ -29,7 +43,7 @@ define([
 		.get('aggregates') || Map({});
 	const selectedAggregate = aggregates
 		.get(aggregate) || Map({});
-	const tags = result
+	const tags = selectedAggregate
 		.get('tags') || Map({});
 	const latestTag = tags
 		.get('latest') || '0.0.0';
@@ -50,6 +64,7 @@ define([
 	// - it needs a return type
 	// - parameters could be optional but it should have a type
 	// - return and parameter type should match entities
+	// - validate now returnTypes and params have not changed since last major version - ie only add
 	const newVersion = latestVersion.mergeDeep(Map({
 		queries: Map(queries).map(v => (_.isObject(v) ? Map(v) : v))
 	}));

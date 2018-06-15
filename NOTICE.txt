@@ -5,10 +5,10 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/eq8/mvp
 │  ├─ licenseUrl: https://github.com/eq8/mvp/raw/master/LICENSE
 │  └─ parents: UNDEFINED
-├─ @types/graphql@0.12.6
+├─ @types/node@9.6.20
 │  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
+│  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
+│  ├─ licenseUrl: https://github.com/DefinitelyTyped/DefinitelyTyped/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ abbrev@1.1.1
 │  ├─ licenses: ISC
@@ -90,11 +90,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/micromatch/anymatch
 │  ├─ licenseUrl: https://github.com/micromatch/anymatch/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ apollo-link@1.2.2
+├─ apollo-link@1.2.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/apollographql/apollo-link
 │  ├─ licenseUrl: https://github.com/apollographql/apollo-link
-│  └─ parents: @eq8/mvp
+│  └─ parents: graphql-tools:@eq8/mvp
 ├─ apollo-utilities@1.0.12
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/apollographql/apollo-client
@@ -884,7 +884,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/isaacs/node-graceful-fs
 │  ├─ licenseUrl: https://github.com/isaacs/node-graceful-fs/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ graphql-tools@2.23.1
+├─ graphql-tools@3.0.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/apollostack/graphql-tools
 │  ├─ licenseUrl: https://github.com/apollostack/graphql-tools/raw/master/LICENSE
@@ -1539,7 +1539,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/mapbox/node-pre-gyp
 │  ├─ licenseUrl: https://github.com/mapbox/node-pre-gyp/raw/master/LICENSE
 │  └─ parents: fsevents:@eq8/mvp
-├─ nodemon@1.17.3
+├─ nodemon@1.17.5
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/remy/nodemon
 │  ├─ licenseUrl: https://github.com/remy/nodemon
@@ -2393,7 +2393,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/sindresorhus/url-parse-lax
 │  ├─ licenseUrl: https://github.com/sindresorhus/url-parse-lax/raw/master/license
 │  └─ parents: @eq8/mvp
-├─ url-parse@1.4.0
+├─ url-parse@1.4.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/unshiftio/url-parse
 │  ├─ licenseUrl: https://github.com/unshiftio/url-parse/raw/master/LICENSE

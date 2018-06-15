@@ -2,10 +2,12 @@
 'use strict';
 
 define([
-	'-/utils/lib/to-immutable.js'
-], toImmutable => {
+	'-/utils/lib/to-immutable.js',
+	'-/utils/lib/to-json.js'
+], (toImmutable, toJSON) => {
 	const plugin = {
-		toImmutable
+		toImmutable,
+		toJSON
 	};
 
 	return plugin;
