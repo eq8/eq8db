@@ -47,7 +47,7 @@
     "semver": "5.5.0",
     "url-parse": "1.4.1",
     "uuid": "3.2.1",
-    "winston": "2.4.1"
+    "winston": "3.0.0"
   },
   "devDependencies": {
     "eslint": "4.19.1",
