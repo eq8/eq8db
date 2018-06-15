@@ -17,12 +17,11 @@ define([
 
 	const LF = '\n';
 
-	function getQueries() {
-		return {
-			isValid: {
-				returnType: 'Boolean'
-			}
-		};
+	function getQueries(domain, args) {
+		const { bctxt, aggregate, v } = args || {};
+		const queryPath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}].queries`;
+
+		return _.get(domain, queryPath);
 	}
 
 	function getMethods() {
@@ -49,7 +48,7 @@ define([
 					options: 'TransactOptions'
 				}
 			}
-		}, _.get(args, 'queries'));
+		}, _.mapValues(_.get(args, 'queries'), query => _.defaultsDeep({ returnType: '[Aggregate]' }, query)));
 
 		const methods = _.assign({
 			version: {
@@ -85,6 +84,7 @@ ${typeDefQuery}
 
 type Result {
 	id: ID!
+	success: Boolean
 }
 
 input TransactOptions {
@@ -92,6 +92,7 @@ input TransactOptions {
 }
 
 input CommitOptions {
+	wait: Boolean
 	timeout: Int
 }
 `;
@@ -172,12 +173,14 @@ input CommitOptions {
 	}
 
 	function getQueryResolvers() {
-		return {};
+		return {
+			load: () => [{ version: 1 }, { version: 2 }]
+		};
 	}
 
 	function getAggregateResolvers() {
 		return {
-			version: obj => new Promise(resolve => resolve(obj.get('version') || 0))
+			version: obj => Promise.resolve(_.get(obj, 'version') || 0)
 		};
 	}
 

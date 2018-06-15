@@ -5,6 +5,17 @@ services:
       ports:
          - "8080:8080"
          - "28015:28015"
+   seed:
+      image: seed
+      build:
+         context: ./test/fixture/services/seed
+      restart: "no"
+      depends_on:
+         - rethinkdb
+   repository:
+      image: repository
+      build:
+         context: ./test/fixture/services/repository
    mvp:
       image: equate/mvp
       build:
@@ -17,4 +28,4 @@ services:
       ports:
          - "8000:8000"
       depends_on:
-         - rethinkdb
+         - seed
