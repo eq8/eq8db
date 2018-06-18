@@ -135,7 +135,9 @@ input CommitOptions {
 		return typeDefinitionQueryParams ? `(${typeDefinitionQueryParams})` : '';
 	}
 
-	function getResolvers() {
+	function getResolvers(typeDefsRaw) {
+		const { actions } = typeDefsRaw;
+
 		return {
 			Query: _.assign({
 				transact: getTransaction()
@@ -144,7 +146,7 @@ input CommitOptions {
 			Result: getResultResolvers(),
 			Transaction: _.assign({
 				commit
-			}, getTransactionResolvers())
+			}, getTransactionResolvers(actions))
 		};
 	}
 
