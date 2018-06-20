@@ -7,4 +7,4 @@ RUN npm install
 
 COPY index.js /workspace/
 
-CMD sh -c 'sleep 60 && node index.js'
+CMD node index.js

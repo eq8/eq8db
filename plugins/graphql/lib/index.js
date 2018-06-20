@@ -142,7 +142,7 @@ input CommitOptions {
 			Query: _.assign({
 				transact: getTransaction()
 			}, getQueryResolvers()),
-			Aggregate: getAggregateResolvers(),
+			Aggregate: getMethodResolvers(),
 			Result: getResultResolvers(),
 			Transaction: _.assign({
 				commit
@@ -151,14 +151,30 @@ input CommitOptions {
 	}
 
 	function getTransaction() {
-		return (/* obj, args, ctxt */) => {
+		return (obj, args, rawCtxt) => {
 			const id = uuidv4();
 
+			const ctxt = toImmutable(_.pick(rawCtxt, [
+				'baseUrl',
+				'cookies',
+				'hostname',
+				'ip',
+				'method',
+				'originalUrl',
+				'params',
+				'path',
+				'protocol',
+				'query',
+				'route',
+				'user'
+			]));
+
 			// TODO: extract repository info
-			return Promise.resolve(toImmutable({
+			return Promise.resolve(Map({
 				id,
 
 				// repository,
+				ctxt,
 
 				tasks: List([])
 			}));
@@ -166,12 +182,12 @@ input CommitOptions {
 	}
 
 	function commit(obj) {
-		const result = {
+		const result = Map({
 			id: obj.get('id'),
-			tasks: obj.get('tasks') || List([])
-		};
+			tasks: obj.get('tasks').toJSON() || []
+		});
 
-		return Promise.resolve(Map(result));
+		return Promise.resolve(result);
 	}
 
 	function getQueryResolvers() {
@@ -180,7 +196,7 @@ input CommitOptions {
 		};
 	}
 
-	function getAggregateResolvers() {
+	function getMethodResolvers() {
 		return {
 			version: obj => Promise.resolve(_.get(obj, 'version') || 0)
 		};
