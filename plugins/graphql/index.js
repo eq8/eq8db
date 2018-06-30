@@ -12,6 +12,7 @@ define([
 		getQueries,
 		getMethods,
 		getActions,
+		getRepository,
 		getTypeDefs,
 		getResolvers
 	} = utils;
@@ -44,10 +45,12 @@ define([
 				const queries = getQueries(domain, args);
 				const methods = getMethods(domain, args);
 				const actions = getActions(domain, args);
+				const repository = getRepository(domain, args);
 				const typeDefsRaw = {
 					queries,
 					methods,
-					actions
+					actions,
+					repository
 				};
 				const typeDefs = getTypeDefs(typeDefsRaw);
 				const resolvers = getResolvers(typeDefsRaw);

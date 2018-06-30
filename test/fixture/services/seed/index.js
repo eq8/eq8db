@@ -26,16 +26,24 @@ const conn = r.connect({
 							},
 							"versions": {
 								"0.0": {
-									"actions": {},
+									"actions": {
+										"load": {
+											"params": {
+												"id": "ID"
+											}
+										},
+										"action": {
+											"params": {
+												"id": "ID"
+											}
+										}
+									},
 									"reducers": {}, // TODO: use for showing result aggregates
 									"methods": {},
 									"queries": {
 										"load": {
 											"params": {
 												"id": "ID"
-											},
-											"resolver": {
-												"uri": "https://api-domain/query/load/0.0"
 											}
 										}
 									},
