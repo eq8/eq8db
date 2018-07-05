@@ -17,11 +17,15 @@ define([
 	};
 
 	const LF = '\n';
+	const PROPERTIES = {
+		QUERIES: 'queries',
+		METHODS: 'methods',
+		ACTIONS: 'actions',
+		REPOSITORY: 'repository'
+	};
 
 	function getQueries(domain, args) {
-		const { bctxt, aggregate, v } = args || {};
-		const queryPath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}].queries`;
-		const queries = _.get(domain, queryPath);
+		const queries = getAggregatePropertyValue(domain, args, PROPERTIES.QUERIES) || {};
 
 		return _.mapValues(
 			queries,
@@ -29,26 +33,36 @@ define([
 		);
 	}
 
-	function getMethods() {
-		return {
-			isValid: {
-				returnType: 'Boolean'
-			}
-		};
+	function getMethods(domain, args) {
+		const methods = getAggregatePropertyValue(domain, args, PROPERTIES.METHODS) || {};
+		const hasReturnType = _.partialRight(_.has, 'returnType');
+
+		return _.pickBy(methods, hasReturnType);
 	}
 
 	function getActions(domain, args) {
-		const { bctxt, aggregate, v } = args || {};
-		const actionPath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}].actions`;
+		const actions = getAggregatePropertyValue(domain, args, PROPERTIES.ACTIONS) || {};
 
 		return _.mapValues(
-			_.get(domain, actionPath),
+			actions,
 			action => _.assign({}, action, { returnType: 'Transaction' })
 		);
 	}
 
-	function getRepository(/* domain , args */) {
-		return {}; // TODO: extract from domain
+	function getRepository(domain, args) {
+		const repositoryName = getAggregatePropertyValue(domain, args, PROPERTIES.REPOSITORY);
+		const repositoryPath = `repositories[${repositoryName}]`;
+		const repository = _.get(domain, repositoryPath);
+
+		return repository;
+	}
+
+	function getAggregatePropertyValue(domain, args, propertyName) {
+		const { bctxt, aggregate, v } = args || {};
+		const propertyPath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}][${propertyName}]`;
+		const propertyValue = _.get(domain, propertyPath);
+
+		return propertyValue;
 	}
 
 	function getTypeDefs(args) {
@@ -169,7 +183,7 @@ input CommitOptions {
 
 			return Promise.resolve(Map({
 				id,
-				repository,
+				repository: Map(repository),
 				ctxt,
 				tasks: List([])
 			}));
@@ -198,7 +212,6 @@ input CommitOptions {
 			id: obj.get('id'),
 			success: true // TODO: replace with actual value for success
 		});
-
 
 		return Promise.resolve(result);
 	}

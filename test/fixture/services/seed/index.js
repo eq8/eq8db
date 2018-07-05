@@ -38,8 +38,20 @@ const conn = r.connect({
 											}
 										}
 									},
-									"reducers": {}, // TODO: use for showing result aggregates
-									"methods": {},
+									"methods": {
+										"id": {
+											"returnType": "ID"
+										},
+										"version": {
+											"returnType": "Int"
+										},
+										"foo": {
+											"params": {
+												"bar": "Boolean"
+											},
+											"returnType": "Boolean"
+										}
+									},
 									"queries": {
 										"load": {
 											"params": {
@@ -47,6 +59,7 @@ const conn = r.connect({
 											}
 										}
 									},
+									"reducers": {}, // TODO: use for showing result aggregates
 									"repository": "default",
 									"rootEntity": "domain",
 									"schemaVersion": "0.0"
