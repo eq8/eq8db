@@ -26,30 +26,141 @@ const conn = r.connect({
 							},
 							"versions": {
 								"0.0": {
+									"entities": {
+										"Repository": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+												"uri": {
+													"returnType": {
+														"name": "String"
+													}
+												}
+											}
+										},
+										"BoundedContext": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+											}
+										},
+										"Aggregate": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+												"entities": {
+													"returnType": {
+														"name": "Entity",
+														"isCollection": true
+													}
+												},
+												"methods": {
+													"returnType": {
+														"name": "Method",
+														"isCollection": true
+													}
+												},
+												"queries": {
+													"returnType": {
+														"name": "Query",
+														"isCollection": true
+													}
+												},
+												"actions": {
+													"returnType": {
+														"name": "Action",
+														"isCollection": true
+													}
+												},
+											}
+										},
+										"Entity": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+											}
+										},
+										"Method": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												}
+											}
+										},
+										"Query": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												}
+											}
+										},
+										"Action": {
+											"methods": {
+												"name": {
+													"returnType": {
+														"name": "String"
+													}
+												}
+											}
+										},
+									},
 									"actions": {
+										"create": {
+											"params": {
+												"id": "ID"
+											}
+										},
 										"load": {
 											"params": {
 												"id": "ID"
 											}
 										},
-										"action": {
+										"delete": {
 											"params": {
 												"id": "ID"
+											}
+										},
+										"addRepository": {
+											"params": {
+												"name": "String",
+												"uri": "String",
 											}
 										}
 									},
 									"methods": {
 										"id": {
-											"returnType": "ID"
+											"returnType": {
+												"name": "ID"
+											}
 										},
 										"version": {
-											"returnType": "Int"
+											"returnType": {
+												"name": "Int"
+											}
+										/* TODO
 										},
-										"foo": {
-											"params": {
-												"bar": "Boolean"
-											},
-											"returnType": "Boolean"
+										"repositories": {
+											"returnType": {
+												"name": "Repository",
+												"isCollection": true
+											}
+										*/
 										}
 									},
 									"queries": {
@@ -59,7 +170,7 @@ const conn = r.connect({
 											}
 										}
 									},
-									"reducers": {}, // TODO: use for showing result aggregates
+									// "reducers": {}, // TODO: use for showing result aggregates
 									"repository": "default",
 									"rootEntity": "domain",
 									"schemaVersion": "0.0"
@@ -71,8 +182,7 @@ const conn = r.connect({
 			},
 			"repositories": {
 				"default": {
-					"entities": {},
-					"uri": "https://repository"
+					"uri": "https://repository/api" // TODO: define API for repositories
 				}
 			}
 		})

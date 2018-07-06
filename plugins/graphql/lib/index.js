@@ -11,6 +11,7 @@ define([
 		getQueries,
 		getMethods,
 		getActions,
+		getEntities,
 		getRepository,
 		getTypeDefs,
 		getResolvers
@@ -21,6 +22,7 @@ define([
 		QUERIES: 'queries',
 		METHODS: 'methods',
 		ACTIONS: 'actions',
+		ENTITIES: 'entities',
 		REPOSITORY: 'repository'
 	};
 
@@ -29,7 +31,7 @@ define([
 
 		return _.mapValues(
 			queries,
-			query => _.assign({}, query, { returnType: '[Aggregate]' })
+			query => _.assign({}, query, { returnType: { name: 'Aggregate', isCollection: true } })
 		);
 	}
 
@@ -45,8 +47,16 @@ define([
 
 		return _.mapValues(
 			actions,
-			action => _.assign({}, action, { returnType: 'Transaction' })
+			action => _.assign({}, action, { returnType: { name: 'Transaction' } })
 		);
+	}
+
+	function getEntities(domain, args) {
+		const entities = getAggregatePropertyValue(domain, args, PROPERTIES.ENTITIES) || {};
+
+		// const hasName = _.partialRight(_.has, 'methods');
+
+		return entities; // _.pickBy(entities, hasName);
 	}
 
 	function getRepository(domain, args) {
@@ -66,10 +76,10 @@ define([
 	}
 
 	function getTypeDefs(args) {
-		const { queries, methods, actions } = args || {};
+		const { queries, methods, actions, entities } = args || {};
 		const defaultQueries = {
 			transact: {
-				returnType: 'Transaction',
+				returnType: { name: 'Transaction' },
 				params: {
 					options: 'TransactOptions'
 				}
@@ -77,41 +87,65 @@ define([
 		};
 
 		const defaultMethods = {
+			id: {
+				returnType: { name: 'ID' }
+			},
 			version: {
-				returnType: 'Int'
+				returnType: { name: 'Int' }
 			}
 		};
 
 		const defaultActions = {
 			id: {
-				returnType: 'ID'
+				returnType: { name: 'ID' }
 			},
 			commit: {
-				returnType: 'Result',
+				returnType: { name: 'Result' },
 				params: {
 					options: 'CommitOptions'
 				}
 			}
 		};
 
-		const typeDefQuery = getTypeDef('Query', _.assign(defaultQueries, queries));
-		const typeDefAggregate = getTypeDef('Aggregate', _.assign(defaultMethods, methods));
-		const typeDefTransaction = getTypeDef('Transaction', _.assign(defaultActions, actions));
+		const defaultEntities = {
+			Query: {
+				methods: _.assign({}, queries, defaultQueries)
+			},
+			Aggregate: {
+				methods: _.assign({}, methods, defaultMethods)
+			},
+			Transaction: {
+				methods: _.assign({}, actions, defaultActions)
+			},
+			Result: {
+				methods: {
+					id: {
+						returnType: {
+							name: 'ID!'
+						}
+					},
+					success: {
+						returnType: {
+							name: 'Boolean'
+						}
+					}
+				}
+			}
+		};
+
+
+		const typeDefEntities = _.reduce(_.assign({}, entities, defaultEntities), (result, entity, name) => {
+			const entityMethods = _.get(entity, 'methods') || {};
+			const typeDefEntity = getTypeDef(name, entityMethods);
+
+			return `${result}${typeDefEntity}${LF}`;
+		}, '');
 
 		const typeDef = `
 """
 Sample documentation for Aggregate
 """
-${typeDefAggregate}
-
-${typeDefTransaction}
-
-${typeDefQuery}
-
-type Result {
-	id: ID!
-	success: Boolean
-}
+${typeDefEntities}
 
 input TransactOptions {
 	subscribe: Boolean
@@ -136,11 +170,15 @@ input CommitOptions {
 
 		const queryDefs = _.reduce(queries || {}, (result, query, name) => {
 			const params = getQueryParams(_.get(query, 'params'));
-			const returnType = _.get(query, 'returnType');
+			const returnTypeName = _.get(query, 'returnType.name');
+			const returnTypeIsCollection = _.get(query, 'returnType.isCollection');
+			const returnType = returnTypeIsCollection
+				? `[${returnTypeName}]`
+				: returnTypeName;
 			const prevResult = result && `${result}${LF}`;
 
 			return returnType
-				? `${prevResult}${name}${params}: ${returnType}`
+				? `${prevResult} ${name}${params}: ${returnType}`
 				: result;
 		}, '');
 
@@ -162,14 +200,14 @@ input CommitOptions {
 		const { actions, repository } = typeDefsRaw;
 
 		return {
-			Query: _.assign({
+			Query: _.assign({}, getQueryResolvers(), {
 				transact: getTransaction({ repository })
-			}, getQueryResolvers()),
+			}),
 			Aggregate: getMethodResolvers(),
 			Result: getResultResolvers(),
-			Transaction: _.assign({
+			Transaction: _.assign({}, getTransactionResolvers({ actions }), {
 				commit
-			}, getTransactionResolvers({ actions }))
+			})
 		};
 	}
 
@@ -218,12 +256,19 @@ input CommitOptions {
 
 	function getQueryResolvers() {
 		return {
-			load: () => [{ version: 1 }, { version: 2 }] // TODO: replace with actual resolver
+			load: () => [{
+				id: 'localhost:8000',
+				version: 1,
+				repository: {
+					name: 'default'
+				}
+			}] // TODO: replace with actual resolver
 		};
 	}
 
 	function getMethodResolvers() {
 		return {
+			id: obj => Promise.resolve(_.get(obj, 'id') || 0),
 			version: obj => Promise.resolve(_.get(obj, 'version') || 0)
 		};
 	}
