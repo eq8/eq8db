@@ -26,6 +26,17 @@ const conn = r.connect({
 							},
 							"versions": {
 								"0.0": {
+									"inputEntities": {
+										"QueryInput": {
+											"methods": {
+												"id": {
+													"returnType": {
+														"name": "ID"
+													}
+												}
+											}
+										}
+									},
 									"entities": {
 										"Repository": {
 											"methods": {
@@ -123,17 +134,17 @@ const conn = r.connect({
 									"actions": {
 										"create": {
 											"params": {
-												"id": "ID"
+												"in": "QueryInput"
 											}
 										},
 										"load": {
 											"params": {
-												"id": "ID"
+												"in": "QueryInput"
 											}
 										},
 										"delete": {
 											"params": {
-												"id": "ID"
+												"in": "QueryInput"
 											}
 										},
 										"addRepository": {
@@ -166,7 +177,7 @@ const conn = r.connect({
 									"queries": {
 										"load": {
 											"params": {
-												"id": "ID"
+												"in": "QueryInput"
 											}
 										}
 									},

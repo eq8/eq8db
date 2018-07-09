@@ -12,6 +12,7 @@ define([
 		getMethods,
 		getActions,
 		getEntities,
+		getInputEntities,
 		getRepository,
 		getTypeDefs,
 		getResolvers
@@ -23,6 +24,7 @@ define([
 		METHODS: 'methods',
 		ACTIONS: 'actions',
 		ENTITIES: 'entities',
+		INPUT_ENTITIES: 'inputEntities',
 		REPOSITORY: 'repository'
 	};
 
@@ -59,6 +61,14 @@ define([
 		return entities; // _.pickBy(entities, hasName);
 	}
 
+	function getInputEntities(domain, args) {
+		const entities = getAggregatePropertyValue(domain, args, PROPERTIES.INPUT_ENTITIES) || {};
+
+		// const hasName = _.partialRight(_.has, 'methods');
+
+		return entities; // _.pickBy(entities, hasName);
+	}
+
 	function getRepository(domain, args) {
 		const repositoryName = getAggregatePropertyValue(domain, args, PROPERTIES.REPOSITORY);
 		const repositoryPath = `repositories[${repositoryName}]`;
@@ -76,7 +86,7 @@ define([
 	}
 
 	function getTypeDefs(args) {
-		const { queries, methods, actions, entities } = args || {};
+		const { queries, methods, actions, entities, inputEntities } = args || {};
 		const defaultQueries = {
 			transact: {
 				returnType: { name: 'Transaction' },
@@ -133,37 +143,62 @@ define([
 			}
 		};
 
+		const defaultInputEntities = {
+			TransactOptions: {
+				methods: {
+					subscribe: {
+						returnType: {
+							name: 'Boolean'
+						}
+					}
+				}
+			},
+			CommitOptions: {
+				methods: {
+					wait: {
+						returnType: {
+							name: 'Boolean'
+						}
+					},
+					timeout: {
+						returnType: {
+							name: 'Int'
+						}
+					}
+				}
+			}
+		};
 
-		const typeDefEntities = _.reduce(_.assign({}, entities, defaultEntities), (result, entity, name) => {
+		const types = _.reduce(_.assign({}, entities, defaultEntities), (result, entity, name) => {
 			const entityMethods = _.get(entity, 'methods') || {};
-			const typeDefEntity = getTypeDef(name, entityMethods);
+			const typeEntityDef = getDefinition('type', name, entityMethods);
 
-			return `${result}${typeDefEntity}${LF}`;
+			return `${result}${typeEntityDef}${LF}`;
 		}, '');
 
-		const typeDef = `
+		const inputs = _.reduce(_.assign({}, inputEntities, defaultInputEntities), (result, input, name) => {
+			const inputMethods = _.get(input, 'methods') || {};
+			const inputEntityDef = getDefinition('input', name, inputMethods);
+
+			return `${result}${inputEntityDef}${LF}`;
+		}, '');
+
+		const typeDefs = `
 """
 Sample documentation for Aggregate
 """
-${typeDefEntities}
+${types}
 
-input TransactOptions {
-	subscribe: Boolean
-}
-
-input CommitOptions {
-	wait: Boolean
-	timeout: Int
-}
+${inputs}
 `;
 
-		return typeDef;
+		return typeDefs;
 	}
 
-	function getTypeDef(type, queries) {
+	function getDefinition(type, name, queries) {
 		const queryDefs = getQueryDefs(queries);
 
-		return `type ${type} {${LF}${queryDefs}${LF}}${LF}`;
+		return `${type} ${name} {${LF}${queryDefs}${LF}}${LF}`;
 	}
 
 	function getQueryDefs(queries) {

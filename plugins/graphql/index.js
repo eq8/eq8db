@@ -13,6 +13,7 @@ define([
 		getMethods,
 		getActions,
 		getEntities,
+		getInputEntities,
 		getRepository,
 		getTypeDefs,
 		getResolvers
@@ -47,12 +48,14 @@ define([
 				const methods = getMethods(domain, args);
 				const actions = getActions(domain, args);
 				const entities = getEntities(domain, args);
+				const inputEntities = getInputEntities(domain, args);
 				const repository = getRepository(domain, args);
 				const typeDefsRaw = {
 					queries,
 					methods,
 					actions,
 					entities,
+					inputEntities,
 					repository
 				};
 				const typeDefs = getTypeDefs(typeDefsRaw);
