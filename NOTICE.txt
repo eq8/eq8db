@@ -1,14 +1,15 @@
 include dir /Users/benjaminbartolome/git/eq8/mvp
 scanning /Users/benjaminbartolome/git/eq8/mvp
+scanning /Users/benjaminbartolome/git/eq8/mvp/test/fixture/services/seed
 ├─ @eq8/mvp@0.0.0
 │  ├─ licenses: Apache-2.0
 │  ├─ repository: https://github.com/eq8/mvp
 │  ├─ licenseUrl: https://github.com/eq8/mvp/raw/master/LICENSE
 │  └─ parents: UNDEFINED
-├─ @types/node@9.6.20
+├─ @types/graphql@0.12.6
 │  ├─ licenses: MIT
-│  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://github.com/DefinitelyTyped/DefinitelyTyped/raw/master/LICENSE
+│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
+│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
 │  └─ parents: @eq8/mvp
 ├─ abbrev@1.1.1
 │  ├─ licenses: ISC
@@ -20,27 +21,22 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jshttp/accepts
 │  ├─ licenseUrl: https://github.com/jshttp/accepts/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ acorn-jsx@3.0.1
+├─ acorn-jsx@4.1.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/RReverser/acorn-jsx
 │  ├─ licenseUrl: https://github.com/RReverser/acorn-jsx/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ acorn@3.3.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/ternjs/acorn
-│  ├─ licenseUrl: https://github.com/ternjs/acorn/raw/master/LICENSE
-│  └─ parents: acorn-jsx:@eq8/mvp
-├─ acorn@5.5.3
+├─ acorn@5.7.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/acornjs/acorn
 │  ├─ licenseUrl: https://github.com/acornjs/acorn/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ ajv-keywords@2.1.1
+├─ ajv-keywords@3.2.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/epoberezkin/ajv-keywords
 │  ├─ licenseUrl: https://github.com/epoberezkin/ajv-keywords/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ ajv@5.5.2
+├─ ajv@6.5.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/epoberezkin/ajv
 │  ├─ licenseUrl: https://github.com/epoberezkin/ajv/raw/master/LICENSE
@@ -90,12 +86,12 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/micromatch/anymatch
 │  ├─ licenseUrl: https://github.com/micromatch/anymatch/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ apollo-link@1.2.1
+├─ apollo-link@1.2.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/apollographql/apollo-link
 │  ├─ licenseUrl: https://github.com/apollographql/apollo-link
-│  └─ parents: graphql-tools:@eq8/mvp
-├─ apollo-utilities@1.0.12
+│  └─ parents: @eq8/mvp
+├─ apollo-utilities@1.0.16
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/apollographql/apollo-client
 │  ├─ licenseUrl: https://github.com/apollographql/apollo-client
@@ -170,11 +166,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/paulmillr/async-each
 │  ├─ licenseUrl: https://github.com/paulmillr/async-each
 │  └─ parents: @eq8/mvp
-├─ async@1.0.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/caolan/async
-│  ├─ licenseUrl: https://github.com/caolan/async/raw/master/LICENSE
-│  └─ parents: winston:@eq8/mvp
 ├─ async@2.6.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/caolan/async
@@ -229,11 +220,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: BSD-3-Clause
 │  ├─ repository: https://github.com/goinstant/buffer-equal-constant-time
 │  ├─ licenseUrl: https://github.com/goinstant/buffer-equal-constant-time/raw/master/LICENSE.txt
-│  └─ parents: @eq8/mvp
-├─ buffer-from@1.0.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/LinusU/buffer-from
-│  ├─ licenseUrl: https://github.com/LinusU/buffer-from
 │  └─ parents: @eq8/mvp
 ├─ bytes@3.0.0
 │  ├─ licenses: MIT
@@ -325,11 +311,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/knownasilya/cli-width
 │  ├─ licenseUrl: https://github.com/knownasilya/cli-width/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ co@4.6.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/tj/co
-│  ├─ licenseUrl: https://github.com/tj/co/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
 ├─ code-point-at@1.1.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/code-point-at
@@ -340,6 +321,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jonschlinkert/collection-visit
 │  ├─ licenseUrl: https://github.com/jonschlinkert/collection-visit/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ color-convert@0.5.3
+│  ├─ licenses: UNKNOWN
+│  ├─ repository: https://github.com/harthur/color-convert
+│  ├─ licenseUrl: https://github.com/harthur/color-convert/raw/master/LICENSE
+│  └─ parents: color:@eq8/mvp
 ├─ color-convert@1.9.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/Qix-/color-convert
@@ -350,12 +336,30 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/dfcreative/color-name
 │  ├─ licenseUrl: https://github.com/dfcreative/color-name/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ colors@1.0.3
+├─ color-string@0.3.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/harthur/color-string
+│  ├─ licenseUrl: https://github.com/harthur/color-string/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
+├─ color@0.8.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/harthur/color
+│  ├─ licenseUrl: https://github.com/harthur/color/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
+├─ colornames@0.0.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/timoxley/colornames
+│  ├─ licenseUrl: https://github.com/timoxley/colornames
+│  └─ parents: @eq8/mvp
+├─ colors@1.3.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/Marak/colors.js
-│  ├─ licenseUrl: https://github.com/Marak/colors.js/raw/master/MIT-LICENSE.txt
+│  ├─ licenseUrl: https://github.com/Marak/colors.js/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ commander@2.15.1
+├─ colorspace@1.0.1
+│  ├─ licenses: MIT
+│  └─ parents: @eq8/mvp
+├─ commander@2.16.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/tj/commander.js
 │  ├─ licenseUrl: https://github.com/tj/commander.js/raw/master/LICENSE
@@ -369,11 +373,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/substack/node-concat-map
 │  ├─ licenseUrl: https://github.com/substack/node-concat-map/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ concat-stream@1.6.2
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/maxogden/concat-stream
-│  ├─ licenseUrl: https://github.com/maxogden/concat-stream/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ configstore@3.1.2
 │  ├─ licenses: BSD-2-Clause
@@ -425,15 +424,15 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/IndigoUnited/node-cross-spawn
 │  ├─ licenseUrl: https://github.com/IndigoUnited/node-cross-spawn/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ cross-spawn@6.0.5
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/moxystudio/node-cross-spawn
+│  ├─ licenseUrl: https://github.com/moxystudio/node-cross-spawn/raw/master/LICENSE
+│  └─ parents: eslint:@eq8/mvp
 ├─ crypto-random-string@1.0.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/crypto-random-string
 │  ├─ licenseUrl: https://github.com/sindresorhus/crypto-random-string/raw/master/license
-│  └─ parents: @eq8/mvp
-├─ cycle@1.0.3
-│  ├─ licenses: UNKNOWN
-│  ├─ repository: https://github.com/dscape/cycle
-│  ├─ licenseUrl: https://github.com/dscape/cycle
 │  └─ parents: @eq8/mvp
 ├─ debug@2.6.7
 │  ├─ licenses: MIT
@@ -550,6 +549,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/npm/dezalgo
 │  ├─ licenseUrl: https://github.com/npm/dezalgo/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ diagnostics@1.1.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/bigpipe/diagnostics
+│  ├─ licenseUrl: https://github.com/bigpipe/diagnostics/raw/master/LICENSE.md
+│  └─ parents: @eq8/mvp
 ├─ doctrine@2.1.0
 │  ├─ licenses: Apache-2.0
 │  ├─ repository: https://github.com/eslint/doctrine
@@ -580,12 +584,22 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jonathanong/ee-first
 │  ├─ licenseUrl: https://github.com/jonathanong/ee-first/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ enabled@1.0.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/bigpipe/enabled
+│  ├─ licenseUrl: https://github.com/bigpipe/enabled/raw/master/LICENSE.md
+│  └─ parents: @eq8/mvp
 ├─ encodeurl@1.0.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/pillarjs/encodeurl
 │  ├─ licenseUrl: https://github.com/pillarjs/encodeurl/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ es-abstract@1.11.0
+├─ env-variable@0.0.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/3rd-Eden/env-variable
+│  ├─ licenseUrl: https://github.com/3rd-Eden/env-variable
+│  └─ parents: @eq8/mvp
+├─ es-abstract@1.12.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/ljharb/es-abstract
 │  ├─ licenseUrl: https://github.com/ljharb/es-abstract/raw/master/LICENSE
@@ -610,7 +624,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/eslint/eslint
 │  ├─ licenseUrl: https://github.com/eslint/eslint/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ eslint-scope@3.7.1
+├─ eslint-scope@4.0.0
 │  ├─ licenses: BSD-2-Clause
 │  ├─ repository: https://github.com/eslint/eslint-scope
 │  ├─ licenseUrl: https://github.com/eslint/eslint-scope/raw/master/LICENSE
@@ -620,12 +634,12 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/eslint/eslint-visitor-keys
 │  ├─ licenseUrl: https://github.com/eslint/eslint-visitor-keys/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ eslint@4.19.1
+├─ eslint@5.0.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/eslint/eslint
 │  ├─ licenseUrl: https://github.com/eslint/eslint/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ espree@3.5.4
+├─ espree@4.0.0
 │  ├─ licenses: BSD-2-Clause
 │  ├─ repository: https://github.com/eslint/espree
 │  ├─ licenseUrl: https://github.com/eslint/espree/raw/master/LICENSE
@@ -705,11 +719,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/micromatch/extglob
 │  ├─ licenseUrl: https://github.com/micromatch/extglob/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ eyes@0.1.8
-│  ├─ licenses: MIT
-│  ├─ licenseUrl: 
-│  └─ parents: @eq8/mvp
-├─ fast-deep-equal@1.1.0
+├─ fast-deep-equal@2.0.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/epoberezkin/fast-deep-equal
 │  ├─ licenseUrl: https://github.com/epoberezkin/fast-deep-equal/raw/master/LICENSE
@@ -724,10 +734,20 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/hiddentao/fast-levenshtein
 │  ├─ licenseUrl: https://github.com/hiddentao/fast-levenshtein/raw/master/LICENSE.md
 │  └─ parents: @eq8/mvp
+├─ fast-safe-stringify@2.0.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/davidmarkclements/fast-safe-stringify
+│  ├─ licenseUrl: https://github.com/davidmarkclements/fast-safe-stringify/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
 ├─ faucet@0.0.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/substack/faucet
 │  ├─ licenseUrl: https://github.com/substack/faucet
+│  └─ parents: @eq8/mvp
+├─ fecha@2.3.3
+│  ├─ licenses: MIT
+│  ├─ repository: git+https://taylorhakes@github.com/taylorhakes/fecha
+│  ├─ licenseUrl: git+https://taylorhakes@github.com/taylorhakes/fecha/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ figures@2.0.0
 │  ├─ licenses: MIT
@@ -754,10 +774,10 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/royriojas/flat-cache
 │  ├─ licenseUrl: https://github.com/royriojas/flat-cache/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ for-each@0.3.2
+├─ for-each@0.3.3
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/Raynos/for-each
-│  ├─ licenseUrl: http://github.com/Raynos/for-each/raw/master/LICENSE
+│  ├─ licenseUrl: https://github.com/Raynos/for-each/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ for-in@1.0.2
 │  ├─ licenses: MIT
@@ -859,7 +879,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/sindresorhus/global-dirs
 │  ├─ licenseUrl: https://github.com/sindresorhus/global-dirs/raw/master/license
 │  └─ parents: @eq8/mvp
-├─ globals@11.5.0
+├─ globals@11.7.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/globals
 │  ├─ licenseUrl: https://github.com/sindresorhus/globals/raw/master/license
@@ -884,7 +904,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/isaacs/node-graceful-fs
 │  ├─ licenseUrl: https://github.com/isaacs/node-graceful-fs/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ graphql-tools@3.0.2
+├─ graphql-tools@3.0.5
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/apollostack/graphql-tools
 │  ├─ licenseUrl: https://github.com/apollostack/graphql-tools/raw/master/LICENSE
@@ -908,6 +928,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/has-flag
 │  ├─ licenseUrl: https://github.com/sindresorhus/has-flag/raw/master/license
+│  └─ parents: @eq8/mvp
+├─ has-symbols@1.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/has-symbols
+│  ├─ licenseUrl: https://github.com/ljharb/has-symbols/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ has-unicode@2.0.1
 │  ├─ licenses: ISC
@@ -934,10 +959,10 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jonschlinkert/has-values
 │  ├─ licenseUrl: https://github.com/jonschlinkert/has-values/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ has@1.0.1
+├─ has@1.0.3
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/tarruda/has
-│  ├─ licenseUrl: https://github.com/tarruda/has/blob/master/LICENSE-MIT
+│  ├─ licenseUrl: https://github.com/tarruda/has/raw/master/LICENSE-MIT
 │  └─ parents: @eq8/mvp
 ├─ http-errors@1.6.3
 │  ├─ licenses: MIT
@@ -969,7 +994,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/isaacs/ignore-walk
 │  ├─ licenseUrl: https://github.com/isaacs/ignore-walk/raw/master/LICENSE
 │  └─ parents: fsevents:@eq8/mvp
-├─ ignore@3.3.8
+├─ ignore@3.3.10
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/kaelzhang/node-ignore
 │  ├─ licenseUrl: https://github.com/kaelzhang/node-ignore
@@ -1004,7 +1029,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/isaacs/ini
 │  ├─ licenseUrl: https://github.com/isaacs/ini/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ inquirer@3.3.0
+├─ inquirer@5.2.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/SBoudrias/Inquirer.js
 │  ├─ licenseUrl: https://github.com/SBoudrias/Inquirer.js
@@ -1034,7 +1059,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/feross/is-buffer
 │  ├─ licenseUrl: https://github.com/feross/is-buffer/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ is-callable@1.1.3
+├─ is-callable@1.1.4
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/ljharb/is-callable
 │  ├─ licenseUrl: https://github.com/ljharb/is-callable/raw/master/LICENSE
@@ -1093,11 +1118,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/is-fullwidth-code-point
 │  ├─ licenseUrl: https://github.com/sindresorhus/is-fullwidth-code-point/raw/master/license
-│  └─ parents: @eq8/mvp
-├─ is-function@1.0.1
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/grncdr/js-is-function
-│  ├─ licenseUrl: https://github.com/grncdr/js-is-function/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ is-glob@3.1.0
 │  ├─ licenses: MIT
@@ -1224,11 +1244,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jonschlinkert/isobject
 │  ├─ licenseUrl: https://github.com/jonschlinkert/isobject/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ isstream@0.1.2
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/rvagg/isstream
-│  ├─ licenseUrl: https://github.com/rvagg/isstream/raw/master/LICENSE.md
-│  └─ parents: @eq8/mvp
 ├─ iterall@1.2.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/leebyron/iterall
@@ -1259,7 +1274,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/smikes/json-parse-helpfulerror
 │  ├─ licenseUrl: https://github.com/smikes/json-parse-helpfulerror/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ json-schema-traverse@0.3.1
+├─ json-schema-traverse@0.4.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/epoberezkin/json-schema-traverse
 │  ├─ licenseUrl: https://github.com/epoberezkin/json-schema-traverse/raw/master/LICENSE
@@ -1308,6 +1323,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/jonschlinkert/kind-of
 │  ├─ licenseUrl: https://github.com/jonschlinkert/kind-of/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
+├─ kuler@0.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/3rd-Eden/kuler
+│  ├─ licenseUrl: https://github.com/3rd-Eden/kuler
 │  └─ parents: @eq8/mvp
 ├─ latest-version@3.1.0
 │  ├─ licenses: MIT
@@ -1368,6 +1388,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/lodash/lodash
 │  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
+├─ logform@1.9.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/winstonjs/logform
+│  ├─ licenseUrl: https://github.com/winstonjs/logform/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ lowercase-keys@1.0.1
 │  ├─ licenses: MIT
@@ -1534,6 +1559,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jshttp/negotiator
 │  ├─ licenseUrl: https://github.com/jshttp/negotiator/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ nice-try@1.0.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/electerious/nice-try
+│  ├─ licenseUrl: https://github.com/electerious/nice-try/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
 ├─ node-pre-gyp@0.10.0
 │  ├─ licenses: BSD-3-Clause
 │  ├─ repository: https://github.com/mapbox/node-pre-gyp
@@ -1592,7 +1622,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/npm/npm-bundled
 │  ├─ licenseUrl: https://github.com/npm/npm-bundled
 │  └─ parents: fsevents:@eq8/mvp
-├─ npm-license-crawler@0.1.7
+├─ npm-license-crawler@0.1.9
 │  ├─ licenses: BSD-3-Clause
 │  ├─ repository: https://github.com/mwittig/npm-license-crawler
 │  ├─ licenseUrl: https://github.com/mwittig/npm-license-crawler/raw/master/LICENSE
@@ -1627,7 +1657,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jonschlinkert/object-copy
 │  ├─ licenseUrl: https://github.com/jonschlinkert/object-copy/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ object-inspect@1.5.0
+├─ object-inspect@1.6.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/substack/object-inspect
 │  ├─ licenseUrl: https://github.com/substack/object-inspect/raw/master/LICENSE
@@ -1637,7 +1667,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/ljharb/object-keys
 │  ├─ licenseUrl: https://github.com/ljharb/object-keys
 │  └─ parents: @eq8/mvp
-├─ object-keys@1.0.11
+├─ object-keys@1.0.12
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/ljharb/object-keys
 │  ├─ licenseUrl: https://github.com/ljharb/object-keys/raw/master/LICENSE
@@ -1661,6 +1691,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/isaacs/once
 │  ├─ licenseUrl: https://github.com/isaacs/once/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
+├─ one-time@0.0.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/unshiftio/one-time
+│  ├─ licenseUrl: https://github.com/unshiftio/one-time/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ onetime@2.0.1
 │  ├─ licenses: MIT
@@ -1833,6 +1868,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 ├─ pstree.remy@1.1.0
 │  ├─ licenses: MIT
 │  └─ parents: @eq8/mvp
+├─ punycode@2.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/bestiejs/punycode.js
+│  ├─ licenseUrl: https://github.com/bestiejs/punycode.js/raw/master/LICENSE-MIT.txt
+│  └─ parents: @eq8/mvp
 ├─ qs@6.4.0
 │  ├─ licenses: BSD-3-Clause
 │  ├─ repository: https://github.com/ljharb/qs
@@ -1898,6 +1938,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jonschlinkert/regex-not
 │  ├─ licenseUrl: https://github.com/jonschlinkert/regex-not/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ regexp.prototype.flags@1.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/es-shims/RegExp.prototype.flags
+│  ├─ licenseUrl: https://github.com/es-shims/RegExp.prototype.flags/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
 ├─ regexpp@1.1.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/mysticatea/regexpp
@@ -1953,10 +1998,10 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/lydell/resolve-url
 │  ├─ licenseUrl: https://github.com/lydell/resolve-url/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ resolve@1.5.0
+├─ resolve@1.7.1
 │  ├─ licenses: MIT
-│  ├─ repository: https://github.com/browserify/node-resolve
-│  ├─ licenseUrl: https://github.com/browserify/node-resolve/raw/master/LICENSE
+│  ├─ repository: https://github.com/browserify/resolve
+│  ├─ licenseUrl: https://github.com/browserify/resolve/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ restore-cursor@2.0.0
 │  ├─ licenses: MIT
@@ -1988,15 +2033,10 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/SBoudrias/run-async
 │  ├─ licenseUrl: https://github.com/SBoudrias/run-async/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ rx-lite-aggregates@4.0.8
-│  ├─ licenses: Apache License, Version 2.0
-│  ├─ repository: https://github.com/Reactive-Extensions/RxJS
-│  ├─ licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
-│  └─ parents: @eq8/mvp
-├─ rx-lite@4.0.8
-│  ├─ licenses: Apache License, Version 2.0
-│  ├─ repository: https://github.com/Reactive-Extensions/RxJS
-│  ├─ licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
+├─ rxjs@5.5.11
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/ReactiveX/RxJS
+│  ├─ licenseUrl: https://github.com/ReactiveX/RxJS/raw/master/LICENSE.txt
 │  └─ parents: @eq8/mvp
 ├─ safe-buffer@5.1.1
 │  ├─ licenses: MIT
@@ -2023,6 +2063,9 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/isaacs/sax-js
 │  ├─ licenseUrl: https://github.com/isaacs/sax-js/raw/master/LICENSE
 │  └─ parents: fsevents:@eq8/mvp
+├─ seed@1.0.0
+│  ├─ licenses: ISC
+│  └─ parents: UNDEFINED
 ├─ semver-diff@2.1.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/semver-diff
@@ -2188,6 +2231,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/sindresorhus/string-width
 │  ├─ licenseUrl: https://github.com/sindresorhus/string-width/raw/master/license
 │  └─ parents: @eq8/mvp
+├─ string.prototype.matchall@2.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/String.prototype.matchAll
+│  ├─ licenseUrl: https://github.com/ljharb/String.prototype.matchAll/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
 ├─ string.prototype.trim@1.1.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/es-shims/String.prototype.trim
@@ -2248,7 +2296,12 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/chalk/supports-color
 │  ├─ licenseUrl: https://github.com/chalk/supports-color/raw/master/license
 │  └─ parents: chalk:@eq8/mvp
-├─ table@4.0.2
+├─ symbol-observable@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/blesh/symbol-observable
+│  ├─ licenseUrl: https://github.com/blesh/symbol-observable/raw/master/license
+│  └─ parents: @eq8/mvp
+├─ table@4.0.3
 │  ├─ licenses: BSD-3-Clause
 │  ├─ repository: https://github.com/gajus/table
 │  ├─ licenseUrl: https://github.com/gajus/table/raw/master/LICENSE
@@ -2263,7 +2316,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/substack/tape
 │  ├─ licenseUrl: https://github.com/substack/tape/raw/master/LICENSE
 │  └─ parents: faucet:@eq8/mvp
-├─ tape@4.9.0
+├─ tape@4.9.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/substack/tape
 │  ├─ licenseUrl: https://github.com/substack/tape/raw/master/LICENSE
@@ -2277,6 +2330,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/sindresorhus/term-size
 │  ├─ licenseUrl: https://github.com/sindresorhus/term-size/raw/master/license
+│  └─ parents: @eq8/mvp
+├─ text-hex@0.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/3rd-Eden/text-hex
+│  ├─ licenseUrl: https://github.com/3rd-Eden/text-hex
 │  └─ parents: @eq8/mvp
 ├─ text-table@0.2.0
 │  ├─ licenses: MIT
@@ -2328,6 +2386,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/notatestuser/treeify
 │  ├─ licenseUrl: https://github.com/notatestuser/treeify/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
+├─ triple-beam@1.3.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/winstonjs/triple-beam
+│  ├─ licenseUrl: https://github.com/winstonjs/triple-beam/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
 ├─ type-check@0.3.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/gkz/type-check
@@ -2337,11 +2400,6 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/jshttp/type-is
 │  ├─ licenseUrl: https://github.com/jshttp/type-is/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ typedarray@0.0.6
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/substack/typedarray
-│  ├─ licenseUrl: https://github.com/substack/typedarray/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ undefsafe@2.0.2
 │  ├─ licenses: MIT
@@ -2383,6 +2441,11 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/yeoman/update-notifier
 │  ├─ licenseUrl: https://github.com/yeoman/update-notifier/raw/master/license
 │  └─ parents: @eq8/mvp
+├─ uri-js@4.2.2
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/garycourt/uri-js
+│  ├─ licenseUrl: https://github.com/garycourt/uri-js
+│  └─ parents: @eq8/mvp
 ├─ urix@0.1.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/lydell/urix
@@ -2418,7 +2481,7 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/jaredhanson/utils-merge
 │  ├─ licenseUrl: http://www.opensource.org/licenses/MIT
 │  └─ parents: @eq8/mvp
-├─ uuid@3.2.1
+├─ uuid@3.3.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/kelektiv/node-uuid
 │  ├─ licenseUrl: https://github.com/kelektiv/node-uuid/raw/master/LICENSE.md
@@ -2443,7 +2506,12 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
 │  ├─ repository: https://github.com/sindresorhus/widest-line
 │  ├─ licenseUrl: https://github.com/sindresorhus/widest-line/raw/master/license
 │  └─ parents: @eq8/mvp
-├─ winston@2.4.1
+├─ winston-transport@4.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/winstonjs/winston-transport
+│  ├─ licenseUrl: https://github.com/winstonjs/winston-transport/raw/master/LICENSE
+│  └─ parents: @eq8/mvp
+├─ winston@3.0.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/winstonjs/winston
 │  ├─ licenseUrl: https://github.com/winstonjs/winston/raw/master/LICENSE
@@ -2504,4 +2572,4 @@ scanning /Users/benjaminbartolome/git/eq8/mvp
    ├─ licenseUrl: https://github.com/zenparsing/zen-observable/raw/master/LICENSE
    └─ parents: @eq8/mvp
 
-Number of entries found: 502
+Number of entries found: 516
