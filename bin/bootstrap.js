@@ -37,7 +37,7 @@ function bootstrap(options) {
 	// - Logger
 	// - API
 	// - HTTP server
-	mvp({ overrides }, (initError, { logger, store, api, server }) => {
+	mvp({ overrides }, (initError, { logger, store, server }) => {
 		if (initError) {
 			return logger.error(initError);
 		}
@@ -50,9 +50,6 @@ function bootstrap(options) {
 			}
 
 			logger.info('server started');
-
-			// TODO: allow disable of repl
-			const repl = require('repl');
 
 			let retryTimerId;
 
@@ -73,14 +70,6 @@ function bootstrap(options) {
 
 			return connect(() => {
 				logger.info('store connected');
-
-				api(null, (err, apiInstance) => {
-					if (err) {
-						logger.error('unable to instantiate API plugin:', err);
-					}
-
-					repl.start().context.api = apiInstance;
-				});
 			});
 		});
 	});

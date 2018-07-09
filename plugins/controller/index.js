@@ -6,7 +6,7 @@ define([
 	'express-graphql',
 	'-/logger/index.js',
 	'-/store/index.js',
-	'-/graphql/lib/index.js'
+	'-/controller/lib/index.js'
 ], ({ makeExecutableSchema }, graphqlHTTP, logger, store, utils) => {
 	const {
 		getQueries,
@@ -21,14 +21,6 @@ define([
 
 	const plugin = {
 		middleware: args => new Promise((resolve, reject) => {
-
-			/*
-			 * TODO
-			 * - construct schema based from database
-			 * - construct rootValue from database to queue messages for the worker process
-			 * - create a middleware and store in an LRU cache
-			 *   - use the domain and schema version as the key
-			 */
 
 			const { domain: id } = args || {};
 

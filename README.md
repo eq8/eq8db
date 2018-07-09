@@ -24,20 +24,3 @@ cd mvp
 npm install
 npm start
 ```
-
-#### Example REPL calls
-
-```
-api
-	.domain({id: 'localhost:8000'})
-	.addAggregate({bctxt: 'bctxt', name: 'aggregate', schemaVersion: '0.0'})
-	.commit()
-	.then(console.log, console.error);
-
-api
-	.domain({id: 'localhost:8000'})
-	.upsertQueries({bctxt: 'bctxt', aggregate: 'aggregate', queries: {query: {type: 'Entity'}}})
-	.commit()
-	.then(console.log, console.error);
-```
-

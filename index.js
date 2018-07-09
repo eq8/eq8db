@@ -29,14 +29,12 @@ module.exports = function mvp(options, done) {
 	rjs([
 		'-/logger/index.js',
 		'-/store/index.js',
-		'-/api/index.js',
 		'-/server/index.js'
-	], (logger, store, api, server) => {
+	], (logger, store, server) => {
 		done(null, {
 			version,
 			logger,
 			store,
-			api,
 			server
 		});
 	});

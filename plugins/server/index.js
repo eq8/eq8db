@@ -7,16 +7,16 @@ define([
 	'lru-cache',
 	'-/logger/index.js',
 	'-/authentication/index.js',
-	'-/graphql/index.js',
-	'-/server/layers/error-handling.js'
+	'-/controller/index.js',
+	'-/server/error-handling.js'
 ], (
 	_,
 	express,
 	lru,
 	logger,
-	pluginAuthentication,
-	pluginGraphQL,
-	layerErrorHandling
+	authentication,
+	controller,
+	errorHandling
 ) => {
 	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10))
 		? parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10)
@@ -39,9 +39,9 @@ define([
 				port: 8000
 			});
 
-			app.use(pluginAuthentication.initialize());
+			app.use(authentication.initialize());
 
-			app.use('/:bctxt/:aggregate/:v', pluginAuthentication.authenticate);
+			app.use('/:bctxt/:aggregate/:v', authentication.authenticate);
 
 			// TODO: add pre-middleware plugin
 
@@ -65,7 +65,7 @@ define([
 				} else {
 					logger.trace(`loading middleware for ${uri}`);
 
-					pluginGraphQL.middleware({
+					controller.middleware({
 						domain, bctxt, aggregate, v
 					}).then(middleware => {
 						cache.set(uri, middleware);
@@ -77,7 +77,7 @@ define([
 			// TODO: add post-middleware plugin
 
 			// TODO: only bubble up safe errors
-			app.use(layerErrorHandling);
+			app.use(errorHandling);
 
 			app.listen(port, done);
 		}
