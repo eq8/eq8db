@@ -88,6 +88,9 @@ define([
 	function getTypeDefs(args) {
 		const { queries, methods, actions, entities, inputEntities } = args || {};
 		const defaultQueries = {
+			meta: {
+				returnType: { name: 'Meta' }
+			},
 			transact: {
 				returnType: { name: 'Transaction' },
 				params: {
@@ -126,6 +129,38 @@ define([
 			},
 			Transaction: {
 				methods: _.assign({}, actions, defaultActions)
+			},
+			Meta: {
+				methods: {
+					inputEntity: {
+						returnType: {
+							name: 'InputEntityMeta'
+						},
+						params: {
+							name: 'String',
+							property: 'String'
+						}
+					}
+				}
+			},
+			InputEntityMeta: {
+				methods: {
+					name: {
+						returnType: {
+							name: 'String'
+						}
+					},
+					type: {
+						returnType: {
+							name: 'String'
+						}
+					},
+					component: {
+						returnType: {
+							name: 'String'
+						}
+					}
+				}
 			},
 			Result: {
 				methods: {
