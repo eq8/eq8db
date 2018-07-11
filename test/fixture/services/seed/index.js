@@ -8,8 +8,6 @@ const conn = r.connect({
 }).then(conn => {
 	const id = '127.0.0.1:8000';
 
-	r.tableCreate('domain');
-
 	r
 		.table('domain')
 		.get(id)
@@ -27,7 +25,7 @@ const conn = r.connect({
 							"versions": {
 								"0.0": {
 									"inputEntities": {
-										"QueryInput": {
+										"InputDomainID": {
 											"methods": {
 												"id": {
 													"returnType": {
@@ -35,9 +33,52 @@ const conn = r.connect({
 													}
 												}
 											}
+										},
+										"InputDomainPagination": {
+											"methods": {
+												"skip": {
+													"returnType": {
+														"name": "Int"
+													}
+												},
+												"length": {
+													"returnType": {
+														"name": "Int"
+													}
+												},
+												"direction": {
+													"returnType": {
+														"name": "Int"
+													}
+												}
+											}
 										}
 									},
 									"entities": {
+										"Meta": {
+											"methods": {
+												"created": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+												"createdBy": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+												"lastModified": {
+													"returnType": {
+														"name": "String"
+													}
+												},
+												"lastModifiedBy": {
+													"returnType": {
+														"name": "String"
+													}
+												}
+											}
+										},
 										"Repository": {
 											"methods": {
 												"name": {
@@ -132,52 +173,49 @@ const conn = r.connect({
 										},
 									},
 									"actions": {
-										"create": {
+										"browse": {
 											"params": {
-												"in": "QueryInput"
+												"in": "InputDomainPagination"
 											}
 										},
-										"load": {
+										"read": {
 											"params": {
-												"in": "QueryInput"
+												"in": "InputDomainID"
+											}
+										},
+										"add": {
+											"params": {
+												"in": "InputDomainID"
 											}
 										},
 										"delete": {
 											"params": {
-												"in": "QueryInput"
-											}
-										},
-										"addRepository": {
-											"params": {
-												"name": "String",
-												"uri": "String",
+												"in": "InputDomainID"
 											}
 										}
+										/*
+										 * editDomain
+										 * addRepository
+										 * addBoundedContext
+										 * addAggregate
+										 * addMethod
+										 * addAction
+										 * addQuery
+										 * addEntity
+										 * addInputEntity
+										 */
 									},
 									"methods": {
-										"id": {
+										"meta": {
 											"returnType": {
-												"name": "ID"
+												"name": "Meta"
 											}
-										},
-										"version": {
-											"returnType": {
-												"name": "Int"
-											}
-										/* TODO
-										},
-										"repositories": {
-											"returnType": {
-												"name": "Repository",
-												"isCollection": true
-											}
-										*/
 										}
 									},
 									"queries": {
 										"load": {
 											"params": {
-												"in": "QueryInput"
+												"in": "InputDomainID"
 											}
 										}
 									},
