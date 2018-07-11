@@ -34,7 +34,7 @@ define([
 				type: 'domain',
 				id
 			}).then(domain => {
-				logger.trace('domain info found:', domain);
+				logger.debug('domain', { domain });
 
 				const queries = getQueries(domain, args);
 				const methods = getMethods(domain, args);
@@ -57,7 +57,7 @@ define([
 					typeDefs,
 					resolvers,
 					logger: {
-						log: resolveError => logger.error(resolveError)
+						log: resolveError => logger.error('controller unable to resolve', { err: resolveError })
 					}
 				});
 

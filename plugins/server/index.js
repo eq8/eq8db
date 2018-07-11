@@ -54,7 +54,7 @@ define([
 
 				const uri = `${domain}/${bctxt}/${aggregate}/${v}`;
 
-				logger.debug('uri', uri);
+				logger.debug('uri', { uri });
 
 				const cached = cache.get(uri);
 

@@ -39,17 +39,17 @@ function bootstrap(options) {
 	// - HTTP server
 	mvp({ overrides }, (initError, { logger, store, server }) => {
 		if (initError) {
-			return logger.error(initError);
+			return logger.error('unable to initialize', { overrides, err: initError });
 		}
 
-		logger.info('settings', settings);
+		logger.info('initialized', { overrides });
 
 		return server.listen({ port }, listenError => {
 			if (listenError) {
-				return logger.error(listenError);
+				return logger.error('server unable to listen', { port, err: listenError });
 			}
 
-			logger.info('server started');
+			logger.info('server is listening', { port });
 
 			let retryTimerId;
 
@@ -63,13 +63,13 @@ function bootstrap(options) {
 
 						callback();
 					}, err => {
-						logger.error('unable to connect store:', err);
+						logger.error('store unable to connect', { storeUri, err });
 						retryTimerId = setTimeout(connect, retryInterval, callback);
 					});
 			}
 
 			return connect(() => {
-				logger.info('store connected');
+				logger.info('store has connected', { storeUri });
 			});
 		});
 	});
