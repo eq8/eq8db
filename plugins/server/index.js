@@ -8,6 +8,7 @@ define([
 	'-/logger/index.js',
 	'-/authentication/index.js',
 	'-/controller/index.js',
+	'-/server/status-handling.js',
 	'-/server/error-handling.js'
 ], (
 	_,
@@ -16,6 +17,7 @@ define([
 	logger,
 	authentication,
 	controller,
+	statusHandling,
 	errorHandling
 ) => {
 	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10))
@@ -34,10 +36,12 @@ define([
 	const app = express();
 
 	const plugin = {
-		listen: function server(options, done) {
+		listen(options, done) {
 			const { port } = _.defaultsDeep(options, {
 				port: 8000
 			});
+
+			app.use(statusHandling.middleware);
 
 			app.use(authentication.initialize());
 
@@ -80,6 +84,9 @@ define([
 			app.use(errorHandling);
 
 			app.listen(port, done);
+		},
+		setState(newState) {
+			statusHandling.setState(newState);
 		}
 	};
 

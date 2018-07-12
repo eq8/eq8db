@@ -61,6 +61,8 @@ function bootstrap(options) {
 							clearTimeout(retryTimerId);
 						}
 
+						server.setState('ready'); // TODO: replace with connected, ready if db was created
+
 						callback();
 					}, err => {
 						logger.error('store unable to connect', { storeUri, err });
