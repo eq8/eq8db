@@ -5,8 +5,10 @@ define([
 	'lodash',
 	'uuid/v4',
 	'immutable',
+	'request',
+	'-/logger/index.js',
 	'-/utils/index.js'
-], (_, uuidv4, { Map, List }, { toImmutable }) => {
+], (_, uuidv4, { Map, List }, request, logger, { toImmutable }) => {
 	const plugin = {
 		getQueries,
 		getMethods,
@@ -232,13 +234,13 @@ ${inputs}
 	}
 
 	function getResolvers(typeDefsRaw) {
-		const { actions, repository } = typeDefsRaw;
+		const { actions, methods, repository } = typeDefsRaw;
 
 		return {
 			Query: _.assign({}, getQueryResolvers(), {
 				transact: getTransaction({ repository })
 			}),
-			Aggregate: getMethodResolvers(),
+			Aggregate: getMethodResolvers({ methods }),
 			Result: getResultResolvers(),
 			Transaction: _.assign({}, getTransactionResolvers({ actions }), {
 				commit
@@ -301,10 +303,58 @@ ${inputs}
 		};
 	}
 
-	function getMethodResolvers() {
-		return {
+	function getMethodResolvers(options) {
+		const { methods } = options || {};
+
+		const defaultMethodResolvers = {
 			id: obj => Promise.resolve(_.get(obj, 'id') || 0),
 			version: obj => Promise.resolve(_.get(obj, 'version') || 0)
+		};
+
+		const methodResolvers = _.reduce(methods, (result, method, name) => {
+			const resolver = _.get(method, 'resolver');
+
+			return _.assign({}, result, _.set({}, name, getDispatcher(resolver)));
+		}, {});
+
+		const result = _.assign({}, methodResolvers, defaultMethodResolvers);
+
+		return result;
+	}
+
+	function getDispatcher(resolver) {
+		if (!resolver) {
+			return () => {
+				throw new Error('Resolver not found'); // TODO: consider localization
+			};
+		}
+
+		// TODO: add configuration for self-signed certs
+		const { uri } = resolver || {};
+
+		return (obj, args, rawCtxt) => {
+
+			const ctxt = getFilteredImmutableCtxt(rawCtxt);
+
+			return new Promise((resolve, reject) => {
+				request.post(uri, { obj, args, ctxt }, (httpError, res, body) => {
+					if (httpError) {
+
+						logger.error('controller unable to resolve', { httpError, body });
+
+						return reject(new Error('Unexpected error while resolving'));
+
+					}
+
+					const { error, data } = body || {};
+
+					if (error) {
+						return reject(error);
+					}
+
+					return resolve(data);
+				});
+			});
 		};
 	}
 
