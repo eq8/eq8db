@@ -234,13 +234,25 @@ ${inputs}
 	}
 
 	function getResolvers(typeDefsRaw) {
-		const { actions, methods, repository } = typeDefsRaw;
+		const { actions, queries, methods, repository } = typeDefsRaw;
+
+		const defaultMethodResolvers = {
+			id: obj => Promise.resolve(_.get(obj, 'id') || 0),
+			version: obj => Promise.resolve(_.get(obj, 'version') || 0),
+			meta: obj => Promise.resolve(_.get(obj, 'meta') || 0) // TODO: replace with remote invoke
+		};
+
 
 		return {
-			Query: _.assign({}, getQueryResolvers(), {
+			Query: _.assign({}, getMethodResolvers({ defaults: {}, methods: queries }), {
 				transact: getTransaction({ repository })
 			}),
-			Aggregate: getMethodResolvers({ methods }),
+			Meta: {
+				created(obj) {
+					return Promise.resolve(_.get(obj, 'created'));
+				}
+			},
+			Aggregate: getMethodResolvers({ defaults: defaultMethodResolvers, methods }),
 			Result: getResultResolvers(),
 			Transaction: _.assign({}, getTransactionResolvers({ actions }), {
 				commit
@@ -291,25 +303,8 @@ ${inputs}
 		return Promise.resolve(result);
 	}
 
-	function getQueryResolvers() {
-		return {
-			load: () => [{
-				id: 'localhost:8000',
-				version: 1,
-				repository: {
-					name: 'default'
-				}
-			}] // TODO: replace with actual resolver
-		};
-	}
-
 	function getMethodResolvers(options) {
-		const { methods } = options || {};
-
-		const defaultMethodResolvers = {
-			id: obj => Promise.resolve(_.get(obj, 'id') || 0),
-			version: obj => Promise.resolve(_.get(obj, 'version') || 0)
-		};
+		const { defaults, methods } = options || {};
 
 		const methodResolvers = _.reduce(methods, (result, method, name) => {
 			const resolver = _.get(method, 'resolver');
@@ -317,7 +312,7 @@ ${inputs}
 			return _.assign({}, result, _.set({}, name, getDispatcher(resolver)));
 		}, {});
 
-		const result = _.assign({}, methodResolvers, defaultMethodResolvers);
+		const result = _.assign({}, methodResolvers, defaults);
 
 		return result;
 	}
@@ -346,7 +341,7 @@ ${inputs}
 
 					}
 
-					const { error, data } = body || {};
+					const { error, data } = JSON.parse(body) || {};
 
 					if (error) {
 						return reject(error);
