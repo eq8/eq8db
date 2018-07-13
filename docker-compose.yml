@@ -8,24 +8,22 @@ services:
    seed:
       image: seed
       build:
-         context: ./test/fixture/services/seed
+         context: ./services/seed
       restart: "no"
       depends_on:
          - rethinkdb
-   repository:
-      image: repository
-      build:
-         context: ./test/fixture/services/repository
    mvp:
       image: equate/mvp
       build:
          dockerfile: Dockerfile.js
          context: ./
-      stdin_open: true
-      environment:
-        - "NODE_ENV=development"
-      tty: true
+      restart: "always"
       ports:
          - "8000:8000"
       depends_on:
          - seed
+   api-domain-query-load:
+      image: equate/mvp-microservice:api-domain-query-load
+      build:
+         context: ./services/api/domain/query/load
+      restart: "always"
