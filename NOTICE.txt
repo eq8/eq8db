@@ -1709,7 +1709,7 @@ scanning /Users/bbartolome/git/sandbox/test/fixture/services/seed
 │  ├─ repository: https://github.com/mapbox/node-pre-gyp
 │  ├─ licenseUrl: https://github.com/mapbox/node-pre-gyp/raw/master/LICENSE
 │  └─ parents: fsevents:@eq8/mvp
-├─ nodemon@1.18.0
+├─ nodemon@1.18.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/remy/nodemon
 │  ├─ licenseUrl: https://github.com/remy/nodemon
