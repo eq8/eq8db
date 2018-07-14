@@ -27,3 +27,8 @@ services:
       build:
          context: ./services/api/domain/query/load
       restart: "always"
+   utils-get:
+      image: equate/mvp-microservice:utils-get
+      build:
+         context: ./services/utils/get
+      restart: "always"

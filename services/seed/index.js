@@ -8,9 +8,18 @@ r.connect({
 	username: process.env.USERNAME || 'admin',
 	password: process.env.PASSWORD
 }).then(conn => {
+	const table = 'domain';
+
+	r.tableList().contains(table)
+		.do(databaseExists => seed(!databaseExists ? r.tableCreate(table) : r))
+		.run(conn)
+		.then(console.log, console.err); // eslint-disable-line no-console
+});
+
+function seed(chain) {
 	const id = '127.0.0.1:8000';
 
-	r
+	return chain
 		.table('domain')
 		.get(id)
 		.replace({
@@ -60,21 +69,33 @@ r.connect({
 										Meta: {
 											methods: {
 												created: {
+													resolver: {
+														uri: 'http://utils-get/?path=created'
+													},
 													returnType: {
 														name: 'String'
 													}
 												},
 												createdBy: {
+													resolver: {
+														uri: 'http://utils-get/?path=createdBy'
+													},
 													returnType: {
 														name: 'String'
 													}
 												},
 												lastModified: {
+													resolver: {
+														uri: 'http://utils-get/?path=lastModified'
+													},
 													returnType: {
 														name: 'String'
 													}
 												},
 												lastModifiedBy: {
+													resolver: {
+														uri: 'http://utils-get/?path=lastModifiedBy'
+													},
 													returnType: {
 														name: 'String'
 													}
@@ -211,6 +232,9 @@ r.connect({
 									},
 									methods: {
 										meta: {
+											resolver: {
+												uri: 'http://utils-get/?path=meta'
+											},
 											returnType: {
 												name: 'Meta'
 											}
@@ -243,8 +267,5 @@ r.connect({
 					uri: 'https://repository/api' // TODO: define API for repositories
 				}
 			}
-		})
-		.run(conn)
-		.then(console.log, console.err); // eslint-disable-line no-console
-});
-
+		});
+}

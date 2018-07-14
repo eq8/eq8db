@@ -35,6 +35,8 @@ define([
 
 		return _.mapValues(
 			queries,
+
+			// safe-assign: all queries returns a collection of `Aggregate`'s
 			query => _.assign({}, query, { returnType: { name: 'Aggregate', isCollection: true } })
 		);
 	}
@@ -51,6 +53,8 @@ define([
 
 		return _.mapValues(
 			actions,
+
+			// safe-assign: all actions return a `Transaction` object
 			action => _.assign({}, action, { returnType: { name: 'Transaction' } })
 		);
 	}
@@ -121,12 +125,18 @@ define([
 
 		const defaultEntities = {
 			Query: {
+
+				// safe-assign: does not let users to override default `Query` methods
 				methods: _.assign({}, queries, defaultQueries)
 			},
 			Aggregate: {
+
+				// safe-assign: does not let users to override default `Aggregate` methods
 				methods: _.assign({}, methods, defaultMethods)
 			},
 			Transaction: {
+
+				// safe-assign: does not let users to override default `Transaction` methods
 				methods: _.assign({}, actions, defaultActions)
 			},
 			Result: {
@@ -171,14 +181,14 @@ define([
 			}
 		};
 
-		const types = _.reduce(_.assign({}, entities, defaultEntities), (result, entity, name) => {
+		const types = _.reduce(_.defaultsDeep({}, defaultEntities, entities), (result, entity, name) => {
 			const entityMethods = _.get(entity, 'methods') || {};
 			const typeEntityDef = getDefinition('type', name, entityMethods);
 
 			return `${result}${typeEntityDef}${LF}`;
 		}, '');
 
-		const inputs = _.reduce(_.assign({}, inputEntities, defaultInputEntities), (result, input, name) => {
+		const inputs = _.reduce(_.defaultsDeep({}, defaultInputEntities, inputEntities), (result, input, name) => {
 			const inputMethods = _.get(input, 'methods') || {};
 			const inputEntityDef = getDefinition('input', name, inputMethods);
 
@@ -234,30 +244,45 @@ ${inputs}
 	}
 
 	function getResolvers(typeDefsRaw) {
-		const { actions, queries, methods, repository } = typeDefsRaw;
+		const { actions, queries, methods, entities, repository } = typeDefsRaw;
 
-		const defaultMethodResolvers = {
-			id: obj => Promise.resolve(_.get(obj, 'id') || 0),
-			version: obj => Promise.resolve(_.get(obj, 'version') || 0),
-			meta: obj => Promise.resolve(_.get(obj, 'meta') || 0) // TODO: replace with remote invoke
-		};
-
-
-		return {
-			Query: _.assign({}, getMethodResolvers({ defaults: {}, methods: queries }), {
-				transact: getTransaction({ repository })
-			}),
-			Meta: {
-				created(obj) {
-					return Promise.resolve(_.get(obj, 'created'));
-				}
+		const defaultEntities = {
+			Query: {
+				methods: queries
 			},
-			Aggregate: getMethodResolvers({ defaults: defaultMethodResolvers, methods }),
-			Result: getResultResolvers(),
-			Transaction: _.assign({}, getTransactionResolvers({ actions }), {
-				commit
-			})
+			Aggregate: {
+				methods
+			}
 		};
+
+		const resolvers = _.reduce(_.defaultsDeep({}, defaultEntities, entities), (result, entity, name) => {
+			const entityMethods = _.get(entity, 'methods') || {};
+			const entityResolvers = getEntityResolvers(name, entityMethods);
+
+			// safe-assign: result is the accumulated list of resolvers for all entities
+			return _.assign({}, result, entityResolvers);
+		}, {});
+
+		const defaultResolvers = {
+			Query: {
+				transact: getTransaction({ repository })
+			},
+			Aggregate: {
+				id: obj => Promise.resolve(_.get(obj, 'id') || 0),
+				version: obj => Promise.resolve(_.get(obj, 'version') || 0)
+			},
+			Result: {
+				id: obj => Promise.resolve(obj.get('id')),
+				success: obj => Promise.resolve(obj.get('success'))
+			},
+			Transaction: _.defaultsDeep({}, {
+				commit
+			}, getTransactionResolvers({ actions }))
+		};
+
+		const result = _.defaultsDeep({}, defaultResolvers, resolvers);
+
+		return result;
 	}
 
 	function getTransaction(options) {
@@ -303,18 +328,15 @@ ${inputs}
 		return Promise.resolve(result);
 	}
 
-	function getMethodResolvers(options) {
-		const { defaults, methods } = options || {};
-
-		const methodResolvers = _.reduce(methods, (result, method, name) => {
+	function getEntityResolvers(entityName, methods) {
+		const resolvers = _.reduce(methods, (result, method, methodName) => {
 			const resolver = _.get(method, 'resolver');
 
-			return _.assign({}, result, _.set({}, name, getDispatcher(resolver)));
+			// safe-assign: result is the accumulated list of resolvers for the entity
+			return _.assign({}, result, _.set({}, methodName, getDispatcher(resolver)));
 		}, {});
 
-		const result = _.assign({}, methodResolvers, defaults);
-
-		return result;
+		return _.set({}, entityName, resolvers);
 	}
 
 	function getDispatcher(resolver) {
@@ -332,16 +354,18 @@ ${inputs}
 			const ctxt = getFilteredImmutableCtxt(rawCtxt);
 
 			return new Promise((resolve, reject) => {
-				request.post(uri, { obj, args, ctxt }, (httpError, res, body) => {
+				request({
+					url: uri,
+					method: 'POST',
+					json: { obj, args, ctxt }
+				}, (httpError, res, body) => {
 					if (httpError) {
-
 						logger.error('controller unable to resolve', { httpError, body });
 
 						return reject(new Error('Unexpected error while resolving'));
-
 					}
 
-					const { error, data } = JSON.parse(body) || {};
+					const { error, data } = body || {};
 
 					if (error) {
 						return reject(error);
@@ -350,13 +374,6 @@ ${inputs}
 					return resolve(data);
 				});
 			});
-		};
-	}
-
-	function getResultResolvers() {
-		return {
-			id: obj => Promise.resolve(obj.get('id')),
-			success: obj => Promise.resolve(obj.get('success'))
 		};
 	}
 

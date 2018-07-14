@@ -1,3 +1,5 @@
+'use strict';
+
 const http = require('http');
 const app = require('connect')();
 const bodyParser = require('body-parser');
@@ -6,22 +8,24 @@ app.use(bodyParser.json());
 
 const current = new Date();
 
-app.use('/', (req, res, next) => {
+app.use('/', (req, res) => {
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});
-	res.write(JSON.stringify({data: [{
-		id: '127.0.0.1:8000',
-		version: 1,
-		meta: {
-			created: current.toISOString(),
-			lastModified: current.toISOString()
-		},
-		repository: {
-			name: 'default'
-		}
-	}]}));
+	res.write(JSON.stringify({
+		data: [{
+			id: '127.0.0.1:8000',
+			version: 1,
+			meta: {
+				created: current.toISOString(),
+				lastModified: current.toISOString()
+			},
+			repository: {
+				name: 'default'
+			}
+		}]
+	}));
 	res.end();
-})
+});
 
-http.createServer(app).listen(process.env.PORT || 80)
+http.createServer(app).listen(process.env.PORT || 80);

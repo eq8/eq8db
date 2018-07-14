@@ -60,7 +60,7 @@
     "tape": "4.9.1"
   },
   "nodemonConfig": {
-    "exec": "docker-compose up --build",
+    "exec": "docker-compose up --build --remove-orphans",
     "ignore": [
       "test/*",
       "docs/*"
