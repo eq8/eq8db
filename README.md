@@ -23,4 +23,5 @@ git clone https://github.com/eq8/mvp.git
 cd mvp
 npm install
 npm start
+open http://127.0.0.1:8000/api/domain/0.0
 ```

@@ -87,7 +87,12 @@ define([
 	function connCheck(handler) {
 		return args => {
 			if (conn) {
-				return handler(args);
+				return new Promise((resolve, reject) => {
+					conn.server().then(storeServer => {
+						logger.trace('store server', { storeServer });
+						handler(args).then(resolve, reject);
+					}, reject);
+				});
 			}
 
 			return Promise.reject(new Error('Not connected to a store'));

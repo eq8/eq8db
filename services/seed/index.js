@@ -1,20 +1,43 @@
 'use strict';
 
 const r = require('rethinkdb');
+const retryInterval = parseInt(process.env.RETRY_INTERVAL || '100', 10);
+const retryMax = parseInt(process.env.RETRY_INTERVAL || '1000', 10);
 
-r.connect({
-	host: process.env.HOST || 'rethinkdb',
-	port: process.env.PORT || 28015,
-	username: process.env.USERNAME || 'admin',
-	password: process.env.PASSWORD
-}).then(conn => {
-	const table = 'domain';
+let retryTimerId;
+let retryCount = 1;
 
-	r.tableList().contains(table)
-		.do(databaseExists => seed(!databaseExists ? r.tableCreate(table) : r))
-		.run(conn)
-		.then(console.log, console.err); // eslint-disable-line no-console
-});
+connectAndSeed();
+
+function connectAndSeed() {
+	r.connect({
+		host: process.env.HOST || 'rethinkdb',
+		port: process.env.PORT || 28015,
+		username: process.env.USERNAME || 'admin',
+		password: process.env.PASSWORD
+	}).then(conn => {
+		const table = 'domain';
+
+		r.tableList().contains(table)
+			.do(databaseExists => seed(!databaseExists ? r.tableCreate(table) : r))
+			.run(conn)
+			.then(result => {
+				if (retryTimerId) {
+					clearTimeout(retryTimerId);
+				}
+
+				console.log(result);
+			}, () => {
+				console.error('Failed to seed');
+
+				retryTimerId = setTimeout(connectAndSeed, Math.min(retryInterval * retryCount++, retryMax));
+			}); // eslint-disable-line no-console
+	}, err => {
+		console.error('Failed to connect');
+
+		retryTimerId = setTimeout(connectAndSeed, retryInterval);
+	});
+}
 
 function seed(chain) {
 	const id = '127.0.0.1:8000';

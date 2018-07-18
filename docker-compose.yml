@@ -22,6 +22,8 @@ services:
          - "8000:8000"
       depends_on:
          - seed
+      environment:
+         - "MVP_LOGGER_LEVEL=trace"
    api-domain-query-load:
       image: equate/mvp-microservice:api-domain-query-load
       build:

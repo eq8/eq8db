@@ -11,4 +11,4 @@ RUN npm install
 
 COPY index.js /workspace/
 
-CMD ./wait-for-it.sh -h ${HOST} -p ${PORT} -- node index.js
+CMD ./wait-for-it.sh -t 0 -h ${HOST} -p ${PORT} -- node index.js

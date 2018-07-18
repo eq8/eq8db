@@ -5,19 +5,25 @@ define([
 	'lodash',
 	'uuid/v4',
 	'immutable',
+	'graphql-tools',
+	'express-graphql',
 	'request',
 	'-/logger/index.js',
+	'-/store/index.js',
 	'-/utils/index.js'
-], (_, uuidv4, { Map, List }, request, logger, { toImmutable }) => {
+], (
+	_,
+	uuidv4,
+	{ Map, List },
+	{ makeExecutableSchema },
+	graphqlHTTP,
+	request,
+	logger,
+	store,
+	{ toImmutable }
+) => {
 	const plugin = {
-		getQueries,
-		getMethods,
-		getActions,
-		getEntities,
-		getInputEntities,
-		getRepository,
-		getTypeDefs,
-		getResolvers
+		getInterface
 	};
 
 	const LF = '\n';
@@ -30,8 +36,92 @@ define([
 		REPOSITORY: 'repository'
 	};
 
-	function getQueries(domain, args) {
-		const queries = getAggregatePropertyValue(domain, args, PROPERTIES.QUERIES) || {};
+	async function getInterface(args) {
+		const domain = await getDomain(args);
+		const aggregate = getAggregate(domain, args);
+		const repository = getRepository(domain, aggregate);
+
+		return getAPI({
+			aggregate,
+			repository
+		});
+	}
+
+	async function getDomain(args) {
+		const id = _.get(args, 'domain');
+
+		logger.trace(`reading domain info for ${id}`);
+
+		const domain = await store.read({
+			type: 'domain',
+			id
+		});
+
+		logger.debug('domain', { domain });
+
+		return domain;
+	}
+
+	function getAggregate(domain, args) {
+		const { bctxt, aggregate, v } = args || {};
+
+		const aggregatePath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}]`;
+
+		return _.get(domain, aggregatePath);
+	}
+
+	function getAPI(args) {
+		const { aggregate, repository } = args || {};
+
+		if (!aggregate) {
+			const ERROR_AGGREGATE_NOT_FOUND = 'Aggregate was not found';
+
+			logger.error(ERROR_AGGREGATE_NOT_FOUND);
+			throw new Error(ERROR_AGGREGATE_NOT_FOUND);
+		}
+
+		if (!repository) {
+			const ERROR_REPOSITORY_NOT_FOUND = 'Repository was not found';
+
+			logger.error(ERROR_REPOSITORY_NOT_FOUND);
+			throw new Error(ERROR_REPOSITORY_NOT_FOUND);
+		}
+
+		const queries = getQueries(aggregate);
+		const methods = getMethods(aggregate);
+		const actions = getActions(aggregate);
+		const entities = getEntities(aggregate);
+		const inputEntities = getInputEntities(aggregate);
+		const typeDefsRaw = {
+			queries,
+			methods,
+			actions,
+			entities,
+			inputEntities,
+			repository
+		};
+		const typeDefs = getTypeDefs(typeDefsRaw);
+		const resolvers = getResolvers(typeDefsRaw);
+
+		const schema = makeExecutableSchema({
+			typeDefs,
+			resolvers,
+			logger: {
+				log: resolveError => logger.error('controller unable to resolve', { err: resolveError })
+			}
+		});
+
+		const API = graphqlHTTP({
+			schema,
+			rootValue: {},
+			graphiql: true
+		});
+
+		return API;
+	}
+
+	function getQueries(aggregate) {
+		const queries = _.get(aggregate, PROPERTIES.QUERIES) || {};
 
 		return _.mapValues(
 			queries,
@@ -41,15 +131,15 @@ define([
 		);
 	}
 
-	function getMethods(domain, args) {
-		const methods = getAggregatePropertyValue(domain, args, PROPERTIES.METHODS) || {};
+	function getMethods(aggregate) {
+		const methods = _.get(aggregate, PROPERTIES.METHODS) || {};
 		const hasReturnType = _.unary(_.partialRight(_.has, 'returnType'));
 
 		return _.pickBy(methods, hasReturnType);
 	}
 
-	function getActions(domain, args) {
-		const actions = getAggregatePropertyValue(domain, args, PROPERTIES.ACTIONS) || {};
+	function getActions(aggregate) {
+		const actions = _.get(aggregate, PROPERTIES.ACTIONS) || {};
 
 		return _.mapValues(
 			actions,
@@ -59,36 +149,28 @@ define([
 		);
 	}
 
-	function getEntities(domain, args) {
-		const entities = getAggregatePropertyValue(domain, args, PROPERTIES.ENTITIES) || {};
+	function getEntities(aggregate) {
+		const entities = _.get(aggregate, PROPERTIES.ENTITIES) || {};
 
 		// const hasName = _.partialRight(_.has, 'methods');
 
 		return entities; // _.pickBy(entities, hasName);
 	}
 
-	function getInputEntities(domain, args) {
-		const entities = getAggregatePropertyValue(domain, args, PROPERTIES.INPUT_ENTITIES) || {};
+	function getInputEntities(aggregate) {
+		const entities = _.get(aggregate, PROPERTIES.INPUT_ENTITIES) || {};
 
 		// const hasName = _.partialRight(_.has, 'methods');
 
 		return entities; // _.pickBy(entities, hasName);
 	}
 
-	function getRepository(domain, args) {
-		const repositoryName = getAggregatePropertyValue(domain, args, PROPERTIES.REPOSITORY);
+	function getRepository(domain, aggregate) {
+		const repositoryName = _.get(aggregate, PROPERTIES.REPOSITORY);
 		const repositoryPath = `repositories[${repositoryName}]`;
 		const repository = _.get(domain, repositoryPath);
 
 		return repository;
-	}
-
-	function getAggregatePropertyValue(domain, args, propertyName) {
-		const { bctxt, aggregate, v } = args || {};
-		const propertyPath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}][${propertyName}]`;
-		const propertyValue = _.get(domain, propertyPath);
-
-		return propertyValue;
 	}
 
 	function getTypeDefs(args) {

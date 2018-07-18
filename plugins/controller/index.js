@@ -1,75 +1,60 @@
-/* globals define, Promise */
+/* globals define */
 'use strict';
 
 define([
-	'graphql-tools',
-	'express-graphql',
+	'lodash',
+	'lru-cache',
 	'-/logger/index.js',
-	'-/store/index.js',
 	'-/controller/lib/index.js'
-], ({ makeExecutableSchema }, graphqlHTTP, logger, store, utils) => {
+], (_, lru, logger, utils) => {
+	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10))
+		? parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10)
+		: 500;
+	const LRU_MAXAGE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXAGE, 10))
+		? parseInt(process.env.MVP_SERVER_LRU_MAXAGE, 10)
+		: 1000 * 60 * 60;
+	const cache = lru({
+		max: LRU_MAXSIZE,
+		length: (n, key) => n * 2 + key.length,
+		dispose: (key, n) => n.close(),
+		maxAge: LRU_MAXAGE
+	});
+
 	const {
-		getQueries,
-		getMethods,
-		getActions,
-		getEntities,
-		getInputEntities,
-		getRepository,
-		getTypeDefs,
-		getResolvers
+		getInterface
 	} = utils;
 
 	const plugin = {
-		middleware: args => new Promise((resolve, reject) => {
+		middleware() {
+			return (req, res, next) => {
+				const domain = _.get(req, 'headers.host');
+				const bctxt = _.get(req, 'params.bctxt');
+				const aggregate = _.get(req, 'params.aggregate');
+				const v = _.get(req, 'params.v');
 
-			const { domain: id } = args || {};
+				const uri = `${domain}/${bctxt}/${aggregate}/${v}`;
 
-			if (!id) {
-				return reject(new Error('Domain was not found'));
-			}
+				logger.debug('uri', { uri });
 
-			logger.trace(`reading domain info for ${id}`);
+				const cached = cache.get(uri);
 
-			return store.read({
-				type: 'domain',
-				id
-			}).then(domain => {
-				logger.debug('domain', { domain });
+				if (cached) {
+					logger.trace(`using cached middleware for ${uri}`);
 
-				const queries = getQueries(domain, args);
-				const methods = getMethods(domain, args);
-				const actions = getActions(domain, args);
-				const entities = getEntities(domain, args);
-				const inputEntities = getInputEntities(domain, args);
-				const repository = getRepository(domain, args);
-				const typeDefsRaw = {
-					queries,
-					methods,
-					actions,
-					entities,
-					inputEntities,
-					repository
-				};
-				const typeDefs = getTypeDefs(typeDefsRaw);
-				const resolvers = getResolvers(typeDefsRaw);
+					cached(req, res, next);
+				} else {
+					logger.trace(`loading middleware for ${uri}`);
 
-				const schema = makeExecutableSchema({
-					typeDefs,
-					resolvers,
-					logger: {
-						log: resolveError => logger.error('controller unable to resolve', { err: resolveError })
-					}
-				});
-
-				const middleware = graphqlHTTP({
-					schema,
-					rootValue: {},
-					graphiql: true
-				});
-
-				resolve(middleware);
-			}, reject);
-		})
+					getInterface({
+						domain, bctxt, aggregate, v
+					}).then(middleware => {
+						logger.trace('middleware found');
+						cache.set(uri, middleware);
+						middleware(req, res, next);
+					}, next);
+				}
+			};
+		}
 	};
 
 	return plugin;
