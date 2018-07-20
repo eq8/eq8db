@@ -26,18 +26,13 @@ define([
 				port: 8000
 			});
 
-			app.use(statusHandling.middleware);
+			app.use(statusHandling.middleware());
 
 			app.use(authentication.initialize());
 
-			app.use('/:bctxt/:aggregate/:v', authentication.authenticate);
+			app.use('/:bctxt/:aggregate/:v', authentication.authenticate());
 
-			// TODO: add pre-middleware plugin
-
-			// TODO: move to a file
 			app.use('/:bctxt/:aggregate/:v', controller.middleware());
-
-			// TODO: add post-middleware plugin
 
 			// TODO: only bubble up safe errors
 			app.use(errorHandling);

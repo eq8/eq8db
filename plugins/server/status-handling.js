@@ -8,13 +8,15 @@ define([
 	let state = 'disconnected';
 
 	return {
-		middleware(req, res, next) {
-			switch (state) {
-			case 'ready':
-				return next();
-			default:
-				return res.status(503).end();
-			}
+		middleware() {
+			return (req, res, next) => {
+				switch (state) {
+				case 'ready':
+					return next();
+				default:
+					return res.status(503).end();
+				}
+			};
 		},
 		setState(newState) {
 			state = newState;

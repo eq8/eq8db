@@ -29,8 +29,8 @@ services:
       build:
          context: ./services/api/domain/query/load
       restart: "always"
-   utils-get:
-      image: equate/mvp-microservice:utils-get
+   get.utils.resolver:
+      image: equate/mvp-resolver:utils.get
       build:
-         context: ./services/utils/get
+         context: ./services/resolvers/utils/get
       restart: "always"
