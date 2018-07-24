@@ -6,7 +6,7 @@ const app = express();
 const _ = require('lodash');
 
 app.use(express.json());
-app.use('/', (req, res) => {
+app.use('/0.0', (req, res) => {
 	const path = _.get(req, 'query.path');
 	const body = _.get(req, 'body') || {};
 	const data = _.get(body, `obj[${path}]`);

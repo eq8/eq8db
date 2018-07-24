@@ -17,4 +17,6 @@ const program = require('commander')
 	.option('--overrides-file <path>', 'The absolute path to the file containing mappings for overriding the default implementations')
 	.parse(process.argv);
 
-bootstrap(program);
+bootstrap(program).catch(err => {
+	throw new Error(err);
+});

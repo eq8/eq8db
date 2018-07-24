@@ -1,3 +1,4 @@
+/* global Promise */
 'use strict';
 
 const _ = require('lodash');
@@ -6,9 +7,9 @@ const rjs = require('requirejs');
 
 const { version } = require('./package.json');
 
-module.exports = function mvp(options, done) {
+module.exports = function mvp(argv) {
 
-	const settings = _.defaultsDeep(options, {});
+	const settings = _.defaultsDeep(argv, {});
 
 	const { overrides } = settings;
 
@@ -26,16 +27,20 @@ module.exports = function mvp(options, done) {
 	// We'll be using the `overrides` to re-map the implementation of internal dependencies
 	rjs.config({ map });
 
-	rjs([
-		'-/logger/index.js',
-		'-/store/index.js',
-		'-/server/index.js'
-	], (logger, store, server) => {
-		done(null, {
-			version,
-			logger,
-			store,
-			server
+	return new Promise(resolve => {
+		rjs([
+			'-/options/index.js',
+			'-/logger/index.js',
+			'-/store/index.js',
+			'-/server/index.js'
+		], (options, logger, store, server) => {
+			resolve({
+				version,
+				options,
+				logger,
+				store,
+				server
+			});
 		});
 	});
 };

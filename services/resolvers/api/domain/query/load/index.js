@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 const current = new Date();
 
-app.use('/', (req, res) => {
+app.use('/0.0', (req, res) => {
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});

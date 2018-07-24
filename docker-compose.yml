@@ -24,12 +24,12 @@ services:
          - seed
       environment:
          - "MVP_LOGGER_LEVEL=trace"
-   api-domain-query-load:
-      image: equate/mvp-microservice:api-domain-query-load
+   resolver.api.domain.query.load:
+      image: equate/mvp-microservice:api.domain.query.load
       build:
-         context: ./services/api/domain/query/load
+         context: ./services/resolvers/api/domain/query/load
       restart: "always"
-   get.utils.resolver:
+   resolver.utils.get:
       image: equate/mvp-resolver:utils.get
       build:
          context: ./services/resolvers/utils/get

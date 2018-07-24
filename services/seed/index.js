@@ -93,7 +93,7 @@ function seed(chain) {
 											methods: {
 												created: {
 													resolver: {
-														uri: 'http://utils.get.resolver/?path=created'
+														uri: 'http://resolver.utils.get/0.0?path=created'
 													},
 													returnType: {
 														name: 'String'
@@ -101,7 +101,7 @@ function seed(chain) {
 												},
 												createdBy: {
 													resolver: {
-														uri: 'http://utils.get.resolver/?path=createdBy'
+														uri: 'http://resolver.utils.get/0.0?path=createdBy'
 													},
 													returnType: {
 														name: 'String'
@@ -109,7 +109,7 @@ function seed(chain) {
 												},
 												lastModified: {
 													resolver: {
-														uri: 'http://utils.get.resolver/?path=lastModified'
+														uri: 'http://resolver.utils.get/0.0?path=lastModified'
 													},
 													returnType: {
 														name: 'String'
@@ -117,7 +117,7 @@ function seed(chain) {
 												},
 												lastModifiedBy: {
 													resolver: {
-														uri: 'http://utils.get.resolver/?path=lastModifiedBy'
+														uri: 'http://resolver.utils.get/0.0?path=lastModifiedBy'
 													},
 													returnType: {
 														name: 'String'
@@ -256,7 +256,7 @@ function seed(chain) {
 									methods: {
 										meta: {
 											resolver: {
-												uri: 'http://utils.get.resolver/?path=meta'
+												uri: 'http://resolver.utils.get/0.0?path=meta'
 											},
 											returnType: {
 												name: 'Meta'
@@ -266,7 +266,7 @@ function seed(chain) {
 									queries: {
 										load: {
 											resolver: {
-												uri: 'http://api-domain-query-load/'
+												uri: 'http://resolver.api.domain.query.load/0.0'
 											},
 											params: {
 												in: 'InputDomainID'

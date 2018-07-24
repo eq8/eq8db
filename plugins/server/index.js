@@ -1,4 +1,4 @@
-/* global define */
+/* global define, Promise */
 'use strict';
 
 define([
@@ -21,7 +21,7 @@ define([
 	const app = express();
 
 	const plugin = {
-		listen(options, done) {
+		listen(options) {
 			const { port } = _.defaultsDeep(options, {
 				port: 8000
 			});
@@ -37,7 +37,9 @@ define([
 			// TODO: only bubble up safe errors
 			app.use(errorHandling);
 
-			app.listen(port, done);
+			return new Promise((resolve, reject) => {
+				app.listen(port, err => (err ? reject(err) : resolve({ success: true })));
+			});
 		},
 		setState(newState) {
 			statusHandling.setState(newState);
