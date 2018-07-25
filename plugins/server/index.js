@@ -7,16 +7,16 @@ define([
 	'-/logger/index.js',
 	'-/authentication/index.js',
 	'-/controller/index.js',
-	'-/server/status-handling.js',
-	'-/server/error-handling.js'
+	'-/server/status-handler.js',
+	'-/server/utils.js'
 ], (
 	_,
 	express,
 	logger,
 	authentication,
 	controller,
-	statusHandling,
-	errorHandling
+	statusHandler,
+	utils
 ) => {
 	const app = express();
 
@@ -26,23 +26,25 @@ define([
 				port: 8000
 			});
 
-			app.use(statusHandling.middleware());
+			app.use(statusHandler.middleware());
 
 			app.use(authentication.initialize());
+
+			app.use(utils.contextProvider());
 
 			app.use('/:bctxt/:aggregate/:v', authentication.authenticate());
 
 			app.use('/:bctxt/:aggregate/:v', controller.middleware());
 
 			// TODO: only bubble up safe errors
-			app.use(errorHandling);
+			app.use(utils.errorHandler());
 
 			return new Promise((resolve, reject) => {
 				app.listen(port, err => (err ? reject(err) : resolve({ success: true })));
 			});
 		},
 		setState(newState) {
-			statusHandling.setState(newState);
+			statusHandler.setState(newState);
 		}
 	};
 

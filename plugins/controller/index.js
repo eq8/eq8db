@@ -5,19 +5,17 @@ define([
 	'lodash',
 	'lru-cache',
 	'-/logger/index.js',
-	'-/controller/lib/index.js'
+	'-/controller/utils.js'
 ], (_, lru, logger, utils) => {
-	const LRU_MAXSIZE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10))
-		? parseInt(process.env.MVP_SERVER_LRU_MAXSIZE, 10)
+	const max = !_.isNaN(parseInt(process.env.MVP_CONTROLLER_LRU_MAXSIZE, 10))
+		? parseInt(process.env.MVP_CONTROLLER_LRU_MAXSIZE, 10)
 		: 500;
-	const LRU_MAXAGE = !_.isNaN(parseInt(process.env.MVP_SERVER_LRU_MAXAGE, 10))
-		? parseInt(process.env.MVP_SERVER_LRU_MAXAGE, 10)
+	const maxAge = !_.isNaN(parseInt(process.env.MVP_CONTROLLER_LRU_MAXAGE, 10))
+		? parseInt(process.env.MVP_CONTROLLER_LRU_MAXAGE, 10)
 		: 1000 * 60 * 60;
 	const cache = lru({
-		max: LRU_MAXSIZE,
-		length: (n, key) => n * 2 + key.length,
-		dispose: (key, n) => n.close(),
-		maxAge: LRU_MAXAGE
+		max,
+		maxAge
 	});
 
 	const {
