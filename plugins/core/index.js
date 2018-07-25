@@ -5,7 +5,7 @@ define([
 	'lodash',
 	'lru-cache',
 	'-/logger/index.js',
-	'-/controller/utils.js'
+	'-/core/utils.js'
 ], (_, lru, logger, utils) => {
 	const max = !_.isNaN(parseInt(process.env.MVP_CONTROLLER_LRU_MAXSIZE, 10))
 		? parseInt(process.env.MVP_CONTROLLER_LRU_MAXSIZE, 10)

@@ -6,7 +6,7 @@ define([
 	'express',
 	'-/logger/index.js',
 	'-/authentication/index.js',
-	'-/controller/index.js',
+	'-/core/index.js',
 	'-/server/status-handler.js',
 	'-/server/utils.js'
 ], (
@@ -14,7 +14,7 @@ define([
 	express,
 	logger,
 	authentication,
-	controller,
+	core,
 	statusHandler,
 	utils
 ) => {
@@ -34,7 +34,7 @@ define([
 
 			app.use('/:bctxt/:aggregate/:v', authentication.authenticate());
 
-			app.use('/:bctxt/:aggregate/:v', controller.middleware());
+			app.use('/:bctxt/:aggregate/:v', core.middleware());
 
 			// TODO: only bubble up safe errors
 			app.use(utils.errorHandler());
