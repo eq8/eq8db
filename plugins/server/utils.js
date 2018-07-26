@@ -29,7 +29,7 @@ define([
 		logger.trace(`reading domain info for ${id}`);
 
 		const domain = await store.read({
-			type: 'domain',
+			type: 'domains',
 			id
 		});
 

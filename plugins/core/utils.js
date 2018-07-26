@@ -37,9 +37,9 @@ define([
 	};
 
 	async function getInterface(args) {
-		const domain = await getDomain(args);
-		const aggregate = getAggregate(domain, args);
-		const repository = getRepository(domain, aggregate);
+		const config = await getConfig(args);
+		const aggregate = getAggregate(config, args);
+		const repository = getRepository(config, aggregate);
 
 		return getAPI({
 			aggregate,
@@ -47,27 +47,29 @@ define([
 		});
 	}
 
-	async function getDomain(args) {
-		const id = _.get(args, 'domain');
+	async function getConfig(args) {
+		const domain = _.get(args, 'domain');
+		const bctxt = _.get(args, 'bctxt');
+		const id = `${domain}/${bctxt}`;
 
-		logger.trace(`reading domain info for ${id}`);
+		logger.trace(`reading bounded context info for ${id}`);
 
-		const domain = await store.read({
-			type: 'domain',
+		const config = await store.read({
+			type: 'boundedContexts',
 			id
 		});
 
-		logger.debug('domain', { domain });
+		logger.debug('config', { config });
 
-		return domain;
+		return config;
 	}
 
-	function getAggregate(domain, args) {
-		const { bctxt, aggregate, v } = args || {};
+	function getAggregate(config, args) {
+		const { aggregate, v } = args || {};
 
-		const aggregatePath = `boundedContexts[${bctxt}].aggregates[${aggregate}].versions[${v}]`;
+		const aggregatePath = `aggregates[${aggregate}].versions[${v}]`;
 
-		return _.get(domain, aggregatePath);
+		return _.get(config, aggregatePath);
 	}
 
 	function getAPI(args) {
@@ -165,10 +167,10 @@ define([
 		return entities; // _.pickBy(entities, hasName);
 	}
 
-	function getRepository(domain, aggregate) {
+	function getRepository(config, aggregate) {
 		const repositoryName = _.get(aggregate, PROPERTIES.REPOSITORY);
 		const repositoryPath = `repositories[${repositoryName}]`;
-		const repository = _.get(domain, repositoryPath);
+		const repository = _.get(config, repositoryPath);
 
 		return repository;
 	}
