@@ -49,7 +49,13 @@ function seedDomain({ conn, table }) {
 			disableDefaultRoutes: false,
 			routes: {
 				'/': {
-					interface: 'http://interface.ui.defaults/'
+					view: 'http://view.ui.defaults/'
+				},
+				'/api/domain/0.0': {
+					view: 'http://view.api.graphql/api/domain/0.0',
+					authenticate: {
+						secretOrKeyProvider: 'https://bbartolome.auth0.com/.well-known/jwks.json'
+					}
 				}
 			}
 		})
@@ -57,7 +63,7 @@ function seedDomain({ conn, table }) {
 }
 
 function seedBoundedContexts({ conn, table }) {
-	const id = '127.0.0.1:8000/api';
+	const id = '127.0.0.1/api';
 
 	return r
 		.table(table)

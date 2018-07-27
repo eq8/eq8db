@@ -3,57 +3,67 @@
 
 define([
 	'lodash',
-	'lru-cache',
+	'url-parse',
+	'request',
 	'-/logger/index.js',
-	'-/core/utils.js'
-], (_, lru, logger, utils) => {
-	const max = !_.isNaN(parseInt(process.env.MVP_CONTROLLER_LRU_MAXSIZE, 10))
-		? parseInt(process.env.MVP_CONTROLLER_LRU_MAXSIZE, 10)
-		: 500;
-	const maxAge = !_.isNaN(parseInt(process.env.MVP_CONTROLLER_LRU_MAXAGE, 10))
-		? parseInt(process.env.MVP_CONTROLLER_LRU_MAXAGE, 10)
-		: 1000 * 60 * 60;
-	const cache = lru({
-		max,
-		maxAge
-	});
-
-	const {
-		getInterface
-	} = utils;
-
+	'-/store/index.js'
+], (_, urlParse, request, logger, store) => {
 	const plugin = {
 		middleware() {
-			return (req, res, next) => {
-				const domain = _.get(req, 'headers.host');
-				const bctxt = _.get(req, 'params.bctxt');
-				const aggregate = _.get(req, 'params.aggregate');
-				const v = _.get(req, 'params.v');
-
-				const uri = `${domain}/${bctxt}/${aggregate}/${v}`;
-
-				logger.debug('uri', { uri });
-
-				const cached = cache.get(uri);
-
-				if (cached) {
-					logger.trace(`using cached middleware for ${uri}`);
-
-					cached(req, res, next);
-				} else {
-					logger.trace(`loading middleware for ${uri}`);
-
-					getInterface({
-						domain, bctxt, aggregate, v
-					}).then(middleware => {
-						logger.trace('middleware found');
-						cache.set(uri, middleware);
-						middleware(req, res, next);
-					}, next);
-				}
-			};
+			return middleware;
 		}
 	};
+
+	function middleware(req, res, next) {
+		hasView({ req, res })
+			.then(
+				noNext => noNext || next(),
+				() => next(new Error('core unable to check if request has a view'))
+			);
+	}
+
+	async function hasView(args) {
+		const { req, res } = args;
+		const id = _.get(req, 'headers.host');
+
+		const { originalUrl } = req || {};
+		const url = urlParse(originalUrl);
+		const { pathname } = url || { pathname: '/' };
+
+		const domainConfig = await getDomainConfig({ id });
+
+		logger.trace(`reading route info for ${pathname}`);
+
+		const routeConfig = _.get(domainConfig, `routes['${pathname}']`);
+		const { view } = routeConfig || {};
+
+		logger.debug('route config', { config: routeConfig });
+
+		if (view) {
+			req.pipe(request(view, {
+				headers: {
+					host: _.get(req, 'headers.host')
+				}
+			})).pipe(res);
+		}
+
+		return !!routeConfig;
+	}
+
+	async function getDomainConfig(args) {
+		const { id } = args || {};
+
+		logger.trace(`reading domain info for ${id}`);
+
+		const config = await store.read({
+			type: 'domains',
+			id
+		});
+
+		logger.debug('domain config', { config });
+
+		return config;
+	}
 
 	return plugin;
 });

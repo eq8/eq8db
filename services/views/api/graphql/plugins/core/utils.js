@@ -23,7 +23,7 @@ define([
 	{ toImmutable }
 ) => {
 	const plugin = {
-		getInterface
+		getView
 	};
 
 	const LF = '\n';
@@ -36,7 +36,7 @@ define([
 		REPOSITORY: 'repository'
 	};
 
-	async function getInterface(args) {
+	async function getView(args) {
 		const config = await getConfig(args);
 		const aggregate = getAggregate(config, args);
 		const repository = getRepository(config, aggregate);
@@ -67,7 +67,9 @@ define([
 	function getAggregate(config, args) {
 		const { aggregate, v } = args || {};
 
-		const aggregatePath = `aggregates[${aggregate}].versions[${v}]`;
+		const aggregatePath = `aggregates['${aggregate}'].versions['${v}']`;
+
+		logger.debug('aggregatePath', { aggregatePath });
 
 		return _.get(config, aggregatePath);
 	}
@@ -106,11 +108,11 @@ define([
 		const resolvers = getResolvers(typeDefsRaw);
 
 		const schema = makeExecutableSchema({
-			typeDefs,
-			resolvers,
 			logger: {
 				log: resolveError => logger.error('controller unable to resolve', { err: resolveError })
-			}
+			},
+			typeDefs,
+			resolvers
 		});
 
 		const API = graphqlHTTP({
@@ -169,8 +171,11 @@ define([
 
 	function getRepository(config, aggregate) {
 		const repositoryName = _.get(aggregate, PROPERTIES.REPOSITORY);
-		const repositoryPath = `repositories[${repositoryName}]`;
+		const repositoryPath = `repositories['${repositoryName}']`;
 		const repository = _.get(config, repositoryPath);
+
+		logger.debug('repositoryPath', { repositoryPath });
+		logger.debug('repository', { repository });
 
 		return repository;
 	}

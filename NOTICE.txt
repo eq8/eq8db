@@ -1,6 +1,6 @@
 include dir /Users/bbartolome/git/sandbox
 scanning /Users/bbartolome/git/sandbox
-scanning /Users/bbartolome/git/sandbox/services/api/domain/query/load
+scanning /Users/bbartolome/git/sandbox/services/resolvers/api/domain/query/load
 scanning /Users/bbartolome/git/sandbox/services/resolvers/utils/get
 scanning /Users/bbartolome/git/sandbox/services/seed
 ├─ @eq8/mvp@0.0.0
@@ -8,66 +8,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/eq8/mvp
 │  ├─ licenseUrl: https://github.com/eq8/mvp/raw/master/LICENSE
 │  └─ parents: UNDEFINED
-├─ @types/body-parser@1.17.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/connect@3.4.32
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/events@1.2.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/express-jwt@0.0.34
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/express-serve-static-core@4.16.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://github.com/DefinitelyTyped/DefinitelyTyped/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ @types/express-unless@0.0.32
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/express@4.16.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://github.com/DefinitelyTyped/DefinitelyTyped/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ @types/graphql@0.12.6
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/mime@2.0.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
-├─ @types/node@10.5.2
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://github.com/DefinitelyTyped/DefinitelyTyped/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ @types/range-parser@1.2.2
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://github.com/DefinitelyTyped/DefinitelyTyped/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ @types/serve-static@1.13.2
-│  ├─ licenses: MIT
-│  ├─ repository: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  ├─ licenseUrl: https://wwwhub.com/DefinitelyTyped/DefinitelyTyped
-│  └─ parents: @eq8/mvp
 ├─ abbrev@1.1.1
 │  ├─ licenses: ISC
 │  ├─ repository: http://github.com/isaacs/abbrev-js
@@ -151,16 +91,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 ├─ api-domain-query-load@1.0.0
 │  ├─ licenses: UNKNOWN
 │  └─ parents: UNDEFINED
-├─ apollo-link@1.2.2
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/apollographql/apollo-link
-│  ├─ licenseUrl: https://github.com/apollographql/apollo-link
-│  └─ parents: @eq8/mvp
-├─ apollo-utilities@1.0.16
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/apollographql/apollo-client
-│  ├─ licenseUrl: https://github.com/apollographql/apollo-client
-│  └─ parents: @eq8/mvp
 ├─ aproba@1.2.0
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/iarna/aproba
@@ -310,16 +240,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/micromatch/braces
 │  ├─ licenseUrl: https://github.com/micromatch/braces/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ buffer-equal-constant-time@1.0.1
-│  ├─ licenses: BSD-3-Clause
-│  ├─ repository: https://github.com/goinstant/buffer-equal-constant-time
-│  ├─ licenseUrl: https://github.com/goinstant/buffer-equal-constant-time/raw/master/LICENSE.txt
-│  └─ parents: @eq8/mvp
-├─ bytes@3.0.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/visionmedia/bytes.js
-│  ├─ licenseUrl: https://github.com/visionmedia/bytes.js/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ cache-base@1.0.1
 │  ├─ licenses: MIT
@@ -654,11 +574,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/dougwilson/nodejs-depd
 │  ├─ licenseUrl: https://github.com/dougwilson/nodejs-depd/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ deprecated-decorator@0.1.6
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/vilic/deprecated-decorator
-│  ├─ licenseUrl: https://github.com/vilic/deprecated-decorator
-│  └─ parents: @eq8/mvp
 ├─ destroy@1.0.4
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/stream-utils/destroy
@@ -703,11 +618,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/quartzjer/ecc-jsbn
 │  ├─ licenseUrl: https://github.com/quartzjer/ecc-jsbn/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ ecdsa-sig-formatter@1.0.10
-│  ├─ licenses: Apache-2.0
-│  ├─ repository: https://github.com/Brightspace/node-ecdsa-sig-formatter
-│  ├─ licenseUrl: https://github.com/Brightspace/node-ecdsa-sig-formatter/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ ee-first@1.1.1
 │  ├─ licenses: MIT
@@ -818,11 +728,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/jonschlinkert/expand-brackets
 │  ├─ licenseUrl: https://github.com/jonschlinkert/expand-brackets/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ express-graphql@0.6.12
-│  ├─ licenses: BSD-3-Clause
-│  ├─ repository: http://github.com/graphql/express-graphql
-│  ├─ licenseUrl: http://github.com/graphql/express-graphql/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ express@4.15.3
 │  ├─ licenses: MIT
@@ -1063,16 +968,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/isaacs/node-graceful-fs
 │  ├─ licenseUrl: https://github.com/isaacs/node-graceful-fs/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ graphql-tools@3.0.5
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/apollostack/graphql-tools
-│  ├─ licenseUrl: https://github.com/apollostack/graphql-tools/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ graphql@0.13.2
-│  ├─ licenses: MIT
-│  ├─ repository: http://github.com/graphql/graphql-js
-│  ├─ licenseUrl: http://github.com/graphql/graphql-js/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ har-schema@2.0.0
 │  ├─ licenses: ISC
@@ -1393,7 +1288,7 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/juliangruber/isarray
 │  ├─ licenseUrl: https://github.com/juliangruber/isarray
-│  └─ parents: through2:@eq8/mvp
+│  └─ parents: tap-parser:@eq8/mvp
 ├─ isarray@1.0.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/juliangruber/isarray
@@ -1418,11 +1313,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/rvagg/isstream
 │  ├─ licenseUrl: https://github.com/rvagg/isstream/raw/master/LICENSE.md
-│  └─ parents: @eq8/mvp
-├─ iterall@1.2.2
-│  ├─ licenses: MIT
-│  ├─ repository: github:leebyron/iterall
-│  ├─ licenseUrl: github:leebyron/iterall
 │  └─ parents: @eq8/mvp
 ├─ jju@1.3.0
 │  ├─ licenses: WTFPL
@@ -1484,30 +1374,10 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: http://github.com/substack/jsonify
 │  ├─ licenseUrl: http://github.com/substack/jsonify
 │  └─ parents: @eq8/mvp
-├─ jsonwebtoken@8.3.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/auth0/node-jsonwebtoken
-│  ├─ licenseUrl: https://github.com/auth0/node-jsonwebtoken/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
 ├─ jsprim@1.4.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/joyent/node-jsprim
 │  ├─ licenseUrl: https://github.com/joyent/node-jsprim/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ jwa@1.1.6
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/brianloveswords/node-jwa
-│  ├─ licenseUrl: https://github.com/brianloveswords/node-jwa/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ jwks-rsa@1.3.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/auth0/node-jwks-rsa
-│  ├─ licenseUrl: https://github.com/auth0/node-jwks-rsa/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ jws@3.1.5
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/brianloveswords/node-jws
-│  ├─ licenseUrl: https://github.com/brianloveswords/node-jws/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ kind-of@3.2.2
 │  ├─ licenses: MIT
@@ -1549,52 +1419,7 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: http://github.com/davglass/license-checker
 │  ├─ licenseUrl: http://github.com/davglass/license-checker/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ limiter@1.1.3
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/jhurliman/node-rate-limiter
-│  ├─ licenseUrl: http://github.com/jhurliman/node-rate-limiter/raw/master/LICENSE.txt
-│  └─ parents: @eq8/mvp
-├─ lock@0.1.4
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/dominictarr/lock
-│  ├─ licenseUrl: https://github.com/dominictarr/lock/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
 ├─ lodash.debounce@4.0.8
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.includes@4.3.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.isboolean@3.0.3
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.isinteger@4.0.4
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.isnumber@3.0.3
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.isplainobject@4.0.6
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.isstring@4.0.1
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/lodash/lodash
-│  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lodash.once@4.1.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/lodash/lodash
 │  ├─ licenseUrl: https://github.com/lodash/lodash/raw/master/LICENSE
@@ -1619,20 +1444,10 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/sindresorhus/lowercase-keys
 │  ├─ licenseUrl: https://github.com/sindresorhus/lowercase-keys/raw/master/license
 │  └─ parents: @eq8/mvp
-├─ lru-cache@4.0.2
-│  ├─ licenses: ISC
-│  ├─ repository: https://github.com/isaacs/node-lru-cache
-│  ├─ licenseUrl: https://github.com/isaacs/node-lru-cache/raw/master/LICENSE
-│  └─ parents: lru-memoizer:@eq8/mvp
 ├─ lru-cache@4.1.2
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/isaacs/node-lru-cache
 │  ├─ licenseUrl: https://github.com/isaacs/node-lru-cache/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ lru-memoizer@1.12.0
-│  ├─ licenses: MIT*
-│  ├─ repository: https://github.com/jfromaniello/lru-memoizer
-│  ├─ licenseUrl: https://github.com/jfromaniello/lru-memoizer/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
 ├─ make-dir@1.3.0
 │  ├─ licenses: MIT
@@ -1748,7 +1563,7 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/zeit/ms
 │  ├─ licenseUrl: https://github.com/zeit/ms/raw/master/license.md
-│  └─ parents: jsonwebtoken:@eq8/mvp
+│  └─ parents: logform:@eq8/mvp
 ├─ mute-stream@0.0.7
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/isaacs/mute-stream
@@ -1972,26 +1787,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/jonschlinkert/pascalcase
 │  ├─ licenseUrl: https://github.com/jonschlinkert/pascalcase/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ passport-anonymous@1.0.1
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/jaredhanson/passport-anonymous
-│  ├─ licenseUrl: http://www.opensource.org/licenses/MIT
-│  └─ parents: @eq8/mvp
-├─ passport-jwt@4.0.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/themikenicholson/passport-jwt
-│  ├─ licenseUrl: https://github.com/themikenicholson/passport-jwt/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-├─ passport-strategy@1.0.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/jaredhanson/passport-strategy
-│  ├─ licenseUrl: http://www.opensource.org/licenses/MIT
-│  └─ parents: @eq8/mvp
-├─ passport@0.4.0
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/jaredhanson/passport
-│  ├─ licenseUrl: https://github.com/jaredhanson/passport/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
 ├─ path-dirname@1.0.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/es128/path-dirname
@@ -2026,9 +1821,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT,Apache2
 │  ├─ repository: https://github.com/dominictarr/pause-stream
 │  ├─ licenseUrl: ,
-│  └─ parents: @eq8/mvp
-├─ pause@0.0.1
-│  ├─ licenses: MIT*
 │  └─ parents: @eq8/mvp
 ├─ performance-now@2.1.0
 │  ├─ licenses: MIT
@@ -2133,11 +1925,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/jshttp/range-parser
 │  ├─ licenseUrl: https://github.com/jshttp/range-parser/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ raw-body@2.3.3
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/stream-utils/raw-body
-│  ├─ licenseUrl: https://github.com/stream-utils/raw-body/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
 ├─ rc@1.2.7
 │  ├─ licenses: (BSD-2-Clause OR MIT OR Apache-2.0)
 │  ├─ repository: https://github.com/dominictarr/rc
@@ -2162,7 +1949,7 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/isaacs/readable-stream
 │  ├─ licenseUrl: https://github.com/isaacs/readable-stream/raw/master/LICENSE
-│  └─ parents: through2:@eq8/mvp
+│  └─ parents: tap-parser:@eq8/mvp
 ├─ readable-stream@2.3.6
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/nodejs/readable-stream
@@ -2500,7 +2287,7 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/rvagg/string_decoder
 │  ├─ licenseUrl: https://github.com/rvagg/string_decoder/raw/master/LICENSE
-│  └─ parents: through2:@eq8/mvp
+│  └─ parents: tap-parser:@eq8/mvp
 ├─ string_decoder@1.1.1
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/nodejs/string_decoder
@@ -2766,11 +2553,6 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/davepacheco/node-verror
 │  ├─ licenseUrl: https://github.com/davepacheco/node-verror/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ very-fast-args@1.1.0
-│  ├─ licenses: MIT*
-│  ├─ repository: https://github.com/jfromaniello/very-fast-args
-│  ├─ licenseUrl: https://github.com/jfromaniello/very-fast-args/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
 ├─ which@1.3.1
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/isaacs/node-which
@@ -2831,20 +2613,10 @@ scanning /Users/bbartolome/git/sandbox/services/seed
 │  ├─ repository: https://github.com/isaacs/yallist
 │  ├─ licenseUrl: https://github.com/isaacs/yallist/raw/master/LICENSE
 │  └─ parents: @eq8/mvp
-├─ yallist@3.0.2
-│  ├─ licenses: ISC
-│  ├─ repository: https://github.com/isaacs/yallist
-│  ├─ licenseUrl: https://github.com/isaacs/yallist/raw/master/LICENSE
-│  └─ parents: fsevents:@eq8/mvp
-├─ zen-observable-ts@0.8.9
-│  ├─ licenses: MIT
-│  ├─ repository: https://github.com/apollographql/apollo-link
-│  ├─ licenseUrl: https://github.com/apollographql/apollo-link/raw/master/LICENSE
-│  └─ parents: @eq8/mvp
-└─ zen-observable@0.8.8
-   ├─ licenses: MIT
-   ├─ repository: https://github.com/zenparsing/zen-observable
-   ├─ licenseUrl: https://github.com/zenparsing/zen-observable/raw/master/LICENSE
-   └─ parents: @eq8/mvp
+└─ yallist@3.0.2
+   ├─ licenses: ISC
+   ├─ repository: https://github.com/isaacs/yallist
+   ├─ licenseUrl: https://github.com/isaacs/yallist/raw/master/LICENSE
+   └─ parents: fsevents:@eq8/mvp
 
-Number of entries found: 571
+Number of entries found: 525

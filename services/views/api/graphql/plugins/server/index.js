@@ -26,7 +26,7 @@ define([
 
 			app.use(statusHandler.middleware());
 
-			app.use(core.middleware());
+			app.use('/:bctxt/:aggregate/:v', core.middleware());
 
 			// TODO: only bubble up safe errors
 			app.use(utils.errorHandler());
