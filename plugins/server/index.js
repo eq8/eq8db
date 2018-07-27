@@ -4,6 +4,7 @@
 define([
 	'lodash',
 	'express',
+	'request',
 	'-/logger/index.js',
 	'-/authentication/index.js',
 	'-/core/index.js',
@@ -12,6 +13,7 @@ define([
 ], (
 	_,
 	express,
+	request,
 	logger,
 	authentication,
 	core,
@@ -31,6 +33,13 @@ define([
 			app.use(authentication.initialize());
 
 			app.use(utils.contextProvider());
+
+			app.use('/', (req, res) => {
+				req.pipe(request({
+					authorization: 'Basic test',
+					url: 'http://interfaces.ui.defaults'
+				})).pipe(res);
+			});
 
 			app.use('/:bctxt/:aggregate/:v', authentication.authenticate());
 

@@ -34,3 +34,8 @@ services:
       build:
          context: ./services/resolvers/utils/get
       restart: "always"
+   interfaces.ui.defaults:
+      image: equate/mvp-interfaces:ui.defaults
+      build:
+         context: ./services/interfaces/ui/defaults
+      restart: "always"
