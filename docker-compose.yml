@@ -23,7 +23,7 @@ services:
       depends_on:
          - seed
       environment:
-         - "MVP_LOGGER_LEVEL=trace"
+         - "LOG_LEVEL=trace"
    resolver.api.domain.query.load:
       image: equate/mvp-microservice:api.domain.query.load
       build:
@@ -45,4 +45,4 @@ services:
          context: ./services/views/api/graphql
       restart: "always"
       environment:
-         - "MVP_LOGGER_LEVEL=trace"
+         - "LOG_LEVEL=trace"

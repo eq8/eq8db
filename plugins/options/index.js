@@ -1,24 +1,17 @@
-
 /* global define */
 'use strict';
 
-const optionsWhitelist = [
-	'storeUri', 'port', 'retryInterval', 'overridesFile'
-];
-
 define([
-	'lodash'
-], _ => {
+	'lodash',
+	'yargs'
+], (_, { argv }) => {
 
-	let settings = {};
+	let settings = argv;
 
-	function init(options) {
+	function init(options, defaults) {
 
 		// Provide defaults
-		settings = _.defaultsDeep(_.pick(options, optionsWhitelist), {
-			port: 8000,
-			retryInterval: 1000
-		});
+		settings = _.defaultsDeep(options, defaults);
 
 		return get();
 	}

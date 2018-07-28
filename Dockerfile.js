@@ -13,4 +13,4 @@ RUN npm link --production
 COPY ./index.js /opt/mvp/index.js
 COPY ./plugins /opt/mvp/plugins
 
-CMD mvp
+CMD mvp --log-level=${LOG_LEVEL}

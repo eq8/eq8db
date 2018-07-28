@@ -1,22 +1,63 @@
 #!/usr/bin/env node
-
 'use strict';
 
-const pkg = require('../package.json');
-const bootstrap = require('./bootstrap.js');
+const argv = require('yargs').argv;
+
+// hoist bootstrap function and export
+bootstrap(argv);
 
 /**
- * Define the options for running MVP
+ * The main function that signals the start of the application
+ * Basically wraps the MVP library
+ *
+ * @param {Object} [args] CLI arguments
+ * @returns {undefined}
  */
-const program = require('commander')
-	.description(pkg.description)
-	.version(pkg.version)
-	.option('--port <num>', 'The port to bind on', parseInt)
-	.option('--store-uri <uri>', 'The connection string for the store')
-	.option('--retry-interval <num>', 'The interval to retry connecting the store plugin', parseInt)
-	.option('--overrides-file <path>', 'The absolute path to the file containing mappings for overriding the default implementations')
-	.parse(process.argv);
+async function bootstrap(args) {
 
-bootstrap(program).catch(err => {
-	throw new Error(err);
-});
+	// Extract the settings
+	const { overridesFile } = args || {};
+
+	const overrides = overridesFile
+		? require(overridesFile)
+		: {};
+
+	const mvp = require('..');
+
+	// Call MVP with a set of options from the CLI which initializes the core components of MVP:
+	// - Logger
+	// - API
+	// - HTTP server
+	const { options, logger, store, server } = await mvp({ overrides });
+	const defaults = {
+		port: 8000,
+		retryInterval: 1000
+	};
+	const { port, storeUri, retryInterval } = options.init(args, defaults);
+
+	logger.info('initialized', { overrides });
+
+	try {
+		const { success } = await server.listen({ port }) || {};
+
+		logger.info('server is listening', { port, success });
+	} catch (err) {
+		logger.error('server unable to listen', { port, err });
+		process.exitCode = 1;
+	}
+
+	connect();
+
+	async function connect(callback) {
+		try {
+			const { success } = await store.connect({ storeUri }) || {};
+
+			logger.info('store has connected', { storeUri, success });
+
+			server.setState('ready'); // TODO: replace with connected, ready if db was created
+		} catch (err) {
+			logger.error('store unable to connect', { storeUri, err });
+			setTimeout(connect, retryInterval, callback);
+		}
+	}
+}
