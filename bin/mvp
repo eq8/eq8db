@@ -2,7 +2,6 @@
 'use strict';
 
 const argv = require('yargs').argv;
-const path = require('path');
 
 // hoist start function and export
 start(argv);
@@ -17,16 +16,15 @@ start(argv);
 async function start(args) {
 
 	// Extract the settings
-	const { overridesFile } = args || {};
+	const { overridesFile, extensions } = args || {};
 
 	const overrides = overridesFile
 		? require(overridesFile)
 		: {};
 
-	const boot = require('@eq8/mvp-boot');
+	const mvp = require('..');
 
-	const extensions = path.join(__dirname, '../lib/ext');
-	const define = boot({ overrides, extensions });
+	const define = mvp({ overrides, extensions });
 
 	define([
 		'-/options/index.js',
