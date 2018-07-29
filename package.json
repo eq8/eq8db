@@ -7,12 +7,11 @@
     "mvp": "./bin/mvp"
   },
   "scripts": {
-    "install": "npm-license-crawler > ./NOTICE.txt",
     "precommit": "npm run test:lint",
     "prepush": "npm run test:lint && npm run test:unit",
     "start": "nodemon",
     "test": "npm run test:lint && npm run test:unit && npm run test:integration",
-    "test:lint": "eslint --cache --ext .js index.js bin/* plugins",
+    "test:lint": "eslint --cache --ext .js index.js bin/* lib",
     "test:unit": "tape test/test.unit.js | faucet",
     "test:integration": "tape test/test.integration.js | faucet"
   },
@@ -31,16 +30,10 @@
   },
   "homepage": "https://github.com/eq8/mvp#readme",
   "dependencies": {
-    "express": "4.15.3",
-    "immutable": "3.8.1",
+    "@eq8/mvp-boot": "git+https://git@github.com/eq8/mvp-boot.git#master",
     "lodash": "4.17.9",
-    "lru-cache": "4.1.2",
     "request": "2.87.0",
-    "requirejs": "2.3.5",
-    "rethinkdb": "2.3.3",
-    "semver": "5.5.0",
     "url-parse": "1.4.1",
-    "winston": "3.0.0",
     "yargs": "12.0.1"
   },
   "devDependencies": {
@@ -49,7 +42,6 @@
     "faucet": "0.0.1",
     "husky": "0.14.3",
     "nodemon": "1.18.3",
-    "npm-license-crawler": "0.1.9",
     "tape": "4.9.1"
   },
   "nodemonConfig": {

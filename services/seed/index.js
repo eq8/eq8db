@@ -63,7 +63,7 @@ function seedDomain({ conn, table }) {
 }
 
 function seedBoundedContexts({ conn, table }) {
-	const id = '127.0.0.1/api';
+	const id = '127.0.0.1:8000/api';
 
 	return r
 		.table(table)

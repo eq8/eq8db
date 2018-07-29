@@ -11,6 +11,6 @@ COPY package.json /opt/mvp/package.json
 RUN npm link --production
 
 COPY ./index.js /opt/mvp/index.js
-COPY ./plugins /opt/mvp/plugins
+COPY ./lib /opt/mvp/lib
 
 CMD mvp --log-level=${LOG_LEVEL}

@@ -2,9 +2,10 @@
 'use strict';
 
 const argv = require('yargs').argv;
+const path = require('path');
 
-// hoist bootstrap function and export
-bootstrap(argv);
+// hoist start function and export
+start(argv);
 
 /**
  * The main function that signals the start of the application
@@ -13,7 +14,7 @@ bootstrap(argv);
  * @param {Object} [args] CLI arguments
  * @returns {undefined}
  */
-async function bootstrap(args) {
+async function start(args) {
 
 	// Extract the settings
 	const { overridesFile } = args || {};
@@ -22,42 +23,54 @@ async function bootstrap(args) {
 		? require(overridesFile)
 		: {};
 
-	const mvp = require('..');
+	const boot = require('@eq8/mvp-boot');
 
-	// Call MVP with a set of options from the CLI which initializes the core components of MVP:
-	// - Logger
-	// - API
-	// - HTTP server
-	const { options, logger, store, server } = await mvp({ overrides });
-	const defaults = {
-		port: 8000,
-		retryInterval: 1000
-	};
-	const { port, storeUri, retryInterval } = options.init(args, defaults);
+	const extensions = path.join(__dirname, '../lib/ext');
+	const define = boot({ overrides, extensions });
 
-	logger.info('initialized', { overrides });
+	define([
+		'-/options/index.js',
+		'-/logger/index.js',
+		'-/store/index.js',
+		'-/server/index.js',
+		'-/ext/controller/index.js'
+	], (options, logger, store, server, controller) => {
+		const defaults = {
+			port: 8000,
+			retryInterval: 1000
+		};
+		const { port, storeUri, retryInterval } = options.init(args, defaults);
 
-	try {
-		const { success } = await server.listen({ port }) || {};
+		logger.info('initialized', { overrides });
 
-		logger.info('server is listening', { port, success });
-	} catch (err) {
-		logger.error('server unable to listen', { port, err });
-		process.exitCode = 1;
-	}
+		listen().then(connect, err => {
+			throw new Error(err);
+		});
 
-	connect();
+		async function listen() {
+			try {
+				server.use(controller.middleware());
 
-	async function connect(callback) {
-		try {
-			const { success } = await store.connect({ storeUri }) || {};
+				const { success } = await server.listen({ port }) || {};
 
-			logger.info('store has connected', { storeUri, success });
-
-			server.setState('ready'); // TODO: replace with connected, ready if db was created
-		} catch (err) {
-			logger.error('store unable to connect', { storeUri, err });
-			setTimeout(connect, retryInterval, callback);
+				logger.info('server is listening', { port, success });
+			} catch (err) {
+				logger.error('server unable to listen', { port, err });
+				process.exitCode = 1;
+			}
 		}
-	}
+
+		async function connect() {
+			try {
+				const { success } = await store.connect({ storeUri }) || {};
+
+				logger.info('store has connected', { storeUri, success });
+
+				server.setState('ready'); // TODO: replace with connected, ready if db was created
+			} catch (err) {
+				logger.error('store unable to connect', { storeUri, err });
+				setTimeout(connect, retryInterval);
+			}
+		}
+	});
 }
