@@ -4,6 +4,11 @@ const _ = require('lodash');
 const path = require('path');
 const boot = require('@eq8/mvp-boot');
 
+/*
+ * Register default implementation for `-/ext/controller` into the dependency injection framework
+ *
+ * However, `overrides` via the `args` paramater takes precedence
+ */
 module.exports = function mvp(args) {
 	const config = _.defaultsDeep({}, args, {
 		overrides: {
