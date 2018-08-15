@@ -1,4 +1,4 @@
-FROM node:8.11.3
+FROM node:10.8.0
 
 ENV MVP_STORE_URI=rethinkdb://admin@rethinkdb:28015
 ENV PORT=80
