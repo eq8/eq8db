@@ -32,7 +32,7 @@
     "@eq8/mvp-boot": "git+https://git@github.com/eq8/mvp-boot.git#master",
     "lodash": "4.17.9",
     "request": "2.87.0",
-    "url-parse": "1.4.1",
+    "url-parse": "1.4.3",
     "yargs": "12.0.1"
   },
   "devDependencies": {
