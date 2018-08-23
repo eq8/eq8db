@@ -49,7 +49,7 @@ async function start(args) {
 			try {
 				server.use(controller.middleware());
 
-				const { success } = await server.listen({ port }) || {};
+				const { success } = await server.listen(port) || {};
 
 				logger.info('server is listening', { port, success });
 			} catch (err) {
